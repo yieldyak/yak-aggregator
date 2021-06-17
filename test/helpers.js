@@ -54,3 +54,5 @@ module.exports.getTokenContract = tokenAddress => ethers.getContractAt(
     'contracts/interface/IWETH.sol:IWETH', 
     tokenAddress
 )
+
+module.exports.getDeadline = () => Math.floor(Date.now() / 1000) + 60 * 20;

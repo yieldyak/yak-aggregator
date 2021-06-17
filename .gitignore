@@ -6,3 +6,7 @@ artifacts
 scripts
 cache
 .env
+yarn.lock
+deployments/localhost/**
+.mocharc.json
+.vscode

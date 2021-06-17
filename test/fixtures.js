@@ -237,9 +237,63 @@ const router = deployments.createFixture(async ({ }) => {
     }
 })
 
+const zap = deployments.createFixture(async ({ }) => {
+    const genNewAccount = await helpers.makeAccountGen()
+    const deployer = genNewAccount()
+
+    // PNG Token
+    const REWARD_TOKEN = "0x60781C2586D68229fde47564546784ab3fACA982";
+    const NAME = "Yield Yak: PGL AVAX-PNG"
+    // Pangolin Staking Rewards
+    const STAKING_CONTRACT = "0x574d3245e36cf8c9dc86430eadb0fdb2f385f829";
+    // PGL AVAX-PNG
+    const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+    const DEPOSIT_TOKEN = "0xd7538cabbf8605bde1f4901b47b8d42c61de0367";
+    const TIMELOCK = "0x8d36C5c6947ADCcd25Ef49Ea1aAC2ceACFff0bD7";
+    const MIN_TOKENS = ethers.utils.parseUnits("0.1");
+    const ADMIN_FEE = 200;
+    const DEV_FEE = 0;
+    const REINVEST_FEE = 800;
+
+    const YakCompounderFactory = await ethers.getContractFactory('DexStrategyV5')
+    const YakCompounder = await YakCompounderFactory.connect(deployer).deploy(
+        NAME,
+        DEPOSIT_TOKEN,
+        REWARD_TOKEN,
+        STAKING_CONTRACT,
+        ZERO_ADDRESS,
+        ZERO_ADDRESS, 
+        TIMELOCK,
+        MIN_TOKENS,
+        ADMIN_FEE,
+        DEV_FEE,
+        REINVEST_FEE
+    )
+
+    const PangolinFactory = "0xefa94DE7a4656D787667C749f7E1223D71E9FD88";
+    const PangolinPairInitCode = "0x40231f6b438bce0797c9ada29b718a87ea0a5cea3fe9a771abdd76bd41a3e545"
+
+    const ZapRouterFactory = await ethers.getContractFactory('YakZapRouter')
+    const ZapRouter = await ZapRouterFactory.connect(deployer).deploy(
+        PangolinFactory,
+        PangolinPairInitCode,
+    )
+
+    const PGL_WAVAX_PNG_PAIR = await ethers.getContractAt("IUnilikePair", DEPOSIT_TOKEN);
+
+    // Set tags
+    if (TRACER_ENABLED) {
+        hre.tracer.nameTags[YakCompounder.address] = 'YakCompounder'
+        hre.tracer.nameTags[ZapRouter.address] = 'ZapRouter'
+    }
+    const getDeadline =  helpers.getDeadline
+    return {YakCompounder, ZapRouter, PGL_WAVAX_PNG_PAIR, getDeadline}
+})
+
 module.exports = {
     curvelikeAdapters, 
     unilikeAdapters,
     general, 
-    router
+    router,
+    zap
 }
