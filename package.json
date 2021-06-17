@@ -1,0 +1,31 @@
+{
+  "name": "avax-aggregator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "^3.4.1",
+    "chai": "^4.3.4",
+    "ethereum-waffle": "^3.3.0",
+    "ethereumjs-util": "^7.0.10",
+    "ethers": "^5.1.3",
+    "hardhat": "^2.2.0",
+    "hardhat-abi-exporter": "^2.2.1",
+    "hardhat-contract-sizer": "^2.0.3",
+    "hardhat-deploy": "^0.7.10",
+    "hardhat-deploy-ethers": "*",
+    "hardhat-gas-reporter": "^1.0.4"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "hardhat-tracer": "^1.0.0-alpha.5",
+    "typescript": "^4.2.4"
+  }
+}
