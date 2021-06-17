@@ -29,7 +29,7 @@ YakRouter is the user-facing interface to check prices and make trades.
 
 | Name      | Address |
 | ----------- | ----------- |
-| YakRouter   | `0xC81904C7af58Df244B874fDCad1b72059d59EBb9` |
+| YakRouter   | `0x187Cd11549a20ACdABd43992d01bfcF2Bfc3E18d` |
 
 #### Query
 
@@ -94,21 +94,23 @@ Adapters must offer methods: `query` and `swap`.
 
 | Name      | Address |
 | ----------- | ----------- |
-| ComplusAdapterV0   | `0x81544aCDBcFfdc9c0A265CFB220408E1E85AA43D` |
-| ElkYakAdapterV0   | `0x233f1725116d514400127Fd2E458fB5555bE03D1` |
-| GondolaBTCYakAdapterV0   | `0x50F9F913590e1dc0efC822e0552EbcBa5882e5dC` |
-| GondolaDAIYakAdapterV0   | `0xe483B8C8ab7659FbaA2603B963bdA50FB1a8103C` |
-| GondolaETHYakAdapterV0   | `0x9F7e365a57c6baeae94870ffbb0aF92209a9f4d0` |
-| GondolaUSDTYakAdapterV0   | `0x24eD3cd5C29c9Ba7AAf9779D2055B8E38E16a29f` |
-| LydiaYakAdapterV0   | `0x9D609aD3c673E2ddB3047C3F3B3efa2Ce14EB436` |
-| OliveYakAdapterV0   | `0x1CA700e1b370182b2B44C884cBfA54ef60afc4d4` |
-| PandaYakAdapterV0   | `0x19eb54ccB443aCED9dcbC960bA98064A13262Ef3` |
-| PangolinAdapter   | `0x436029d1E240C7179a84326c4Cf4F3d2852FF40F` |
-| SnobF3YakAdapterV0   | `0xDeDA699b533a1c6436B98D84D40a6724d377352d` |
-| SnobS3YakAdapterV0   | `0xb32C79a25291265eF240Eb32E9faBbc6DcEE3cE3` |
-| SushiswapAdapter   | `0x9d8D45Ad3388846e6F0062196e24df4c7654098b` |
-| YetiYakAdapterV0   | `0x5eD59096EbB9C47C20D805a744a24EfDC3E982AB` |
-| ZeroYakAdapterV0   | `0x11E68A3CE9A5A0F95ca9c4B0B8F17849752e24DD` |
+| ComplusAdapterV0   | `0x2B5eff8AaD9c48E48F9A22e4F86d6A831d029355` |
+| ElkYakAdapterV0   | `0x1F1B88608D475691b69bEb5216A0158F5a338a37` |
+| GondolaBTCYakAdapterV0   | `0x48C4F0F696afEbaB0eb13281F74cb9ac34c96c93` |
+| GondolaDAIYakAdapterV0   | `0x68B2C7208C395b092674C7720d8163049158a37E` |
+| GondolaETHYakAdapterV0   | `0x5f9c037F7D4C35934Fa023EDaE982D858f5A80d4` |
+| GondolaUSDTYakAdapterV0   | `0x015Fcfc3Eff282bF5470267F96d830a8C94B285E` |
+| LydiaYakAdapterV0   | `0xe54EC09784F5Ee971254d288E34C8395d448C363` |
+| OliveYakAdapterV0   | `0x38d8CDBfABC152B4B61DbA406c6cd29998527418` |
+| PandaYakAdapterV0   | `0xBEf9AC2A46eAd1810599f75dA9967456d1739D09` |
+| PangolinAdapter   | `0xe13D49ce2755D9537be62E0544AeC2878438994E` |
+| SnobF3YakAdapterV0   | `0x681EBc3DDE781935847D5981a7AB0482653bf558` |
+| SnobS3YakAdapterV0   | `0x2F4463a81Cb1cc0d9305eAc461077490e1756714` |
+| SushiswapAdapter   | `0xAD5ae6e5e4f4BE199528985A4e93065A4F22939e` |
+| YetiYakAdapterV0   | `0x3A2e85e1d4aBa2EBDABcdF7F12e2B371687F6dfF` |
+| ZeroYakAdapterV0   | `0x647A80d26ab387D813f5B8Fa1FC71DBD2A5aD178` |
+| BaguetteYakAdapterV0   | `0xf4fbe2680C926d1ceD09e6e45b3b31853fD157a3` |
+| CanaryYakAdapterV0   | `0x85b9ebbAC0669CA081892F5AEad7B835b472c054` |
 
 ## Local Development and testing
 
