@@ -51,6 +51,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const OliveYakAdapterV0 = await deployments.get("OliveYakAdapterV0")
     const CanaryYakAdapterV0 = await deployments.get("CanaryYakAdapterV0")
     const BaguetteYakAdapterV0 = await deployments.get('BaguetteYakAdapterV0')
+    const TraderJoeYakAdapterV0 = await deployments.get('TraderJoeYakAdapterV0')
 
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
@@ -78,7 +79,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         OliveYakAdapterV0.address,
         ComplusAdapterV0.address,
         CanaryYakAdapterV0.address, 
-        BaguetteYakAdapterV0.address
+        BaguetteYakAdapterV0.address,
+        TraderJoeYakAdapterV0.address
     ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
@@ -115,7 +117,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
 	// Add adapters if some of them are not added
 	let currentAdapters = await getAdaptersForRouter(yakRouter)
-	let allAdaptersIncluded = ADAPTERS.filter(a => !currentAdapters.includes(a)).length == 0
+	let allAdaptersIncluded = ADAPTERS.length == currentAdapters.length && ADAPTERS.every(a => currentAdapters.includes(a))
 	if (!allAdaptersIncluded) {
 		// Add adapters
 		console.log('Adding adapters:', ADAPTERS.join('\n\t- '))
@@ -125,7 +127,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 	}
 	// Add trusted tokens if some of them are not added
 	let currentTrustedTokens = await getTrustedTokensForRouter(yakRouter)
-	let allTrustedTknAdded = TRUSTED_TOKENS.filter(t => !currentTrustedTokens.includes(t)).length == 0
+	let allTrustedTknAdded = TRUSTED_TOKENS.length == currentTrustedTokens.length && TRUSTED_TOKENS.every(a => currentTrustedTokens.includes(a))
 	if (!allTrustedTknAdded) {
 		// Add trusted tokens
 		console.log('Adding trusted tokens:', TRUSTED_TOKENS.join('\n\t- '))

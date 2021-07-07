@@ -26,7 +26,8 @@
         "elk": "0x9E4AAbd2B3E60Ee1322E94307d0776F2c8e6CFbb",
         "olive": "0x0c45FB63001b56a21e29c7dcc1727bfDA273a368", 
         "lydia": "0xA52aBE4676dbfd04Df42eF7755F01A3c41f28D27", 
-        "pangolin": "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106"
+        "pangolin": "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106",
+        "joe": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4"
     }, 
     "unilikeFactories": {
         "zero": "0x2Ef422F30cdb7c5F1f7267AB5CF567A88974b308",
@@ -39,7 +40,8 @@
         "lydia": "0xe0C1bb6DF4851feEEdc3E14Bd509FEAF428f7655",
         "pangolin": "0xefa94DE7a4656D787667C749f7E1223D71E9FD88", 
         "canary": "0xCFBA329d49C24b70F3a8b9CC0853493d4645436b", 
-        "baguette": "0x3587B8c0136c2C3605a9E5B03ab54Da3e4044b50"
+        "baguette": "0x3587B8c0136c2C3605a9E5B03ab54Da3e4044b50", 
+        "joe": "0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10"
       },
     "curvelikePools": {
         "snobS3D": "0x6B41E5c07F2d382B921DE5C34ce8E2057d84C042", 
