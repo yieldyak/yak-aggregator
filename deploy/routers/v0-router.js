@@ -61,6 +61,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         "0xde3A24028580884448a5397872046a019649b084",  // USDT
         "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15", // ETH
         "0x008E26068B3EB40B443d3Ea88c1fF99B789c10F7", // ZERO
+        "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd", // JOE
+        "0xe896CDeaAC9615145c0cA09C8Cd5C25bced6384c", // PEFI
+        "0xC38f41A296A4493Ff429F1238e030924A1542e50", // SNOB
+        "0x4C9B4E1AC6F24CdE3660D5E4Ef1eBF77C710C084", // LYD
+        "0xE1C8f3d529BEa8E3fA1FAC5B416335a2f998EE1C", // ELK
+        "0xa1144a6A1304bd9cbb16c800F7a867508726566E", // BAG
+        "0x8D88e48465F30Acfb8daC0b3E35c9D6D7d36abaf", // CNR
     ];
     const ADAPTERS = [
         PangolinYakAdapterV0.address,
