@@ -1,11 +1,19 @@
 require('dotenv').config();
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-ethers");
 require('hardhat-contract-sizer');
 require('hardhat-deploy-ethers');
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
 require("hardhat-tracer");
 require('hardhat-deploy');
+
+// load scripts
+const aggregatorView = require("./scripts/aggregator-view");
+
+// tasks
+task('viewAdapters', 'Displays nice output of all YakAdapters from the YakRouter. With respective Trusted Tokens.')
+  .setAction(async () => aggregatorView())
 
 
 module.exports = {
@@ -33,7 +41,7 @@ module.exports = {
     hardhat: {
       chainId: 43114,
       forking: {
-        url: process.env.AVALANCHE_FORK_RPC, 
+        url: process.env.AVALANCHE_MAINNET_URL, 
         // blockNumber: 2000000
       },
       accounts: {
@@ -44,9 +52,9 @@ module.exports = {
     mainnet: {
       chainId: 43114,
       gasPrice: 225000000000,
-      url: process.env.AVALANCHE_MAINNET_RPC,
+      url: process.env.AVALANCHE_MAINNET_URL,
       accounts: [
-        process.env.PK_DEPLOYER
+        // process.env.PRIVATE_KEY_5
       ]
     }
   },

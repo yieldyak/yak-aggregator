@@ -3,6 +3,5 @@ node_modules
 playground
 artifacts
 .DS_Store
-scripts
 cache
 .env
