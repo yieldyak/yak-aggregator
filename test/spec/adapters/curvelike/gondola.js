@@ -118,10 +118,7 @@ describe("YakAdapter - Gondola", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: ethers.utils.parseEther('100') 
-                }
+                { value: ethers.utils.parseEther('100') }
             )
     
             // Swapping
@@ -195,10 +192,7 @@ describe("YakAdapter - Gondola", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: ethers.utils.parseEther('100') 
-                }
+                { value: ethers.utils.parseEther('100') }
             )
     
             // Swapping
@@ -254,10 +248,7 @@ describe("YakAdapter - Gondola", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: ethers.utils.parseEther('100') 
-                }
+                { value: ethers.utils.parseEther('100') }
             )
             await tokenFrom.connect(trader).transfer(adapters.GondolaUSDTAdapter.address, amountIn)
             // Swapping
@@ -310,10 +301,7 @@ describe("YakAdapter - Gondola", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: ethers.utils.parseEther('100') 
-                }
+                { value: ethers.utils.parseEther('100') }
             )
             
     

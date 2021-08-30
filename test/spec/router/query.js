@@ -99,7 +99,7 @@ describe('Yak Router - query', () => {
     it('Return the best path between two tokens that are not directly connected (ZERO -> LYDIA)', async () => {
         let amountIn = ethers.utils.parseUnits('10')
         let tokenIn = assets.ZERO
-        let tokenOut = assets.LYDIA
+        let tokenOut = assets.LYD
         let steps = 2
         let result = await YakRouter.findBestPath(
             amountIn, 

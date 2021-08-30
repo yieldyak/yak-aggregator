@@ -8,7 +8,7 @@ describe('Permit', async () => {
 
     before(async () => {
         [ deployer, alice ] = await ethers.getSigners()
-        bob = new ethers.Wallet(process.env.PK_DUMMY, ethers.provider)
+        bob = new ethers.Wallet.createRandom()
         TestToken = await ethers.getContractFactory('TestToken')
             .then(f => f.connect(deployer).deploy())
     })
@@ -16,8 +16,8 @@ describe('Permit', async () => {
     it('Offchain permit should match onchain', async () => {
         const permitSpender = alice
         const permitHolder = bob
-        const holderPK = process.env.PK_DUMMY
-        const permitProvider = ethers.provider
+        const holderPK = bob.privateKey.slice(2)
+        const chainId = 43114
         const permitSpendAmount = parseUnits('100')
         const inputTokenContract = TestToken
         // Permit setting
@@ -30,7 +30,7 @@ describe('Permit', async () => {
         const domainSeparator = ethers.utils.keccak256(
             ethers.utils.defaultAbiCoder.encode(
               ['bytes32', 'bytes32', 'uint256', 'address'],
-              [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await inputTokenContract.name())), permitProvider.network.chainId, inputTokenContract.address]
+              [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await inputTokenContract.name())), chainId, inputTokenContract.address]
             )
         )
         const nonce = await inputTokenContract.nonces(permitHolder.address)

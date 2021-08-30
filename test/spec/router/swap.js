@@ -63,13 +63,16 @@ describe('Yak Router - swap', () => {
 
     it('Router swap matched the query - with permit', async () => {
         // Need a real-signer for this test as a permit requires a private key
-        let dummySigner = new ethers.Wallet(process.env.PK_DUMMY, ethers.provider)
+        let bob = new ethers.Wallet.createRandom().connect(ethers.provider)
+        // Top up bob
+        await trader.sendTransaction({ to: bob.address, value: parseUnits('2')})
         // Options and constants
         let tokenIn = assets.PNG
         let tokenOut = assets.WAVAX
         let steps = 2
         let fee = '0'
         let amountIn = ethers.utils.parseUnits('1000')
+        const chainId = 43114
         // Permit setting
         let inputTokenContract = await ethers.getContractAt('contracts/interface/IERC20.sol:IERC20', tokenIn)
         const PERMIT_TYPEHASH = ethers.utils.keccak256(
@@ -86,12 +89,12 @@ describe('Yak Router - swap', () => {
                     ethers.utils.keccak256(
                         ethers.utils.toUtf8Bytes(await inputTokenContract.name())
                     ), 
-                    ethers.provider.network.chainId, 
+                    chainId, 
                     inputTokenContract.address
                 ]
             )
         )
-        const nonce = await inputTokenContract.nonces(dummySigner.address)
+        const nonce = await inputTokenContract.nonces(bob.address)
         const deadline = ethers.constants.MaxUint256
         const digest = ethers.utils.keccak256(
             ethers.utils.solidityPack(
@@ -105,7 +108,7 @@ describe('Yak Router - swap', () => {
                     ['bytes32', 'address', 'address', 'uint256', 'uint256', 'uint256'],
                     [
                         PERMIT_TYPEHASH, 
-                        dummySigner.address, 
+                        bob.address, 
                         YakRouter.address, 
                         amountIn, 
                         nonce, 
@@ -116,11 +119,11 @@ describe('Yak Router - swap', () => {
                 ]
             )
         )
-        const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(process.env.PK_DUMMY, 'hex'))
+        const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(bob.privateKey.slice(2), 'hex'))
         // Top up trader with starting tokens
         await helpers.topUpAccountWithToken(
             trader, 
-            dummySigner.address,
+            bob.address,
             tokenIn, 
             amountIn, 
             fix.PangolinRouter
@@ -133,24 +136,23 @@ describe('Yak Router - swap', () => {
             steps
         )
         // Do the swap with permit
-        await YakRouter.connect(dummySigner).swapNoSplitWithPermit(
+        await YakRouter.connect(bob).swapNoSplitWithPermit(
             [
                 result.amounts[0], 
                 result.amounts[result.amounts.length-1],
                 result.path,
                 result.adapters
             ],  
-            dummySigner.address, 
+            bob.address, 
             fee, 
             deadline, 
             v, 
             r, 
-            s, 
-            { gasPrice: '0x00' }
+            s 
         )
         // Verify executed met expected
         outputTokenContract = await ethers.getContractAt('contracts/interface/IERC20.sol:IERC20', tokenOut)
-        expect(await outputTokenContract.balanceOf(dummySigner.address)).to.equal(
+        expect(await outputTokenContract.balanceOf(bob.address)).to.equal(
             result.amounts[result.amounts.length-1]
         )
     })
@@ -184,7 +186,7 @@ describe('Yak Router - swap', () => {
         await helpers.approveERC20(trader, tokenIn, YakRouter.address, ethers.constants.MaxUint256)
         let balBefore = await ethers.provider.getBalance(trader.address)
         // Do the swap
-        await YakRouter.connect(trader).swapNoSplitToAVAX(
+        const swap = YakRouter.connect(trader).swapNoSplitToAVAX(
             [
                 result.amounts[0], 
                 result.amounts[result.amounts.length-1],
@@ -192,13 +194,9 @@ describe('Yak Router - swap', () => {
                 result.adapters
             ],
             trader.address, 
-            fee,
-            { gasPrice: '0x00' }
+            fee
         )
-        let balAfter = await ethers.provider.getBalance(trader.address)
-        expect(balAfter.sub(balBefore)).to.equal(
-            result.amounts[result.amounts.length-1]
-        )
+        await expect(await swap).to.changeEtherBalance(trader, result.amounts[result.amounts.length-1])
     })
 
     it('Mix swap can be done from AVAX', async () => {
@@ -226,7 +224,7 @@ describe('Yak Router - swap', () => {
             ], 
             trader.address, 
             fee, 
-            { gasPrice: '0x00', value: amountIn }
+            { value: amountIn }
         )
         // Check the balance after
         let tokenOutBal = await helpers.getERC20Balance(ethers.provider, tokenOut, trader.address)
@@ -260,7 +258,7 @@ describe('Yak Router - swap', () => {
             ], 
             trader.address, 
             fee,
-            { gasPrice: '0x00', value: amountIn }
+            { value: amountIn }
         )
         // Check the balance after
         let tokenOutBal = await helpers.getERC20Balance(ethers.provider, tokenOut, trader.address)
@@ -302,8 +300,7 @@ describe('Yak Router - swap', () => {
             amountOut,
             tokenIn.address,
             tokenOut.address, 
-            externalTrader.address,
-            { gasPrice: '0x00' }
+            externalTrader.address
         )
         let traderTknBal2 = await tokenOut.balanceOf(externalTrader.address)
         expect(traderTknBal2).to.gt(traderTknBal1)
@@ -317,7 +314,7 @@ describe('Yak Router - swap', () => {
             ], 
             trader.address, 
             fee, 
-            { gasPrice: '0x00', value: amountIn }
+            { value: amountIn }
         )).to.reverted
     })
 
@@ -360,8 +357,7 @@ describe('Yak Router - swap', () => {
             amountOut,
             tokenInChange.address,
             tokenOutChange.address, 
-            externalTrader.address,
-            { gasPrice: '0x00' }
+            externalTrader.address
         )            
         let changeTknBal2 = await tokenOutChange.balanceOf(externalTrader.address)
         expect(changeTknBal2).to.gt(changeTknBal1)
@@ -375,7 +371,7 @@ describe('Yak Router - swap', () => {
             ],
             trader.address, 
             fee,
-            { gasPrice: '0x00', value: amountIn }
+            { value: amountIn }
         )
         // Check the balance after
         let tokenOutBal = await tokenOut.balanceOf(trader.address)
@@ -388,7 +384,7 @@ describe('Yak Router - swap', () => {
     it('User gets expected out-amount within slippage if conditions change negatively', async () => {
         // Call the query
         let tokenIn = fix.tokenContracts.WAVAX
-        let tokenOut = fix.tokenContracts.ZDAI
+        let tokenOut = fix.tokenContracts.DAIe
         let slippageDenominator = parseUnits('1', 5)
         let slippage = parseUnits('0.01', 5)
         let amountIn = parseUnits('10')
@@ -422,8 +418,7 @@ describe('Yak Router - swap', () => {
             amountOut,
             tokenInChange.address,
             tokenOutChange.address, 
-            externalTrader.address,
-            { gasPrice: '0x00'}
+            externalTrader.address
         )            
         let changeTknBal2 = await tokenOutChange.balanceOf(externalTrader.address)
         expect(changeTknBal2).to.gt(changeTknBal1)
@@ -438,7 +433,7 @@ describe('Yak Router - swap', () => {
             ], 
             trader.address, 
             fee,
-            { gasPrice: '0x00', value: amountIn }
+            { value: amountIn }
         )
         // Check the balance after
         let traderTknBal3 = await tokenOut.balanceOf(trader.address)
@@ -484,8 +479,7 @@ describe('Yak Router - swap', () => {
                 result.adapters
             ],
             trader.address, 
-            fee,
-            { gasPrice: '0x00' }
+            fee
         )
         const tokenOutContract = await ethers.getContractAt('contracts/interface/IERC20.sol:IERC20', tokenOut)
         const expectedOutAmount = result.amounts[result.amounts.length-1]
@@ -514,7 +508,7 @@ describe('Yak Router - swap', () => {
             ],
             trader.address, 
             _fee,
-            { gasPrice: '0x00', value: _amountIn }
+            { value: _amountIn }
         )
         const claimerBalAfter = await _path[0].balanceOf(feeClaimer)
         const expectedFeeAmount = _amountIn.mul(_fee).div(_feeDenominator)

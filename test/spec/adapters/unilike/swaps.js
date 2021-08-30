@@ -56,7 +56,6 @@ describe("YakAdapter Swaps", function() {
             tokenFrom.address, 
             tokenTo.address, 
             trader.address, 
-            { gasPrice: ZERO }
         )
         // Swap and compare
         await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutAdapter)

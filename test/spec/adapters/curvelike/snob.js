@@ -113,10 +113,7 @@ describe("YakAdapter - Snob", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: parseUnits('100') 
-                }
+                { value: parseUnits('100') }
             )
             // Swapping
             await tokenFrom.connect(trader).transfer(adapters.SnobF3DAdapter.address, amountIn)
@@ -148,10 +145,7 @@ describe("YakAdapter - Snob", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: parseUnits('1000000') 
-                }
+                { value: parseUnits('1000000') }
             )
             
             // Swapping
@@ -200,10 +194,7 @@ describe("YakAdapter - Snob", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: parseUnits('1000000') 
-                }
+                { value: parseUnits('1000000') }
             )
             await tokenFrom.connect(trader).transfer(adapters.SnobF3DAdapter.address, amountIn)
             await expect(adapters.SnobF3DAdapter.connect(trader).swap(
@@ -295,7 +286,7 @@ describe("YakAdapter - Snob", function() {
             // Options
             let tokenFrom = tkns.USDT
             let tokenTo = tkns.DAI
-            let amountIn = parseUnits('20', await tokenFrom.decimals())
+            let amountIn = parseUnits('1', await tokenFrom.decimals())
     
             // Querying adapter 
             let amountOutAdapter = await adapters.SnobS3DAdapter.query(
@@ -311,10 +302,7 @@ describe("YakAdapter - Snob", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: ethers.utils.parseEther('100') 
-                }
+                { value: ethers.utils.parseEther('100') }
             )
     
             // Swapping
@@ -323,48 +311,6 @@ describe("YakAdapter - Snob", function() {
             await adapters.SnobS3DAdapter.connect(trader).swap(
                 amountIn, 
                 amountOutAdapter,
-                tokenFrom.address,
-                tokenTo.address, 
-                trader.address
-            )
-            let traderRecvTknBalAfter = await tokenTo.balanceOf(trader.address)
-            // Comparing results
-            expect(
-                traderRecvTknBalAfter.sub(traderRecvTknBalBefore)
-            ).to.equal(amountOutAdapter)
-    
-        })
-    
-        it('Swapping matches query (big num)', async () => {
-            // Options
-            let tokenFrom = tkns.USDT
-            let tokenTo = tkns.DAI
-            let amountIn = parseUnits('250000', await tokenFrom.decimals())
-    
-            // Querying adapter 
-            let amountOutAdapter = await adapters.SnobS3DAdapter.query(
-                amountIn, 
-                tokenFrom.address, 
-                tokenTo.address
-            )
-            // Preparing for swap
-            await fix.PangolinRouter.connect(trader).swapAVAXForExactTokens(
-                amountIn,  // Amount of tkns.USDT required to continue 
-                [ tkns.WAVAX.address, tokenFrom.address ],
-                trader.address,
-                parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: ethers.utils.parseEther('1000000') 
-                }
-            )
-    
-            // Swapping
-            let traderRecvTknBalBefore = await tokenTo.balanceOf(trader.address)
-            await tokenFrom.connect(trader).transfer(adapters.SnobS3DAdapter.address, amountIn)
-            await adapters.SnobS3DAdapter.connect(trader).swap(
-                amountIn, 
-                amountOutAdapter, 
                 tokenFrom.address,
                 tokenTo.address, 
                 trader.address
@@ -411,10 +357,7 @@ describe("YakAdapter - Snob", function() {
                 [ tkns.WAVAX.address, tokenFrom.address ],
                 trader.address,
                 parseInt(Date.now()/1e3)+300, 
-                { 
-                    gasPrice: fix.ZERO, 
-                    value: ethers.utils.parseEther('1000000') 
-                }
+                { value: ethers.utils.parseEther('1000000') }
             )
             await tokenFrom.connect(trader).transfer(adapters.SnobS3DAdapter.address, amountIn)
             await expect(adapters.SnobS3DAdapter.connect(trader).swap(
