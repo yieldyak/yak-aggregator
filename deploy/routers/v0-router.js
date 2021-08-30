@@ -40,6 +40,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const GondolaBTCYakAdapterV0 = await deployments.get("GondolaBTCYakAdapterV0")
     const GondolaDAIYakAdapterV0 = await deployments.get("GondolaDAIYakAdapterV0")
     const GondolaETHYakAdapterV0 = await deployments.get("GondolaETHYakAdapterV0")
+    const GondolaDAIDAIeYakAdapterV0 = await deployments.get("GondolaDAIDAIeYakAdapterV0")
+    const GondolaUSDTeDAIeYakAdapterV0 = await deployments.get("GondolaUSDTeDAIeYakAdapterV0")
+    const GondolaUSDTUSDTeYakAdapterV0 = await deployments.get("GondolaUSDTUSDTeYakAdapterV0")
+    const GondolaWBTCWBTCeYakAdapterV0 = await deployments.get("GondolaWBTCWBTCeYakAdapterV0")
+    const GondolaWETHWETHeYakAdapterV0 = await deployments.get("GondolaWETHWETHeYakAdapterV0")
     const SushiswapYakAdapterV0 = await deployments.get("SushiYakAdapterV0")
     const PangolinYakAdapterV0 = await deployments.get("PangolinYakAdapterV0")
     const LydiaYakAdapterV0 = await deployments.get("LydiaYakAdapterV0")
@@ -76,6 +81,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         GondolaDAIYakAdapterV0.address, 
         GondolaBTCYakAdapterV0.address,
         GondolaUSDTYakAdapterV0.address,
+        GondolaDAIDAIeYakAdapterV0.address,
+        GondolaUSDTeDAIeYakAdapterV0.address,
+        GondolaUSDTUSDTeYakAdapterV0.address,
+        GondolaWBTCWBTCeYakAdapterV0.address,
+        GondolaWETHWETHeYakAdapterV0.address,
         SnobF3YakAdapterV0.address,
         SnobS3YakAdapterV0.address, 
         ZeroYakAdapterV0.address, 
@@ -87,7 +97,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         ComplusAdapterV0.address,
         CanaryYakAdapterV0.address, 
         BaguetteYakAdapterV0.address,
-        TraderJoeYakAdapterV0.address
+        TraderJoeYakAdapterV0.address,
     ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
