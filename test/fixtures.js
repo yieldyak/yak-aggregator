@@ -17,6 +17,7 @@ const _curvelikeAdapters = async ({ }) => {
         GondolaETH: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaETH),
         SnobF3D: await ethers.getContractAt('ICurveLikePool', curvelikePools.snobF3D),
         SnobS3D: await ethers.getContractAt('ICurveLikePool', curvelikePools.snobS3D),
+        SnobS4D: await ethers.getContractAt('ICurveLikePool', curvelikePools.snobS4D),
     }
     // Init Adapters
     const adapters = {}
@@ -32,6 +33,12 @@ const _curvelikeAdapters = async ({ }) => {
         curvelikePools.snobS3D, 
         3,  // Token-count
         170000
+    )
+    adapters['SnobS4DAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+        'SnobS4D YakAdapter',
+        curvelikePools.snobS4D, 
+        4,  // Token-count
+        180000
     )
     adapters['GondolaDAIAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaDAI YakAdapter',

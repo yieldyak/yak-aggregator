@@ -36,6 +36,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     
     const SnobS3YakAdapterV0 = await deployments.get("SnobS3YakAdapterV0")
     const SnobF3YakAdapterV0 = await deployments.get("SnobF3YakAdapterV0")
+    const SnobS4YakAdapterV0 = await deployments.get("SnobS4YakAdapterV0")
     const GondolaUSDTYakAdapterV0 = await deployments.get("GondolaUSDTYakAdapterV0")
     const GondolaBTCYakAdapterV0 = await deployments.get("GondolaBTCYakAdapterV0")
     const GondolaDAIYakAdapterV0 = await deployments.get("GondolaDAIYakAdapterV0")
@@ -89,7 +90,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         GondolaWETHWETHeYakAdapterV0.address,
         GondolaWBTCrenBTCYakAdapterV0.address,
         SnobF3YakAdapterV0.address,
-        SnobS3YakAdapterV0.address, 
+        SnobS3YakAdapterV0.address,
+        SnobS4YakAdapterV0.address, 
         ZeroYakAdapterV0.address, 
         LydiaYakAdapterV0.address,
         YetiYakAdapterV0.address,
