@@ -18,7 +18,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
 
     const NAME = 'GondolaBTCYakAdapterV0';
-    const POOL = '0x6212db4C20A1870d232aaFd58c65d8B56490fDD7';  // GondolaUSDT pool
+    const POOL = '0x6212db4C20A1870d232aaFd58c65d8B56490fDD7';  // GondolaBTC pool
     const TOKEN_COUNT = 2;
     const GAS_ESTIMATE = 280000
 
