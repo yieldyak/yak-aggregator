@@ -96,10 +96,6 @@ Adapters must offer methods: `query` and `swap`.
 | ----------- | ----------- |
 | ComplusAdapterV0   | `0x2B5eff8AaD9c48E48F9A22e4F86d6A831d029355` |
 | ElkYakAdapterV0   | `0x1F1B88608D475691b69bEb5216A0158F5a338a37` |
-| GondolaBTCYakAdapterV0   | `0x48C4F0F696afEbaB0eb13281F74cb9ac34c96c93` |
-| GondolaDAIYakAdapterV0   | `0x68B2C7208C395b092674C7720d8163049158a37E` |
-| GondolaETHYakAdapterV0   | `0x5f9c037F7D4C35934Fa023EDaE982D858f5A80d4` |
-| GondolaUSDTYakAdapterV0   | `0x015Fcfc3Eff282bF5470267F96d830a8C94B285E` |
 | GondolaDAIDAIeYakAdapterV0   | `0xA2828faE51f2140a5cbAB4C683c25eEf58363106` |
 | GondolaUSDTeDAIeYakAdapterV0   | `0x0B1A87884D8D8bC7360A0268609D85B17E88b367` |
 | GondolaUSDTUSDTeYakAdapterV0   | `0x12A4901C67fAa2CA37D257d49Ba33B7de1074DE8` |

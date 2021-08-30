@@ -38,10 +38,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const SnobS3YakAdapterV0 = await deployments.get("SnobS3YakAdapterV0")
     const SnobF3YakAdapterV0 = await deployments.get("SnobF3YakAdapterV0")
     const SnobS4YakAdapterV0 = await deployments.get("SnobS4YakAdapterV0")
-    const GondolaUSDTYakAdapterV0 = await deployments.get("GondolaUSDTYakAdapterV0")
-    const GondolaBTCYakAdapterV0 = await deployments.get("GondolaBTCYakAdapterV0")
-    const GondolaDAIYakAdapterV0 = await deployments.get("GondolaDAIYakAdapterV0")
-    const GondolaETHYakAdapterV0 = await deployments.get("GondolaETHYakAdapterV0")
+    // const GondolaUSDTYakAdapterV0 = await deployments.get("GondolaUSDTYakAdapterV0")
+    // const GondolaBTCYakAdapterV0 = await deployments.get("GondolaBTCYakAdapterV0")
+    // const GondolaDAIYakAdapterV0 = await deployments.get("GondolaDAIYakAdapterV0")
+    // const GondolaETHYakAdapterV0 = await deployments.get("GondolaETHYakAdapterV0")
     const GondolaDAIDAIeYakAdapterV0 = await deployments.get("GondolaDAIDAIeYakAdapterV0")
     const GondolaUSDTeDAIeYakAdapterV0 = await deployments.get("GondolaUSDTeDAIeYakAdapterV0")
     const GondolaUSDTUSDTeYakAdapterV0 = await deployments.get("GondolaUSDTUSDTeYakAdapterV0")
@@ -78,10 +78,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const ADAPTERS = [
         PangolinYakAdapterV0.address,
         SushiswapYakAdapterV0.address, 
-        GondolaETHYakAdapterV0.address,
-        GondolaDAIYakAdapterV0.address, 
-        GondolaBTCYakAdapterV0.address,
-        GondolaUSDTYakAdapterV0.address,
+        // GondolaETHYakAdapterV0.address,
+        // GondolaDAIYakAdapterV0.address, 
+        // GondolaBTCYakAdapterV0.address,
+        // GondolaUSDTYakAdapterV0.address,
         GondolaDAIDAIeYakAdapterV0.address,
         GondolaUSDTeDAIeYakAdapterV0.address,
         GondolaUSDTUSDTeYakAdapterV0.address,
