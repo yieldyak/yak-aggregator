@@ -50,7 +50,7 @@ describe('Yak Router - query', () => {
         expect(bestOptionCalc).to.equal(bestOptionQuery[3])
     })
 
-    it('Return the best path between two tokens that are directly connected', async () => {
+    xit('Return the best path between two tokens that are directly connected', async () => {
         let amountIn = ethers.utils.parseUnits('10')
         let tokenIn = assets.WAVAX
         let tokenOut = assets.SUSHI

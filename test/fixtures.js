@@ -7,7 +7,7 @@ const { assets, unilikeFactories, curvelikePools, unilikeRouters } = addresses
 let ADAPTERS = {}
 
 
-const _curvelikeAdapters = async ({ }) => {
+const _curvelikeAdapters = async () => {
     const [ deployer ] = await ethers.getSigners()
     // Import live contracts
     const pools = {
@@ -78,7 +78,7 @@ const _curvelikeAdapters = async ({ }) => {
         pools,
     }
 }
-const _unilikeAdapters = async ({ }) => {
+const _unilikeAdapters = async () => {
     const [ deployer ] = await ethers.getSigners()
     const adapters = {}
     const UnilikeAdapterFactory = await ethers.getContractFactory('UnilikeAdapter')
@@ -149,7 +149,41 @@ const _unilikeAdapters = async ({ }) => {
         adapters,
     }
 }
-const general = deployments.createFixture(async ({ }) => {
+const _bridgeMigrationAdapters = async () => {
+    const [ deployer ] = await ethers.getSigners()
+    const adapterFactory = await ethers.getContractFactory('BridgeMigrationAdapter')
+    const oldTokens = [
+        await ethers.getContractFactory('TestToken').then(f => f.deploy('TToken1', 'TT1')),
+        await ethers.getContractFactory('TestToken').then(f => f.deploy('TToken2', 'TT2'))
+    ]
+    const bridgeTokens = [
+        await ethers.getContractFactory('BridgeToken').then(f => f.deploy('BToken1', 'BT1')),
+        await ethers.getContractFactory('BridgeToken').then(f => f.deploy('BToken1', 'BT1'))
+    ]
+    for (let i=0; i<bridgeTokens.length; i++) {
+        const bt = bridgeTokens[i]
+        const ot = oldTokens[i]
+        await bt.addSwapToken(ot.address, ethers.utils.parseUnits('300'))
+    }
+    const gasCost = 71000
+    adapter = await adapterFactory.connect(deployer).deploy(
+        bridgeTokens.map(t => t.address),
+        oldTokens.map(t => t.address),
+        gasCost
+    )
+    // Set tags
+    if (TRACER_ENABLED) {
+        hre.tracer.nameTags['deployer'] = deployer
+        hre.tracer.nameTags[adapter.address] = 'BridgeMigrationAdapter'
+    }
+    return {
+        adapterFactory, 
+        adapter,
+        oldTokens,
+        bridgeTokens
+    }
+}
+const general = deployments.createFixture(async () => {
     // Get token contracts
     const tokenContracts = {}
     for (tknSymbol of Object.keys(assets)) {
@@ -196,10 +230,12 @@ const general = deployments.createFixture(async ({ }) => {
 })
 const unilikeAdapters = deployments.createFixture(_unilikeAdapters)
 const curvelikeAdapters = deployments.createFixture(_curvelikeAdapters)
+const bridgeMigration = deployments.createFixture(_bridgeMigrationAdapters)
 const router = deployments.createFixture(async ({ }) => {
     const [ deployer ] = await ethers.getSigners()
-    const _unilike = await _unilikeAdapters({ethers})
-    const _curvelike = await _curvelikeAdapters({ethers})
+    const _unilike = await _unilikeAdapters()
+    const _curvelike = await _curvelikeAdapters()
+    const _bridgeMigration = await _bridgeMigrationAdapters()
 
     let adapters
     if (ADAPTERS.length>0) {
@@ -207,15 +243,22 @@ const router = deployments.createFixture(async ({ }) => {
     } else {
         adapters = {
             ..._unilike.adapters,
-            ..._curvelike.adapters
+            ..._curvelike.adapters,
+            'BridgeMigration': _bridgeMigration.adapter
         }
     }
     const trustedTokens = [
-        assets.WAVAX, 
-        assets.SUSHI, 
-        assets.ETH, 
-        assets.DAI, 
-        assets.ZERO
+        assets.WAVAX,
+        assets.WETHe,
+        assets.USDTe,
+        assets.USDCe,
+        assets.DAIe,
+        assets.WBTCe,
+        assets.LINKe,
+        assets.PNG, 
+        assets.JOE,
+        assets.PEFI,
+        assets.SNOB
     ]
     // Deploy the libraries
     const BytesManipulationFactory = await ethers.getContractFactory('BytesManipulation')
@@ -247,6 +290,7 @@ const router = deployments.createFixture(async ({ }) => {
 module.exports = {
     curvelikeAdapters, 
     unilikeAdapters,
+    bridgeMigration,
     general, 
     router
 }
