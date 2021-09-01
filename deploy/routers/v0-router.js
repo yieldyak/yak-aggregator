@@ -48,6 +48,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const GondolaWBTCWBTCeYakAdapterV0 = await deployments.get("GondolaWBTCWBTCeYakAdapterV0")
     const GondolaWETHWETHeYakAdapterV0 = await deployments.get("GondolaWETHWETHeYakAdapterV0")
     const GondolaWBTCrenBTCYakAdapterV0 = await deployments.get("GondolaWBTCrenBTCYakAdapterV0")
+    const GondolaUSDTeUSDCeAdapterV0 = await deployments.get('GondolaUSDTeUSDCeAdapterV0')
+    const GondolaUSDTeTSDAdapterV0 = await deployments.get('GondolaUSDTeTSDAdapterV0')
     const SushiswapYakAdapterV0 = await deployments.get("SushiYakAdapterV0")
     const PangolinYakAdapterV0 = await deployments.get("PangolinYakAdapterV0")
     const LydiaYakAdapterV0 = await deployments.get("LydiaYakAdapterV0")
@@ -89,6 +91,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         GondolaWBTCWBTCeYakAdapterV0.address,
         GondolaWETHWETHeYakAdapterV0.address,
         GondolaWBTCrenBTCYakAdapterV0.address,
+        GondolaUSDTeUSDCeAdapterV0.address, 
+        GondolaUSDTeTSDAdapterV0.address,
         SnobF3YakAdapterV0.address,
         SnobS3YakAdapterV0.address,
         SnobS4YakAdapterV0.address, 
