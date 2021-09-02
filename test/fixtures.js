@@ -11,6 +11,9 @@ const _curvelikeAdapters = async () => {
     const [ deployer ] = await ethers.getSigners()
     // Import live contracts
     const pools = {
+        GondolaUSDTUSDTe: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaUSDTUSDTe),
+        GondolaUSDTeUSDCe: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaUSDTeUSDCe),
+        GondolaUSDTeTSD: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaUSDTeTSD),
         GondolaUSDT: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaUSDT),
         GondolaDAI: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaDAI),
         GondolaBTC: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaBTC),
@@ -61,6 +64,24 @@ const _curvelikeAdapters = async () => {
     adapters['GondolaETHAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaETH YakAdapter',
         curvelikePools.GondolaETH, 
+        2,  // Token-count
+        150000
+    )
+    adapters['GondolaUSDTeUSDCeAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+        'GondolaUSDTeUSDCe YakAdapter',
+        curvelikePools.GondolaUSDTeUSDCe, 
+        2,  // Token-count
+        150000
+    )
+    adapters['GondolaUSDTeTSDAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+        'GondolaUSDTeTSD YakAdapter',
+        curvelikePools.GondolaUSDTeTSD, 
+        2,  // Token-count
+        150000
+    )
+    adapters['GondolaUSDTUSDTeAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+        'GondolaUSDTUSDTe YakAdapter',
+        curvelikePools.GondolaUSDTUSDTe, 
         2,  // Token-count
         150000
     )

@@ -1,7 +1,7 @@
 const { expect } = require("chai")
 const { ethers } = require("hardhat")
 const fixtures = require('../../../fixtures')
-const { parseUnits } = ethers.utils
+const { parseUnits, formatUnits } = ethers.utils
 
 describe("YakAdapter - Gondola", function() {
 
@@ -323,6 +323,44 @@ describe("YakAdapter - Gondola", function() {
     
         })
 
+    })
+
+    describe('GondolaUSDTUSDTe', () => {
+
+        it('Querying adapter matches the price from original contract', async () => {
+            // Options
+            let tokenFrom = tkns.USDT
+            let tokenTo = tkns.USDTe
+            let amountIn = parseUnits('1000000000000000000000000000000000', await tokenFrom.decimals())
+            // Querying adapter 
+            let amountOutAdapter = await adapters.GondolaUSDTUSDTeAdapter.query(amountIn, tokenFrom.address, tokenTo.address)
+            console.log(formatUnits(amountOutAdapter))
+            // Querying original contract
+            let fromIndex = await pools.GondolaUSDTUSDTe.getTokenIndex(tokenFrom.address)
+            let toIndex = await pools.GondolaUSDTUSDTe.getTokenIndex(tokenTo.address)
+            let amountOutOriginal = await pools.GondolaUSDTUSDTe.calculateSwap(fromIndex, toIndex, amountIn)
+            // Comparing the prices
+            expect(amountOutOriginal).to.equal(amountOutAdapter)
+        })
+
+    })
+
+    describe('GondolaUSDCeUSDTe', () => {
+        
+        it('Querying adapter returns zero if there is an error', async () => {
+            // Options
+            let tokenFrom = tkns.USDCe
+            let tokenTo = tkns.USDTe
+            let amountIn = parseUnits('100', await tokenFrom.decimals())
+            // Querying adapter 
+            expect(await adapters.GondolaUSDTeUSDCeAdapter.query(amountIn, tokenFrom.address, tokenTo.address))
+                .to.equal('0')
+            // Querying original contract
+            let fromIndex = await pools.GondolaUSDTeUSDCe.getTokenIndex(tokenFrom.address)
+            let toIndex = await pools.GondolaUSDTeUSDCe.getTokenIndex(tokenTo.address)
+            await expect(pools.GondolaUSDTeUSDCe.calculateSwap(fromIndex, toIndex, amountIn))
+                .to.revertedWith('SafeMath: subtraction overflow')
+        })
     })
 
 })

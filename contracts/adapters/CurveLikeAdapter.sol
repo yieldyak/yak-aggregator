@@ -72,12 +72,15 @@ contract CurveLikeAdapter is YakAdapter {
         if (!TOKENS_MAP[_tokenIn] || !TOKENS_MAP[_tokenOut]) { return 0; }
         uint tokenIndexIn = ICurveLikePool(pool).getTokenIndex(_tokenIn);
         uint tokenIndexOut = ICurveLikePool(pool).getTokenIndex(_tokenOut);
-        uint amountOut = ICurveLikePool(pool).calculateSwap(
+        try ICurveLikePool(pool).calculateSwap(
             uint8(tokenIndexIn), 
             uint8(tokenIndexOut), 
             _amountIn
-        );
-        return amountOut;
+        ) returns (uint amountOut) {
+            return amountOut;
+        } catch {
+            return 0;
+        }
     }
 
     function _swap(
