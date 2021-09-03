@@ -117,6 +117,7 @@ Adapters must offer methods: `query` and `swap`.
 | BaguetteYakAdapterV0   | `0xf4fbe2680C926d1ceD09e6e45b3b31853fD157a3` |
 | CanaryYakAdapterV0   | `0x85b9ebbAC0669CA081892F5AEad7B835b472c054` |
 | TraderJoeYakAdapterV0   | `0xD687165d50209E46f4355f1917F1D2B2d66fB9C9` |
+| SynapseAdapterV0   | `0x364FD64a98bD60aA798Ea8c61bb30d404102E900` |
 
 ## Local Development and testing
 

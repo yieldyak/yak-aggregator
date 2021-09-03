@@ -63,6 +63,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const BaguetteYakAdapterV0 = await deployments.get('BaguetteYakAdapterV0')
     const TraderJoeYakAdapterV0 = await deployments.get('TraderJoeYakAdapterV0')
     const BridgeMigrationAdapterV0 = await deployments.get('BridgeMigrationAdapterV0')
+    const SynapseAdapterV0 = await deployments.get('SynapseAdapterV0')
 
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
@@ -106,7 +107,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         CanaryYakAdapterV0.address, 
         BaguetteYakAdapterV0.address,
         TraderJoeYakAdapterV0.address,
-        BridgeMigrationAdapterV0.address
+        BridgeMigrationAdapterV0.address,
+        SynapseAdapterV0.address
     ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)

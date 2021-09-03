@@ -351,7 +351,7 @@ describe("YakAdapter - Gondola", function() {
             // Options
             let tokenFrom = tkns.USDCe
             let tokenTo = tkns.USDTe
-            let amountIn = parseUnits('100', await tokenFrom.decimals())
+            let amountIn = ethers.constants.MaxInt256
             // Querying adapter 
             expect(await adapters.GondolaUSDTeUSDCeAdapter.query(amountIn, tokenFrom.address, tokenTo.address))
                 .to.equal('0')
@@ -359,7 +359,7 @@ describe("YakAdapter - Gondola", function() {
             let fromIndex = await pools.GondolaUSDTeUSDCe.getTokenIndex(tokenFrom.address)
             let toIndex = await pools.GondolaUSDTeUSDCe.getTokenIndex(tokenTo.address)
             await expect(pools.GondolaUSDTeUSDCe.calculateSwap(fromIndex, toIndex, amountIn))
-                .to.revertedWith('SafeMath: subtraction overflow')
+                .to.revertedWith('SafeMath: multiplication overflow')
         })
     })
 

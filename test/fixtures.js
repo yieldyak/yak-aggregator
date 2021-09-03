@@ -6,7 +6,25 @@ TRACER_ENABLED = process.argv.includes('--logs')
 const { assets, unilikeFactories, curvelikePools, unilikeRouters } = addresses
 let ADAPTERS = {}
 
-
+const _synapseAdapter = async () => {
+    const [ deployer ] = await ethers.getSigners()
+    // Import live contracts
+    const SynapsePool = await ethers.getContractAt('ISynapse', curvelikePools.SynapseDAIeUSDCeUSDTeNUSD)
+    // Init Adapters
+    const  SynapseAdapterFactory = await ethers.getContractFactory('SynapseAdapter')
+    const SynapseAdapter =  await SynapseAdapterFactory.connect(deployer).deploy(
+        'Synapse YakAdapter',
+        curvelikePools.SynapseDAIeUSDCeUSDTeNUSD, 
+        2e5
+    )
+    return {
+        SynapseAdapterFactory,
+        SynapseAdapter,
+        SynapsePool,
+        deployer
+    }
+    
+}
 const _curvelikeAdapters = async () => {
     const [ deployer ] = await ethers.getSigners()
     // Import live contracts
@@ -249,6 +267,7 @@ const general = deployments.createFixture(async () => {
         ZERO
     }
 })
+const synapseAdapter = deployments.createFixture(_synapseAdapter)
 const unilikeAdapters = deployments.createFixture(_unilikeAdapters)
 const curvelikeAdapters = deployments.createFixture(_curvelikeAdapters)
 const bridgeMigration = deployments.createFixture(_bridgeMigrationAdapters)
@@ -312,6 +331,7 @@ module.exports = {
     curvelikeAdapters, 
     unilikeAdapters,
     bridgeMigration,
+    synapseAdapter,
     general, 
     router
 }
