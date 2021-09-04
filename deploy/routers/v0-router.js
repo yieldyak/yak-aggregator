@@ -97,18 +97,18 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         SnobF3YakAdapterV0.address,
         SnobS3YakAdapterV0.address,
         SnobS4YakAdapterV0.address, 
-        ZeroYakAdapterV0.address, 
         LydiaYakAdapterV0.address,
-        YetiYakAdapterV0.address,
         ElkYakAdapterV0.address, 
         PandaYakAdapterV0.address, 
-        OliveYakAdapterV0.address,
-        ComplusAdapterV0.address,
         CanaryYakAdapterV0.address, 
-        BaguetteYakAdapterV0.address,
         TraderJoeYakAdapterV0.address,
         BridgeMigrationAdapterV0.address,
-        SynapseAdapterV0.address
+        SynapseAdapterV0.address,
+        ZeroYakAdapterV0.address, 
+        YetiYakAdapterV0.address,
+        OliveYakAdapterV0.address,
+        ComplusAdapterV0.address,
+        BaguetteYakAdapterV0.address,
     ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
