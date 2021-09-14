@@ -29,7 +29,7 @@ contract UnilikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint;
 
-    bytes32 public constant ID = '0x556e696c696b65';  // hex('Unilike')
+    bytes32 public constant ID = keccak256("UnilikeAdapter");
     uint internal constant FEE_DENOMINATOR = 1e3;
     uint public immutable feeCompliment;
     address public immutable factory;

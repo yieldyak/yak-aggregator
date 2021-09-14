@@ -27,7 +27,7 @@ import "../YakAdapter.sol";
 contract CurveLikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
-    bytes32 public constant indentifier = '0x43757276656c696b65';  // hex('Curvelike')
+    bytes32 public constant indentifier = keccak256("CurvelikeAdapter");
     mapping (address => bool) public TOKENS_MAP;
     address public pool;
 
