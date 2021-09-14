@@ -175,6 +175,12 @@ const _unilikeAdapters = async () => {
         3,
         100000
     )
+    adapters['JoeAdapter'] = await UnilikeAdapterFactory.connect(deployer).deploy(
+        'Joe YakAdapter',
+        unilikeFactories.joe,
+        3,
+        100000
+    )
     ADAPTERS = {...adapters, ...ADAPTERS}
     // Set tags
     if (TRACER_ENABLED) {
@@ -233,6 +239,7 @@ const general = deployments.createFixture(async () => {
     const deployer = genNewAccount()
     // Two dexes to help with testing token->token trades
     const PangolinRouter = await ethers.getContractAt('IUnilikeAVAXRouter', unilikeRouters.pangolin)
+    const LydiaRouter = await ethers.getContractAt('IUnilikeAVAXRouter', unilikeRouters.lydia)
     const SushiswapRouter = await ethers.getContractAt('IUnilikeETHRouter', unilikeRouters.sushiswap)
     const ZeroRouter = await ethers.getContractAt('IUnilikeETHRouter', unilikeRouters.zero)
     // Set tags
@@ -260,6 +267,7 @@ const general = deployments.createFixture(async () => {
         curvelikePools,
         PangolinRouter,
         genNewAccount,
+        LydiaRouter,
         ZeroRouter,
         deployer,
         U256_MAX,
