@@ -390,15 +390,17 @@ contract YakRouter is Ownable {
         OfferWithGas memory queries;
         queries.amounts = BytesManipulation.toBytes(_amountIn);
         queries.path = BytesManipulation.toBytes(_tokenIn);
-        FormattedOffer memory gasQuery = findBestPath(_gasPrice, WAVAX, _tokenOut, 2);
-        uint tknOutPrice = gasQuery.amounts[gasQuery.amounts.length-1];
+        // Find the market price between AVAX and token-out and express gas price in token-out currency
+        FormattedOffer memory gasQuery = findBestPath(1e18, WAVAX, _tokenOut, 2);  // Avoid low-liquidity price appreciation
+        // Leave result nWei to preserve digits for assets with low decimal places
+        uint tknOutPriceNwei = gasQuery.amounts[gasQuery.amounts.length-1].mul(_gasPrice/1e9);
         queries = _findBestPathWithGas(
             _amountIn, 
             _tokenIn, 
             _tokenOut, 
             _maxSteps,
             queries, 
-            tknOutPrice
+            tknOutPriceNwei
         );
         // If no paths are found return empty struct
         if (queries.adapters.length==0) {
@@ -414,7 +416,7 @@ contract YakRouter is Ownable {
         address _tokenOut, 
         uint _maxSteps,
         OfferWithGas memory _queries, 
-        uint _tknOutPrice
+        uint _tknOutPriceNwei
     ) internal view returns (OfferWithGas memory) {
         OfferWithGas memory bestOption = _cloneOfferWithGas(_queries);
         uint256 bestAmountOut;
@@ -453,14 +455,14 @@ contract YakRouter is Ownable {
                     _tokenOut, 
                     _maxSteps, 
                     newOffer, 
-                    _tknOutPrice
+                    _tknOutPriceNwei
                 );
                 address tokenOut = BytesManipulation.bytesToAddress(newOffer.path.length, newOffer.path);
                 uint256 amountOut = BytesManipulation.bytesToUint256(newOffer.amounts.length, newOffer.amounts);
                 // Check that the last token in the path is the tokenOut and update the new best option if neccesary
                 if (_tokenOut == tokenOut && amountOut > bestAmountOut) {
                     if (newOffer.gasEstimate > bestOption.gasEstimate) {
-                        uint gasCostDiff = _tknOutPrice.mul(newOffer.gasEstimate-bestOption.gasEstimate);
+                        uint gasCostDiff = _tknOutPriceNwei.mul(newOffer.gasEstimate-bestOption.gasEstimate) / 1e9;
                         uint priceDiff = amountOut - bestAmountOut;
                         if (gasCostDiff > priceDiff) { continue; }
                     }
