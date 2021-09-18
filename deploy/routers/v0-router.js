@@ -52,6 +52,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const GondolaUSDTeTSDAdapterV0 = await deployments.get('GondolaUSDTeTSDAdapterV0')
     const SushiswapYakAdapterV0 = await deployments.get("SushiYakAdapterV0")
     const PangolinYakAdapterV0 = await deployments.get("PangolinYakAdapterV0")
+    const PartyswapAdapterV0 = await deployments.get('PartyswapAdapterV0')
     const LydiaYakAdapterV0 = await deployments.get("LydiaYakAdapterV0")
     const PandaYakAdapterV0 = await deployments.get("PandaYakAdapterV0")
     const ZeroYakAdapterV0 = await deployments.get("ZeroYakAdapterV0")
@@ -111,7 +112,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         OliveYakAdapterV0.address,
         ComplusAdapterV0.address,
         BaguetteYakAdapterV0.address,
-        MiniYakAdapterV0.address
+        MiniYakAdapterV0.address,
+        PartyswapAdapterV0.address
     ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)

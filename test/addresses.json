@@ -63,7 +63,8 @@
         "pangolin": "0xefa94DE7a4656D787667C749f7E1223D71E9FD88", 
         "canary": "0xCFBA329d49C24b70F3a8b9CC0853493d4645436b", 
         "baguette": "0x3587B8c0136c2C3605a9E5B03ab54Da3e4044b50", 
-        "joe": "0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10"
+        "joe": "0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10",
+        "partyswap": "0x58A08bc28f3E8dab8Fb2773D8f243bC740398b09"
       },
     "curvelikePools": {
         "snobS3D": "0x6B41E5c07F2d382B921DE5C34ce8E2057d84C042", 
