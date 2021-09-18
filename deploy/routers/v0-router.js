@@ -64,7 +64,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const TraderJoeYakAdapterV0 = await deployments.get('TraderJoeYakAdapterV0')
     const BridgeMigrationAdapterV0 = await deployments.get('BridgeMigrationAdapterV0')
     const SynapseAdapterV0 = await deployments.get('SynapseAdapterV0')
-
+    const MiniYakAdapterV0 = await deployments.get('MiniYakAdapterV0')
+    
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
         assets.WAVAX,
@@ -77,7 +78,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         assets.PNG, 
         assets.JOE,
         assets.PEFI,
-        assets.SNOB
+        assets.SNOB,
+        assets.YAK
     ];
     const ADAPTERS = [
         PangolinYakAdapterV0.address,
@@ -109,6 +111,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         OliveYakAdapterV0.address,
         ComplusAdapterV0.address,
         BaguetteYakAdapterV0.address,
+        MiniYakAdapterV0.address
     ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)

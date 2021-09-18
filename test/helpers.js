@@ -1,5 +1,18 @@
 const { ethers } = require("hardhat")
 
+const bigNumToBytes32 = (bn) => {
+    console.log(bn)
+    return ethers.utils.hexlify(ethers.utils.zeroPad(bn.toHexString(), 32))
+};
+  
+const addressToBytes32 = (add) => {
+    return ethers.utils.hexlify(ethers.utils.zeroPad(add, 32))
+};
+
+const setStorageAt = async (address, index, value) => {
+    await ethers.provider.send("hardhat_setStorageAt", [address, index, value]);
+};
+
 module.exports.makeAccountGen = async () => {
     function* getNewAccount() {
         let counter = 0
@@ -54,3 +67,9 @@ module.exports.getTokenContract = tokenAddress => ethers.getContractAt(
     'contracts/interface/IWETH.sol:IWETH', 
     tokenAddress
 )
+
+module.exports.setERC20Bal = async (token, _amount, _holder, _storageSlot) => {
+    const key = addressToBytes32(ethers.BigNumber.from(_holder.toString()))
+    const index = ethers.utils.solidityKeccak256([ "uint256", "uint256" ], [ key, _storageSlot ])
+    await setStorageAt(token, index, bigNumToBytes32(_amount))
+}

@@ -228,6 +228,28 @@ const _bridgeMigrationAdapters = async () => {
         bridgeTokens
     }
 }
+const _miniYakAdapter = async () => {
+    const gasCost = 81000
+    const [ deployer ] = await ethers.getSigners()
+    const adapterFactory = await ethers.getContractFactory('MiniYakAdapter')
+    const adapter = await adapterFactory.connect(deployer).deploy(gasCost)
+    const tkns = {}
+    tkns['YAK'] = await helpers.getTokenContract(assets.YAK)
+    tkns['mYAK'] = await helpers.getTokenContract(assets.mYAK)
+    // Set tags
+    if (TRACER_ENABLED) {
+        hre.tracer.nameTags['deployer'] = deployer
+        hre.tracer.nameTags[adapter.address] = 'MiniYakAdapter'
+        for (key in tkns) {
+            hre.tracer.nameTags[tkns[key].address] = key
+        }
+    }
+    return {
+        adapterFactory, 
+        adapter,
+        tkns
+    }
+}
 const general = deployments.createFixture(async () => {
     // Get token contracts
     const tokenContracts = {}
@@ -275,6 +297,7 @@ const general = deployments.createFixture(async () => {
         ZERO
     }
 })
+const miniYakAdapter = deployments.createFixture(_miniYakAdapter)
 const synapseAdapter = deployments.createFixture(_synapseAdapter)
 const unilikeAdapters = deployments.createFixture(_unilikeAdapters)
 const curvelikeAdapters = deployments.createFixture(_curvelikeAdapters)
@@ -340,6 +363,7 @@ module.exports = {
     unilikeAdapters,
     bridgeMigration,
     synapseAdapter,
+    miniYakAdapter,
     general, 
     router
 }
