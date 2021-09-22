@@ -4,7 +4,7 @@ const fixtures = require('../../fixtures')
 const { setERC20Bal, makeAccountGen } = require('../../helpers')
 const { parseUnits } = ethers.utils
 
-describe.only("YakAdapter - MiniYak", function() {
+describe("YakAdapter - MiniYak", function() {
 
     let genNewAccount
     let MiniYakAdapter
