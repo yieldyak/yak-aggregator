@@ -42,14 +42,15 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     // const GondolaBTCYakAdapterV0 = await deployments.get("GondolaBTCYakAdapterV0")
     // const GondolaDAIYakAdapterV0 = await deployments.get("GondolaDAIYakAdapterV0")
     // const GondolaETHYakAdapterV0 = await deployments.get("GondolaETHYakAdapterV0")
-    const GondolaDAIDAIeYakAdapterV0 = await deployments.get("GondolaDAIDAIeYakAdapterV0")
+    // const GondolaUSDTUSDTeYakAdapterV0 = await deployments.get("GondolaUSDTUSDTeYakAdapterV0")
+    // const GondolaWBTCWBTCeYakAdapterV0 = await deployments.get("GondolaWBTCWBTCeYakAdapterV0")
+    // const GondolaWETHWETHeYakAdapterV0 = await deployments.get("GondolaWETHWETHeYakAdapterV0")
+    // const GondolaWBTCrenBTCYakAdapterV0 = await deployments.get("GondolaWBTCrenBTCYakAdapterV0")
+    // const GondolaDAIDAIeYakAdapterV0 = await deployments.get("GondolaDAIDAIeYakAdapterV0")
     const GondolaUSDTeDAIeYakAdapterV0 = await deployments.get("GondolaUSDTeDAIeYakAdapterV0")
-    const GondolaUSDTUSDTeYakAdapterV0 = await deployments.get("GondolaUSDTUSDTeYakAdapterV0")
-    const GondolaWBTCWBTCeYakAdapterV0 = await deployments.get("GondolaWBTCWBTCeYakAdapterV0")
-    const GondolaWETHWETHeYakAdapterV0 = await deployments.get("GondolaWETHWETHeYakAdapterV0")
-    const GondolaWBTCrenBTCYakAdapterV0 = await deployments.get("GondolaWBTCrenBTCYakAdapterV0")
     const GondolaUSDTeUSDCeAdapterV0 = await deployments.get('GondolaUSDTeUSDCeAdapterV0')
     const GondolaUSDTeTSDAdapterV0 = await deployments.get('GondolaUSDTeTSDAdapterV0')
+    const GondolaYAKmYAKAdapterV0 = await deployments.get('GondolaYAKmYAKAdapterV0')
     const SushiswapYakAdapterV0 = await deployments.get("SushiYakAdapterV0")
     const PangolinYakAdapterV0 = await deployments.get("PangolinYakAdapterV0")
     const PartyswapAdapterV0 = await deployments.get('PartyswapAdapterV0')
@@ -89,14 +90,15 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         // GondolaDAIYakAdapterV0.address, 
         // GondolaBTCYakAdapterV0.address,
         // GondolaUSDTYakAdapterV0.address,
-        GondolaDAIDAIeYakAdapterV0.address,
+        // GondolaDAIDAIeYakAdapterV0.address,
+        // GondolaUSDTUSDTeYakAdapterV0.address,
+        // GondolaWBTCWBTCeYakAdapterV0.address,
+        // GondolaWETHWETHeYakAdapterV0.address,
+        // GondolaWBTCrenBTCYakAdapterV0.address,
         GondolaUSDTeDAIeYakAdapterV0.address,
-        GondolaUSDTUSDTeYakAdapterV0.address,
-        GondolaWBTCWBTCeYakAdapterV0.address,
-        GondolaWETHWETHeYakAdapterV0.address,
-        GondolaWBTCrenBTCYakAdapterV0.address,
         GondolaUSDTeUSDCeAdapterV0.address, 
         GondolaUSDTeTSDAdapterV0.address,
+        GondolaYAKmYAKAdapterV0.address,
         SnobF3YakAdapterV0.address,
         SnobS3YakAdapterV0.address,
         SnobS4YakAdapterV0.address, 
