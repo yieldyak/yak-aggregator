@@ -14,12 +14,12 @@ describe("YakAdapter - Synapse", function() {
     let tkns
 
     before(async () => {
+        fix = await fixtures.general()
         const fixSynapse = await fixtures.synapseAdapter()
         SynapseAdapterFactory = fixSynapse.SynapseAdapterFactory
         SynapseAdapter = fixSynapse.SynapseAdapter
         SynapsePool = fixSynapse.SynapsePool
         deployer = fixSynapse.deployer
-        fix = await fixtures.general()
         tkns = fix.tokenContracts
         genNewAccount = fix.genNewAccount
         PangolinRouter = fix.PangolinRouter
