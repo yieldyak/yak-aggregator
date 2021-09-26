@@ -357,7 +357,6 @@ contract YakRouterV2 is Ownable {
             gasQueries, 
             tknOutPriceNwei
         );  // Avoid low-liquidity price appreciation
-        //FormattedOfferWithGas memory gasQueryFromatted = _formatOfferWithGas(gasQuery);
         uint[] memory tokenOutAmounts = _formatAmounts(gasQuery.amounts);
         // Leave result nWei to preserve digits for assets with low decimal places
         tknOutPriceNwei = tokenOutAmounts[tokenOutAmounts.length-1].mul(_gasPrice/1e9);
