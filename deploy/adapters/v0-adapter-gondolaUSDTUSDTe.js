@@ -19,11 +19,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const NAME = 'GondolaUSDTUSDTeYakAdapterV0';
     const POOL = '0xAE5a60BB105e38A4986017A711c6A6CC1D1a0f36';  // Gondola USDT-USDT.e pool
-    const TOKEN_COUNT = 2;
     const GAS_ESTIMATE = 280000
-
-    // Check that `TOKEN_COUNT` is valid
-    await checkTokenCountValidity(POOL, TOKEN_COUNT)
 
     log(NAME)
     const deployResult = await deploy(NAME, {
@@ -33,7 +29,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       args: [
           NAME,
           POOL, 
-		      TOKEN_COUNT, 
           GAS_ESTIMATE
       ],
       skipIfAlreadyDeployed: true

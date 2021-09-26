@@ -19,11 +19,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const NAME = 'GondolaWBTCrenBTCYakAdapterV0';
     const POOL = '0x3121c59AFfb3c5Df5fA8EeEFb5064d1fC1166A0F';  // Gondola WBTC-renBTC pool
-    const TOKEN_COUNT = 2;
     const GAS_ESTIMATE = 280000
-
-    // Check that `TOKEN_COUNT` is valid
-    await checkTokenCountValidity(POOL, TOKEN_COUNT)
 
     log(NAME)
     const deployResult = await deploy(NAME, {
@@ -33,7 +29,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       args: [
           NAME,
           POOL, 
-		      TOKEN_COUNT, 
           GAS_ESTIMATE
       ],
       skipIfAlreadyDeployed: true

@@ -19,11 +19,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const NAME = 'GondolaDAIDAIeYakAdapterV0';
     const POOL = '0x159E2fE53E415B163bC5846DD70DDD2BC8d8F018';  // Gondola DAI-DAI.e pool
-    const TOKEN_COUNT = 2;
     const GAS_ESTIMATE = 280000
-
-    // Check that `TOKEN_COUNT` is valid
-    await checkTokenCountValidity(POOL, TOKEN_COUNT)
 
     log(NAME)
     const deployResult = await deploy(NAME, {
@@ -33,7 +29,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       args: [
           NAME,
           POOL, 
-		      TOKEN_COUNT, 
           GAS_ESTIMATE
       ],
       skipIfAlreadyDeployed: true
