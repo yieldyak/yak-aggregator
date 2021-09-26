@@ -325,7 +325,7 @@ const router = deployments.createFixture(async ({ }) => {
     const BytesManipulationFactory = await ethers.getContractFactory('BytesManipulation')
     const BytesManipulation = await BytesManipulationFactory.deploy()
     // Init Yak Router
-    const YakRouterFactory = await ethers.getContractFactory('YakRouter', { 
+    const YakRouterFactory = await ethers.getContractFactory('YakRouterV2', { 
         libraries: {
             'BytesManipulation': BytesManipulation.address
         } 

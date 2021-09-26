@@ -33,11 +33,12 @@ describe('Yak Router - swap', () => {
         let steps = 2
         let fee = '0'
         let amountIn = ethers.utils.parseUnits('10')
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Top up trader with starting tokens
         WAVAX = await ethers.getContractAt('contracts/interface/IWETH.sol:IWETH', assets.WAVAX)
@@ -129,11 +130,12 @@ describe('Yak Router - swap', () => {
             fix.PangolinRouter
         )
         // Call the query
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut,
-            steps
+            steps,
+            0
         )
         // Do the swap with permit
         await YakRouter.connect(bob).swapNoSplitWithPermit(
@@ -176,11 +178,12 @@ describe('Yak Router - swap', () => {
             fix.PangolinRouter
         )
         // Query trade
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut,
-            steps
+            steps,
+            0
         )
         // Approve for input token
         await helpers.approveERC20(trader, tokenIn, YakRouter.address, ethers.constants.MaxUint256)
@@ -208,11 +211,12 @@ describe('Yak Router - swap', () => {
         let amountIn = ethers.utils.parseUnits('10')
 
         // Query trade
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Do the swap
         await YakRouter.connect(trader).swapNoSplitFromAVAX(
@@ -242,11 +246,12 @@ describe('Yak Router - swap', () => {
         let amountIn = ethers.utils.parseUnits('10')
 
         // Query trade
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Do the swap
         await YakRouter.connect(trader).swapNoSplitFromAVAX(
@@ -276,11 +281,12 @@ describe('Yak Router - swap', () => {
         let fee = '0'
         
         // Query trade
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn.address, 
             tokenOut.address, 
-            steps
+            steps,
+            0
         )
         let tradeAdapters = Object.values(adapters).filter(adapter => {
             return result.adapters.includes(adapter.address)
@@ -340,11 +346,12 @@ describe('Yak Router - swap', () => {
             fix.PangolinRouter
         )
         // Query trade
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn.address, 
             tokenOut.address, 
-            steps
+            steps,
+            0
         )
         // Conditions change positively (trade in between in the opposite direction)
         // Expect only one adapter for one step
@@ -392,11 +399,12 @@ describe('Yak Router - swap', () => {
         let fee = '0'
 
         // Query trade
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn.address, 
             tokenOut.address, 
-            steps
+            steps,
+            0
         )
         let tradeAdapters = result.adapters.map(rAdapter => {
             return Object.values(adapters).find(a => a.address==rAdapter)
@@ -461,11 +469,12 @@ describe('Yak Router - swap', () => {
         ).then(response => response.wait())
 
         // Query trade
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         expect(result.adapters.length).to.gte(3)
         // Approve for input token
