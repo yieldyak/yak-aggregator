@@ -144,12 +144,11 @@ describe("YakAdapter - Gondola", function() {
             let _GondolaDAIAdapter = await CurveLikeAdapterFactory.connect(fix.deployer).deploy(
                 'pools.GondolaDAI YakAdapter',
                  fix.curvelikePools.GondolaDAI, 
-                2,  // Token-count
                 150000
             )
             // Check that expected tokens are supported
             for (let tkn of [tkns.DAI, tkns.ZDAI]) {
-                expect(await _GondolaDAIAdapter.TOKENS_MAP(tkn.address)).to.be.true
+                expect(await _GondolaDAIAdapter.isPoolToken(tkn.address)).to.be.true
             }
         })   
         

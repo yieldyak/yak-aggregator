@@ -46,61 +46,51 @@ const _curvelikeAdapters = async () => {
     adapters['SnobF3DAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'SnobF3D YakAdapter',
         curvelikePools.snobF3D, 
-        3,  // Token-count
         170000
     )
     adapters['SnobS3DAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'SnobS3D YakAdapter',
         curvelikePools.snobS3D, 
-        3,  // Token-count
         170000
     )
     adapters['SnobS4DAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'SnobS4D YakAdapter',
         curvelikePools.snobS4D, 
-        4,  // Token-count
         180000
     )
     adapters['GondolaDAIAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaDAI YakAdapter',
         curvelikePools.GondolaDAI, 
-        2,  // Token-count
         150000
     )
     adapters['GondolaBTCAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaBTC YakAdapter',
         curvelikePools.GondolaBTC, 
-        2,  // Token-count
         150000
     )
     adapters['GondolaUSDTAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaUSDT YakAdapter',
         curvelikePools.GondolaUSDT, 
-        2,  // Token-count
         150000
     )
     adapters['GondolaETHAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaETH YakAdapter',
         curvelikePools.GondolaETH, 
-        2,  // Token-count
         150000
     )
     adapters['GondolaUSDTeUSDCeAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaUSDTeUSDCe YakAdapter',
         curvelikePools.GondolaUSDTeUSDCe, 
-        2,  // Token-count
         150000
     )
     adapters['GondolaUSDTeTSDAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaUSDTeTSD YakAdapter',
         curvelikePools.GondolaUSDTeTSD, 
-        2,  // Token-count
         150000
     )
     adapters['GondolaUSDTUSDTeAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
         'GondolaUSDTUSDTe YakAdapter',
         curvelikePools.GondolaUSDTUSDTe, 
-        2,  // Token-count
         150000
     )
     ADAPTERS = {...adapters, ...ADAPTERS}
