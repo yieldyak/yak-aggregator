@@ -1,18 +1,6 @@
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
 
-async function checkTokenCountValidity(poolAddress, expectedTknCount) {
-	let curvelikePool = await ethers.getContractAt('ICurveLikePool', poolAddress)
-	try {
-		// Check that max of expected-token-count is valid
-		await expect(curvelikePool.getToken(expectedTknCount-1)).to.not.reverted
-		// Check that there are not tokens after the expected-token-count
-		await expect(curvelikePool.getToken(expectedTknCount)).to.reverted
-	} catch (e) {
-		throw new Error(`Invalid token-count for pool ${poolAddress}`)
-	}
-}
-
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
