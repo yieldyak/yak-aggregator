@@ -24,8 +24,6 @@ import "../interface/IWETH.sol";
 import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
-import "hardhat/console.sol";
-
 contract CurveLikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
