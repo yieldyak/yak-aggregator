@@ -6,7 +6,7 @@ import "./IERC20.sol";
 interface ICurveLikePool {
     function getTokenIndex(address tokenAddress) external view returns (uint8);
     function getTokenBalance(uint8 index) external view returns (uint256);
-    function getToken(uint8 index) external view returns (IERC20);
+    function getToken(uint8 index) external view returns (address);
     function getVirtualPrice() external view returns (uint256);
     function owner() external view returns (address);
     function paused() external view returns (bool);

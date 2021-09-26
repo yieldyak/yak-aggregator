@@ -39,7 +39,7 @@
     "name": "getToken",
     "outputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "address",
         "name": "",
         "type": "address"
       }

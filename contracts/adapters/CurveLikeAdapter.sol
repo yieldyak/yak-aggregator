@@ -24,30 +24,36 @@ import "../interface/IWETH.sol";
 import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
+import "hardhat/console.sol";
+
 contract CurveLikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
     bytes32 public constant indentifier = keccak256("CurvelikeAdapter");
-    mapping (address => bool) public TOKENS_MAP;
+    mapping (address => bool) public isPoolToken;
+    mapping (address => uint8) public tokenIndex;
     address public pool;
 
     constructor (
         string memory _name, 
         address _pool, 
-        uint8 _tokenCount, 
         uint _swapGasEstimate
     ) {
         pool = _pool;
         name = _name;
         setSwapGasEstimate(_swapGasEstimate);
-        _setPoolTokens(_tokenCount);
+        _setPoolTokens();
     }
 
     // Mapping indicator which tokens are included in the pool 
-    function _setPoolTokens(uint8 _tokenCount) internal {
-        for (uint8 index=0; index<_tokenCount; index++) {
-            IERC20 token = ICurveLikePool(pool).getToken(index);
-            TOKENS_MAP[address(token)] = true;
+    function _setPoolTokens() internal {
+        for (uint8 i=0; true; i++) {
+            try ICurveLikePool(pool).getToken(i) returns (address token) {
+                isPoolToken[token] = true;
+                tokenIndex[token] = i;
+            } catch {
+                break;
+            }
         }
     }
 
@@ -65,16 +71,16 @@ contract CurveLikeAdapter is YakAdapter {
         address _tokenIn, 
         address _tokenOut
     ) internal override view returns (uint) {
-        if (_tokenIn==_tokenOut) { return 0; }
-        // Cancel query if pool is closed
-        if (ICurveLikePool(pool).paused() || _amountIn==0) { return 0; }
-        // Cancel query if tokens not in the pool
-        if (!TOKENS_MAP[_tokenIn] || !TOKENS_MAP[_tokenOut]) { return 0; }
-        uint tokenIndexIn = ICurveLikePool(pool).getTokenIndex(_tokenIn);
-        uint tokenIndexOut = ICurveLikePool(pool).getTokenIndex(_tokenOut);
+        if (
+            !isPoolToken[_tokenIn] || 
+            !isPoolToken[_tokenOut] ||
+            _tokenIn == _tokenOut ||
+            _amountIn == 0 ||
+            ICurveLikePool(pool).paused()
+        ) { return 0; }
         try ICurveLikePool(pool).calculateSwap(
-            uint8(tokenIndexIn), 
-            uint8(tokenIndexOut), 
+            tokenIndex[_tokenIn], 
+            tokenIndex[_tokenOut], 
             _amountIn
         ) returns (uint amountOut) {
             return amountOut;
@@ -90,9 +96,10 @@ contract CurveLikeAdapter is YakAdapter {
         address _tokenOut, 
         address _to
     ) internal override {
+        // Note that unsupported token will return index 0 which is valid
         ICurveLikePool(pool).swap(
-            ICurveLikePool(pool).getTokenIndex(_tokenIn), 
-            ICurveLikePool(pool).getTokenIndex(_tokenOut), 
+            tokenIndex[_tokenIn], 
+            tokenIndex[_tokenOut], 
             _amountIn, 
             _amountOut, 
             block.timestamp

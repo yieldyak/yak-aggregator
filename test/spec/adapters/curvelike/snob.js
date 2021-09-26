@@ -165,45 +165,12 @@ describe("YakAdapter - Snob", function() {
             let _SnobF3DAdapter = await CurveLikeAdapterFactory.connect(fix.deployer).deploy(
                 'SnobF3D YakAdapter',
                 fix.curvelikePools.snobF3D, 
-                3,  // Token-count
                 170000
             )
             // Check that expected tokens are supported
             for (let tkn of [tkns.FRAX, tkns.USDT, tkns.TUSD]) {
-                expect(await _SnobF3DAdapter.TOKENS_MAP(tkn.address)).to.be.true
+                expect(await _SnobF3DAdapter.isPoolToken(tkn.address)).to.be.true
             }
-        })
-
-        it('Swapping with AVAX methods should raise an exception', async () => {
-            // Options
-            let tokenFrom = tkns.USDT
-            let tokenTo = tkns.FRAX
-            let amountIn = parseUnits('2500', await tokenFrom.decimals())
-
-            // Revert as WAVAX is not supported by the pool
-            await expect(adapters.SnobF3DAdapter.connect(trader).swap(
-                amountIn,
-                parseUnits('1'), 
-                tkns.WAVAX.address,
-                tkns.USDT.address, 
-                trader.address
-            )).to.revertedWith('Token does not exist')
-            // Revert as WAVAX is not supported by the pool
-            await fix.PangolinRouter.connect(trader).swapAVAXForExactTokens(
-                amountIn,  // Amount of tkns.USDT required to continue 
-                [ tkns.WAVAX.address, tokenFrom.address ],
-                trader.address,
-                parseInt(Date.now()/1e3)+300, 
-                { value: parseUnits('1000000') }
-            )
-            await tokenFrom.connect(trader).transfer(adapters.SnobF3DAdapter.address, amountIn)
-            await expect(adapters.SnobF3DAdapter.connect(trader).swap(
-                amountIn,
-                parseUnits('1'),
-                tkns.USDT.address,
-                tkns.WAVAX.address, 
-                trader.address
-            )).to.revertedWith('Token does not exist')
         })
 
     })
@@ -328,46 +295,14 @@ describe("YakAdapter - Snob", function() {
             let _SnobS3DAdapter = await CurveLikeAdapterFactory.connect(fix.deployer).deploy(
                 'SnobS3D YakAdapter',
                 fix.curvelikePools.snobS3D, 
-                3,  // Token-count
                 170000
             )
             // Check that expected tokens are supported
             for (let tkn of [tkns.DAI, tkns.USDT, tkns.BUSD]) {
-                expect(await _SnobS3DAdapter.TOKENS_MAP(tkn.address)).to.be.true
+                expect(await _SnobS3DAdapter.isPoolToken(tkn.address)).to.be.true
             }
         })
 
-        it('Swapping with AVAX methods should raise an exception', async () => {
-            // Options
-            let tokenFrom = tkns.USDT
-            let tokenTo = tkns.DAI
-            let amountIn = parseUnits('2500', await tokenFrom.decimals())
-
-            // Revert as tkns.WAVAX is not supported by the pool
-            await expect(adapters.SnobS3DAdapter.connect(trader).swap(
-                amountIn,
-                parseUnits('1'), 
-                tkns.WAVAX.address,
-                tkns.USDT.address, 
-                trader.address
-            )).to.revertedWith('Token does not exist')
-            await tkns.WAVAX.connect(trader).approve(fix.PangolinRouter.address, fix.U256_MAX)
-            await fix.PangolinRouter.connect(trader).swapAVAXForExactTokens(
-                amountIn,  // Amount of tkns.USDT required to continue 
-                [ tkns.WAVAX.address, tokenFrom.address ],
-                trader.address,
-                parseInt(Date.now()/1e3)+300, 
-                { value: ethers.utils.parseEther('1000000') }
-            )
-            await tokenFrom.connect(trader).transfer(adapters.SnobS3DAdapter.address, amountIn)
-            await expect(adapters.SnobS3DAdapter.connect(trader).swap(
-                amountIn,
-                parseUnits('1'), 
-                tkns.USDT.address,
-                tkns.WAVAX.address, 
-                trader.address
-            )).to.revertedWith('Token does not exist')
-        })
     })
 
     describe('snobS4D', () => {
@@ -535,48 +470,14 @@ describe("YakAdapter - Snob", function() {
             let _SnobS4DAdapter = await CurveLikeAdapterFactory.connect(fix.deployer).deploy(
                 'SnobS4D YakAdapter',
                 fix.curvelikePools.snobS4D, 
-                4,  // Token-count
                 180000
             )
             // Check that expected tokens are supported
             for (let tkn of [tkns.DAIe, tkns.USDTe, tkns.TUSD, tkns.FRAX]) {
-                expect(await _SnobS4DAdapter.TOKENS_MAP(tkn.address)).to.be.true
+                expect(await _SnobS4DAdapter.isPoolToken(tkn.address)).to.be.true
             }
         })
 
-        it('Swapping with AVAX methods should raise an exception', async () => {
-            // Options
-            let tokenFrom = tkns.FRAX
-            let tokenTo = tkns.WAVAX
-            let amountIn = parseUnits('2500', await tokenFrom.decimals())
-
-            // Revert as tkns.WAVAX is not supported by the pool
-            await expect(adapters.SnobS4DAdapter.connect(trader).swap(
-                amountIn,
-                parseUnits('1'), 
-                tokenTo.address,
-                tokenFrom.address, 
-                trader.address
-            )).to.revertedWith('Token does not exist')
-            await tokenTo.connect(trader).approve(fix.PangolinRouter.address, fix.U256_MAX)
-            await fix.PangolinRouter.connect(trader).swapAVAXForExactTokens(
-                amountIn,  // Amount of tkns.USDT required to continue 
-                [ tokenTo.address, tokenFrom.address ],
-                trader.address,
-                parseInt(Date.now()/1e3)+300, 
-                { 
-                    value: ethers.utils.parseEther('1000000') 
-                }
-            )
-            await tokenFrom.connect(trader).transfer(adapters.SnobS4DAdapter.address, amountIn)
-            await expect(adapters.SnobS4DAdapter.connect(trader).swap(
-                amountIn,
-                parseUnits('1'), 
-                tokenFrom.address,
-                tokenTo.address, 
-                trader.address
-            )).to.revertedWith('Token does not exist')
-        })
     })
 
 })

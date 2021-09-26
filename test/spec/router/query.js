@@ -191,8 +191,8 @@ describe('Yak Router - query', () => {
         // Expect the last token in the path to be token to
         expect(result.path[result.path.length-1]).to.equal(tokenOut)
         expect(result.gasEstimate).to.gt(fix.ZERO)
-        console.log(result)
-        console.log('Gas estimate:', ethers.utils.formatUnits(result.gasEstimate, 9))
+        // console.log(result)
+        // console.log('Gas estimate:', ethers.utils.formatUnits(result.gasEstimate, 9))
     })
 
 
