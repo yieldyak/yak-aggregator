@@ -133,6 +133,9 @@ npm i -D
 ```
 cp .env.sample > .env
 ```
+ * `AVALANCHE_FORK_RPC` is Avalanche C-Chain RPC provider that will be used for the tests [ testing ]
+ * `AVALANCHE_DEPLOY_RPC` is Avalanche C-Chain RPC provider that will be used deployment [ deployment ]
+ * `PK_DEPLOYER` is private-key for the account that will deploy contracts [ deployment ]
 
 ### Run Tests
 
