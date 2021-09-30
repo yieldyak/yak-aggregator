@@ -134,16 +134,16 @@ npm i -D
 cp .env.sample > .env
 ```
 
-### Deployment
-
-```
-npx hardhat deploy --network {your network}
-```
-
 ### Run Tests
 
 ```
 npx hardhat test
+```
+
+### Deployment
+
+```
+npx hardhat deploy --network {your network}
 ```
 
 ## Audits and Security
