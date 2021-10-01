@@ -7,6 +7,18 @@ require("hardhat-gas-reporter");
 require("hardhat-tracer");
 require('hardhat-deploy');
 
+if (!process.env.AVALANCHE_FORK_RPC) {
+  throw new Error('Fork RPC provider not defined')
+}
+const AVALANCHE_FORK_RPC = process.env.AVALANCHE_FORK_RPC
+if (!process.env.PK_DEPLOYER) {
+  console.log('WARNING: Missing private-key for deployer - cant deploy')
+}
+if (!process.env.AVALANCHE_DEPLOY_RPC) {
+  console.log('WARNING: Missing RPC provider for deployer')
+}
+const PK_DEPLOYER = process.env.PK_DEPLOYER || "1111111111111111111111111111111111111111111111111111111111"
+const AVALANCHE_DEPLOY_RPC = process.env.AVALANCHE_DEPLOY_RPC || process.env.AVALANCHE_FORK_RPC
 
 module.exports = {
   mocha: {
@@ -33,8 +45,8 @@ module.exports = {
     hardhat: {
       chainId: 43114,
       forking: {
-        url: process.env.AVALANCHE_FORK_RPC, 
-        blockNumber: 4525371
+        url: AVALANCHE_FORK_RPC, 
+        blockNumber: 5045371
       },
       accounts: {
         accountsBalance: "10000000000000000000000000", 
@@ -44,9 +56,9 @@ module.exports = {
     mainnet: {
       chainId: 43114,
       gasPrice: 225000000000,
-      url: process.env.AVALANCHE_MAINNET_RPC,
+      url: AVALANCHE_DEPLOY_RPC,
       accounts: [
-        process.env.PK_DEPLOYER
+        PK_DEPLOYER
       ]
     }
   },
