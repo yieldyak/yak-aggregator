@@ -67,7 +67,7 @@ contract BridgeMigrationAdapter is YakAdapter {
         address _to
     ) internal override {
         IERC20(_tokenOut).swap(_tokenIn, _amountIn);
-        _returnTo(_tokenOut, _amountOut, _to);
+        _returnTokensTo(_tokenOut, _amountOut, _to);
     }
 
     function setAllowances() public override {}

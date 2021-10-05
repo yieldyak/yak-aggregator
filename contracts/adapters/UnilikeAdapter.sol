@@ -30,7 +30,8 @@ contract UnilikeAdapter is YakAdapter {
     using SafeMath for uint;
 
     bytes32 public constant ID = keccak256("UnilikeAdapter");
-    uint internal constant FEE_DENOMINATOR = 1e3;
+    // todo: overriding FEE_DENOMINATOR should probably be handled differently? 
+    uint internal OVERRIDE_FEE_DENOMINATOR = 1e3;
     uint public immutable feeCompliment;
     address public immutable factory;
 
@@ -40,10 +41,10 @@ contract UnilikeAdapter is YakAdapter {
         uint _fee,
         uint _swapGasEstimate
     ) {
-        require(FEE_DENOMINATOR > _fee, 'YakUnilikeAdapter: Fee greater than the denominator');
+        require(OVERRIDE_FEE_DENOMINATOR > _fee, 'YakUnilikeAdapter: Fee greater than the denominator');
         factory = _factory;
         name = _name;
-        feeCompliment = FEE_DENOMINATOR.sub(_fee);
+        feeCompliment = OVERRIDE_FEE_DENOMINATOR.sub(_fee);
         setSwapGasEstimate(_swapGasEstimate);
         setAllowances();
     }
@@ -62,7 +63,7 @@ contract UnilikeAdapter is YakAdapter {
         // Based on https://github.com/Uniswap/uniswap-v2-periphery/blob/master/contracts/UniswapV2Router02.sol
         uint amountInWithFee = _amountIn.mul(feeCompliment);
         uint numerator = amountInWithFee.mul(_reserveOut);
-        uint denominator = _reserveIn.mul(FEE_DENOMINATOR).add(amountInWithFee);
+        uint denominator = _reserveIn.mul(OVERRIDE_FEE_DENOMINATOR).add(amountInWithFee);
         amountOut = numerator / denominator;
     }
 

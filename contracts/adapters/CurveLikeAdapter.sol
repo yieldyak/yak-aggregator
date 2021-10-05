@@ -103,7 +103,7 @@ contract CurveLikeAdapter is YakAdapter {
             block.timestamp
         );
         // Confidently transfer amount-out
-        _returnTo(_tokenOut, _amountOut, _to);
+        _returnTokensTo(_tokenOut, _amountOut, _to);
     }
 
 }
