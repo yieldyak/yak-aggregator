@@ -29,7 +29,11 @@ import "./YakContract.sol";
 
 contract YakRouter is YakContract {
     using SafeERC20 for IERC20;
-    using SafeMath for uint;    
+    using SafeMath for uint;  
+
+    uint public FEE_DENOMINATOR = 1e4;
+    uint public MIN_FEE = 0;
+    address public FEE_CLAIMER;  
 
     string public constant NAME = 'YakRouter';
     address[] public TRUSTED_TOKENS;
@@ -232,6 +236,31 @@ contract YakRouter is YakContract {
             _formatAddresses(_queries.path), 
             _queries.gasEstimate
         );
+    }
+
+    /**
+     * Converts byte-arrays to an array of integers
+     */
+    function _formatAmounts(bytes memory _amounts) internal pure returns (uint256[] memory) {
+        // Format amounts
+        uint256 chunks = _amounts.length / 32;
+        uint256[] memory amountsFormatted = new uint256[](chunks);
+        for (uint256 i=0; i<chunks; i++) {
+            amountsFormatted[i] = BytesManipulation.bytesToUint256(i*32+32, _amounts);
+        }
+        return amountsFormatted;
+    }
+
+    /**
+     * Converts byte-array to an array of addresses
+     */
+    function _formatAddresses(bytes memory _addresses) internal pure returns (address[] memory) {
+        uint256 chunks = _addresses.length / 32;
+        address[] memory addressesFormatted = new address[](chunks);
+        for (uint256 i=0; i<chunks; i++) {
+            addressesFormatted[i] = BytesManipulation.bytesToAddress(i*32+32, _addresses);
+        }
+        return addressesFormatted;
     }
 
 

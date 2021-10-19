@@ -30,9 +30,6 @@ abstract contract YakContract is Ownable {
 
     address public constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
     address public constant AVAX = address(0);
-    uint public FEE_DENOMINATOR = 1e4;
-    uint public MIN_FEE = 0;
-    address public FEE_CLAIMER;
 
     event Recovered(
         address indexed _asset, 
@@ -93,31 +90,6 @@ abstract contract YakContract is Ownable {
                 IERC20(_token).safeTransfer(_to, _amount);
             }
         }
-    }
-
-    /**
-     * Converts byte-arrays to an array of integers
-     */
-    function _formatAmounts(bytes memory _amounts) internal pure returns (uint256[] memory) {
-        // Format amounts
-        uint256 chunks = _amounts.length / 32;
-        uint256[] memory amountsFormatted = new uint256[](chunks);
-        for (uint256 i=0; i<chunks; i++) {
-            amountsFormatted[i] = BytesManipulation.bytesToUint256(i*32+32, _amounts);
-        }
-        return amountsFormatted;
-    }
-
-    /**
-     * Converts byte-array to an array of addresses
-     */
-    function _formatAddresses(bytes memory _addresses) internal pure returns (address[] memory) {
-        uint256 chunks = _addresses.length / 32;
-        address[] memory addressesFormatted = new address[](chunks);
-        for (uint256 i=0; i<chunks; i++) {
-            addressesFormatted[i] = BytesManipulation.bytesToAddress(i*32+32, _addresses);
-        }
-        return addressesFormatted;
     }
 
     // Fallback
