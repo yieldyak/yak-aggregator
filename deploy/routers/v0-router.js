@@ -68,6 +68,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const SynapseAdapterV0 = await deployments.get('SynapseAdapterV0')
     const MiniYakAdapterV0 = await deployments.get('MiniYakAdapterV0')
     const AxialAS4DYakAdapterV0 = await deployments.get('AxialAS4DYakAdapterV0')
+
+    const GondolaUSD4AdapterV0 = await deployments.get('GondolaUSD4AdapterV0')
+    const GondolaUSDAdapterV0 = await deployments.get('GondolaUSDAdapterV0')
+    const GondolaUSDTeMIMAdapterV0 = await deployments.get('GondolaUSDTeMIMAdapterV0')
+    const GondolaYAKmYAKv2AdapterV0 = await deployments.get('GondolaYAKmYAKv2AdapterV0')
     
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
@@ -117,7 +122,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         BaguetteYakAdapterV0.address,
         MiniYakAdapterV0.address,
         PartyswapAdapterV0.address,
-        AxialAS4DYakAdapterV0.address
+        AxialAS4DYakAdapterV0.address,
+        GondolaUSD4AdapterV0.address,
+        GondolaUSDAdapterV0.address,
+        GondolaUSDTeMIMAdapterV0.address,
+        GondolaYAKmYAKv2AdapterV0.address
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
