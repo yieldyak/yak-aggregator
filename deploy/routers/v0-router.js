@@ -67,6 +67,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const BridgeMigrationAdapterV0 = await deployments.get('BridgeMigrationAdapterV0')
     const SynapseAdapterV0 = await deployments.get('SynapseAdapterV0')
     const MiniYakAdapterV0 = await deployments.get('MiniYakAdapterV0')
+    const AxialAS4DYakAdapterV0 = await deployments.get('AxialAS4DYakAdapterV0')
     
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
@@ -115,8 +116,9 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         ComplusAdapterV0.address,
         BaguetteYakAdapterV0.address,
         MiniYakAdapterV0.address,
-        PartyswapAdapterV0.address
-    ];
+        PartyswapAdapterV0.address,
+        AxialAS4DYakAdapterV0.address
+      ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
     noDuplicates(ADAPTERS)
