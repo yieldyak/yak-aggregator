@@ -35,7 +35,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const BytesManipulationV0 = await deployments.get("BytesManipulationV0")
     
-    const SnobS3YakAdapterV0 = await deployments.get("SnobS3YakAdapterV0")
+    // const SnobS3YakAdapterV0 = await deployments.get("SnobS3YakAdapterV0")
     const SnobF3YakAdapterV0 = await deployments.get("SnobF3YakAdapterV0")
     const SnobS4YakAdapterV0 = await deployments.get("SnobS4YakAdapterV0")
     // const GondolaUSDTYakAdapterV0 = await deployments.get("GondolaUSDTYakAdapterV0")
@@ -47,16 +47,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     // const GondolaWETHWETHeYakAdapterV0 = await deployments.get("GondolaWETHWETHeYakAdapterV0")
     // const GondolaWBTCrenBTCYakAdapterV0 = await deployments.get("GondolaWBTCrenBTCYakAdapterV0")
     // const GondolaDAIDAIeYakAdapterV0 = await deployments.get("GondolaDAIDAIeYakAdapterV0")
-    const GondolaUSDTeDAIeYakAdapterV0 = await deployments.get("GondolaUSDTeDAIeYakAdapterV0")
-    const GondolaUSDTeUSDCeAdapterV0 = await deployments.get('GondolaUSDTeUSDCeAdapterV0')
-    const GondolaUSDTeTSDAdapterV0 = await deployments.get('GondolaUSDTeTSDAdapterV0')
+    // const GondolaUSDTeDAIeYakAdapterV0 = await deployments.get("GondolaUSDTeDAIeYakAdapterV0")
+    // const GondolaUSDTeUSDCeAdapterV0 = await deployments.get('GondolaUSDTeUSDCeAdapterV0')
+    // const GondolaUSDTeTSDAdapterV0 = await deployments.get('GondolaUSDTeTSDAdapterV0')
     const GondolaYAKmYAKAdapterV0 = await deployments.get('GondolaYAKmYAKAdapterV0')
     const SushiswapYakAdapterV0 = await deployments.get("SushiYakAdapterV0")
     const PangolinYakAdapterV0 = await deployments.get("PangolinYakAdapterV0")
     const PartyswapAdapterV0 = await deployments.get('PartyswapAdapterV0')
     const LydiaYakAdapterV0 = await deployments.get("LydiaYakAdapterV0")
-    const PandaYakAdapterV0 = await deployments.get("PandaYakAdapterV0")
-    const ZeroYakAdapterV0 = await deployments.get("ZeroYakAdapterV0")
+    // const PandaYakAdapterV0 = await deployments.get("PandaYakAdapterV0")
+    // const ZeroYakAdapterV0 = await deployments.get("ZeroYakAdapterV0")
     const YetiYakAdapterV0 = await deployments.get("YetiYakAdapterV0")
     const ElkYakAdapterV0 = await deployments.get("ElkYakAdapterV0")
     const ComplusAdapterV0 = await deployments.get("ComplusAdapterV0")
@@ -69,7 +69,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const MiniYakAdapterV0 = await deployments.get('MiniYakAdapterV0')
     const AxialAS4DYakAdapterV0 = await deployments.get('AxialAS4DYakAdapterV0')
 
-    const GondolaUSD4AdapterV0 = await deployments.get('GondolaUSD4AdapterV0')
+    // const GondolaUSD4AdapterV0 = await deployments.get('GondolaUSD4AdapterV0')
     const GondolaUSDAdapterV0 = await deployments.get('GondolaUSDAdapterV0')
     const GondolaUSDTeMIMAdapterV0 = await deployments.get('GondolaUSDTeMIMAdapterV0')
     const GondolaYAKmYAKv2AdapterV0 = await deployments.get('GondolaYAKmYAKv2AdapterV0')
@@ -80,14 +80,15 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         assets.WETHe,
         assets.USDTe,
         assets.USDCe,
-        assets.DAIe,
-        assets.WBTCe,
-        assets.LINKe,
-        assets.PNG, 
         assets.JOE,
-        assets.PEFI,
-        assets.SNOB,
-        assets.YAK
+        assets.DAIe,
+        assets.LINKe,
+        assets.WBTCe,
+        assets.MIM,
+        assets.PNG,
+        assets.YAK,
+        // assets.QI,
+        // assets.SPELL
     ];
     const ADAPTERS = [
         PangolinYakAdapterV0.address,
@@ -101,21 +102,21 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         // GondolaWBTCWBTCeYakAdapterV0.address,
         // GondolaWETHWETHeYakAdapterV0.address,
         // GondolaWBTCrenBTCYakAdapterV0.address,
-        GondolaUSDTeDAIeYakAdapterV0.address,
-        GondolaUSDTeUSDCeAdapterV0.address, 
-        GondolaUSDTeTSDAdapterV0.address,
+        // GondolaUSDTeDAIeYakAdapterV0.address,
+        // GondolaUSDTeUSDCeAdapterV0.address, 
+        // GondolaUSDTeTSDAdapterV0.address,
         GondolaYAKmYAKAdapterV0.address,
         SnobF3YakAdapterV0.address,
-        SnobS3YakAdapterV0.address,
+        // SnobS3YakAdapterV0.address,
         SnobS4YakAdapterV0.address, 
         LydiaYakAdapterV0.address,
         ElkYakAdapterV0.address, 
-        PandaYakAdapterV0.address, 
+        // PandaYakAdapterV0.address, 
         CanaryYakAdapterV0.address, 
         TraderJoeYakAdapterV0.address,
         BridgeMigrationAdapterV0.address,
         SynapseAdapterV0.address,
-        ZeroYakAdapterV0.address, 
+        // ZeroYakAdapterV0.address, 
         YetiYakAdapterV0.address,
         OliveYakAdapterV0.address,
         ComplusAdapterV0.address,
@@ -123,7 +124,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         MiniYakAdapterV0.address,
         PartyswapAdapterV0.address,
         AxialAS4DYakAdapterV0.address,
-        GondolaUSD4AdapterV0.address,
+        // GondolaUSD4AdapterV0.address,
         GondolaUSDAdapterV0.address,
         GondolaUSDTeMIMAdapterV0.address,
         GondolaYAKmYAKv2AdapterV0.address
