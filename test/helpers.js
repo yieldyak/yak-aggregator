@@ -24,11 +24,11 @@ const getERC20SlotByExecute = async (token, _signer) => {
     const result = await signer.provider.send('debug_traceTransaction', [tx.hash])
     const [ slot ] = result.structLogs.flatMap(log => {
         // Find SLOAD operations containing the holder address
-        const addressMatches = () => '0x'+log.memory[0].replace(/^0+/, '') == signer.address.toLowerCase()
+        const addressMatches = () => '0x'+log.memory[0].replace(/^0+/, '') == holder.toLowerCase()
         if (log.op == 'SLOAD' && addressMatches()) {
             const hash = ethers.utils.keccak256('0x' + log.memory[0] + log.memory[1])
             // Return the slot if its hash with holder address is mapped to return value in storage and hash is on top of stack
-            if (log.stack[-1] == hash.slice(2) == result.returnValue) {
+            if (log.stack[log.stack.length-1] == hash.slice(2) && log.storage[hash.slice(2)] == result.returnValue) {
                 return parseInt(log.memory[1])
             }
         }
@@ -110,6 +110,6 @@ module.exports.getTokenContract = tokenAddress => ethers.getContractAt(
 module.exports.setERC20Bal = async (_token, _holder, _amount) => {
     const storageSlot = await getERC20Slot(_token)
     const key = addressToBytes32(ethers.BigNumber.from(_holder.toString()))
-    const index = ethers.utils.solidityKeccak256([ "uint256", "uint256" ], [ key, storageSlot ])
+    const index = ethers.utils.keccak256(key + storageSlot.toString().padStart(64, '0'))
     await setStorageAt(_token, index, bigNumToBytes32(_amount))
 }
