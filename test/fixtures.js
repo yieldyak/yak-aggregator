@@ -6,6 +6,48 @@ TRACER_ENABLED = process.argv.includes('--logs')
 const { assets, unilikeFactories, curvelikePools, unilikeRouters } = addresses
 let ADAPTERS = {}
 
+const _curveAdapter = async () => {
+    const Curve1AdaptorFactory = ethers.getContractFactory('Curve1Adapter')
+    const Curve2AdaptorFactory = ethers.getContractFactory('Curve2Adapter')
+    const CurvePlainAdapterFactory = ethers.getContractFactory('CurvePlainAdapter')
+    const CurveMimAdapterFactory = ethers.getContractFactory('CurveMimAdapter')
+    const [ 
+        CurveAave,
+        CurveAtricrypto,
+        CurveRen,
+        Curve3poolV2,
+        CurveMim,
+        CurveAaveAdapter,
+        CurveAtricryptoAdapter, 
+        CurveRenAdapter, 
+        Curve3poolV2Adapter, 
+        CurveMimAdapter
+    ] = await Promise.all([
+        ethers.getContractAt('ICurve2', curvelikePools.CurveAave),
+        ethers.getContractAt('ICurve1', curvelikePools.CurveAtricrypto),
+        ethers.getContractAt('ICurve2', curvelikePools.CurveRen),
+        ethers.getContractAt('ICurvePlain', curvelikePools.Curve3poolV2),
+        ethers.getContractAt('ICurveMim', curvelikePools.CurveMim),
+        Curve2AdaptorFactory.then(f => f.deploy('CurveAaveAdapter', curvelikePools.CurveAave, 9.1e5)),
+        Curve1AdaptorFactory.then(f => f.deploy('CurveAtricryptoAdapter', curvelikePools.CurveAtricrypto, 1.098e6)),
+        Curve2AdaptorFactory.then(f => f.deploy('CurveRenAdapter', curvelikePools.CurveRen, 6.3e5)),
+        CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.9e5)),
+        CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.25e6))
+    ])
+    return { 
+        CurveAave,
+        CurveAtricrypto,
+        CurveRen,
+        Curve3poolV2,
+        CurveMim, 
+        CurveAaveAdapter,
+        CurveAtricryptoAdapter, 
+        CurveRenAdapter, 
+        Curve3poolV2Adapter, 
+        CurveMimAdapter
+    }
+}
+
 const _synapseAdapter = async () => {
     const [ deployer ] = await ethers.getSigners()
     // Import live contracts
@@ -240,6 +282,17 @@ const _miniYakAdapter = async () => {
         tkns
     }
 }
+
+const simple = deployments.createFixture(async () => {
+    // Get token contracts
+    const tokenContracts = await Promise.all(Object.keys(assets).map(tknSymbol => {
+        return helpers.getTokenContract(assets[tknSymbol]).then(tc => [tknSymbol, tc])
+    })).then(Object.fromEntries)
+    // Get accounts
+    const genNewAccount = await helpers.makeAccountGen()
+    return { genNewAccount, tokenContracts }
+})
+
 const general = deployments.createFixture(async () => {
     // Get token contracts
     const tokenContracts = {}
@@ -287,6 +340,8 @@ const general = deployments.createFixture(async () => {
         ZERO
     }
 })
+
+const curveAdapter = deployments.createFixture(_curveAdapter)
 const miniYakAdapter = deployments.createFixture(_miniYakAdapter)
 const synapseAdapter = deployments.createFixture(_synapseAdapter)
 const unilikeAdapters = deployments.createFixture(_unilikeAdapters)
@@ -354,6 +409,8 @@ module.exports = {
     bridgeMigration,
     synapseAdapter,
     miniYakAdapter,
+    curveAdapter,
     general, 
+    simple,
     router
 }

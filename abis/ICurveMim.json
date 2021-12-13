@@ -1,0 +1,102 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "coins",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "pool",
+        "type": "address"
+      },
+      {
+        "internalType": "int128",
+        "name": "tokenIndexFrom",
+        "type": "int128"
+      },
+      {
+        "internalType": "int128",
+        "name": "tokenIndexTo",
+        "type": "int128"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dx",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minDy",
+        "type": "uint256"
+      }
+    ],
+    "name": "exchange_underlying",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int128",
+        "name": "tokenIndexFrom",
+        "type": "int128"
+      },
+      {
+        "internalType": "int128",
+        "name": "tokenIndexTo",
+        "type": "int128"
+      },
+      {
+        "internalType": "uint256",
+        "name": "dx",
+        "type": "uint256"
+      }
+    ],
+    "name": "get_dy_underlying",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "underlying_coins",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
