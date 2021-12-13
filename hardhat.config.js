@@ -46,7 +46,7 @@ module.exports = {
       chainId: 43114,
       forking: {
         url: AVALANCHE_FORK_RPC, 
-        blockNumber: 7904550
+        blockNumber: 8100181
       },
       accounts: {
         accountsBalance: "10000000000000000000000000", 
@@ -73,11 +73,11 @@ module.exports = {
   },
   contractSizer: {
     alphaSort: false,
-    runOnCompile: true,
+    runOnCompile: false,
     disambiguatePaths: false,
   },
   gasReporter: {
-    enabled: true,
+    enabled: false,
     showTimeSpent: true, 
     gasPrice: 225
   }
