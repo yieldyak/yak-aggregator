@@ -73,6 +73,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const GondolaUSDAdapterV0 = await deployments.get('GondolaUSDAdapterV0')
     const GondolaUSDTeMIMAdapterV0 = await deployments.get('GondolaUSDTeMIMAdapterV0')
     const GondolaYAKmYAKv2AdapterV0 = await deployments.get('GondolaYAKmYAKv2AdapterV0')
+    const CurveAaveAdapterV0 = await deployments.get('CurveAaveAdapterV0')
+    const CurveMimAdapterV0 = await deployments.get('CurveMimAdapterV0')
+    const Curve3poolV2AdapterV0 = await deployments.get('Curve3poolV2AdapterV0')
+    const CurveRenAdapterV0 = await deployments.get('CurveRenAdapterV0')
+    const CurveAtricryptoAdapterV0 = await deployments.get('CurveAtricryptoAdapterV0')
     
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
@@ -127,7 +132,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         // GondolaUSD4AdapterV0.address,
         GondolaUSDAdapterV0.address,
         GondolaUSDTeMIMAdapterV0.address,
-        GondolaYAKmYAKv2AdapterV0.address
+        GondolaYAKmYAKv2AdapterV0.address,
+        CurveAaveAdapterV0.address, 
+        CurveMimAdapterV0.address,
+        Curve3poolV2AdapterV0.address,
+        CurveRenAdapterV0.address,
+        CurveAtricryptoAdapterV0.address,
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
