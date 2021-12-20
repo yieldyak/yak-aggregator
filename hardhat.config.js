@@ -1,4 +1,5 @@
 require('dotenv').config();
+require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-waffle");
 require('hardhat-contract-sizer');
 require('hardhat-deploy-ethers');
@@ -6,6 +7,9 @@ require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
 require("hardhat-tracer");
 require('hardhat-deploy');
+
+const verifyContract = require("./scripts/verify-contract");
+const { task } = require("hardhat/config");
 
 if (!process.env.AVALANCHE_FORK_RPC) {
   throw new Error('Fork RPC provider not defined')
@@ -19,6 +23,14 @@ if (!process.env.AVALANCHE_DEPLOY_RPC) {
 }
 const PK_DEPLOYER = process.env.PK_DEPLOYER || "1111111111111111111111111111111111111111111111111111111111"
 const AVALANCHE_DEPLOY_RPC = process.env.AVALANCHE_DEPLOY_RPC || process.env.AVALANCHE_FORK_RPC
+
+// to verify all contracts use
+// find ./deployments/mainnet -maxdepth 1 -type f -not -path '*/\.*' -path "*.json" | xargs -L1 npx hardhat verifyContract --deployment-file-path --network mainnet
+task("verifyContract", "Verifies the contract in the snowtrace")
+  .addParam("deploymentFilePath", "Deployment file path")
+  .setAction(
+    async({deploymentFilePath}, hre) => verifyContract(deploymentFilePath, hre)
+  )
 
 module.exports = {
   mocha: {
@@ -39,6 +51,9 @@ module.exports = {
     deployer: {
       default: 0,
     }
+  },
+  etherscan: {
+    apiKey: process.env.SNOWTRACE_API_KEY
   },
   defaultNetwork: 'hardhat',
   networks: {

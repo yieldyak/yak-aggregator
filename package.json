@@ -24,6 +24,7 @@
     "hardhat-gas-reporter": "^1.0.4"
   },
   "dependencies": {
+    "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "dotenv": "^8.2.0",
     "hardhat-tracer": "^1.0.0-alpha.5",
     "solc": "^0.6.12",
