@@ -6,7 +6,7 @@ const { setERC20Bal, getTokenContract } = require('../../helpers')
 const { assets } = require('../../addresses.json')
 const fix = require('../../fixtures')
 
-describe("YakAdapter - Curve", function() {
+describe("YakAdapter - Axial", function() {
 
     let fixCurve
     let genNewAccount
@@ -171,7 +171,7 @@ describe("YakAdapter - Curve", function() {
             const amountOutOriginal = await Original.calculateSwap(tknFromIndex, tknToIndex, amountIn)
             // Query adapter 
             const amountOutAdapter = await Adapter.query(amountIn, tknFrom, tknTo)
-            // Compare two prices (original query does not include fee)
+            // Compare two prices
             expect(amountOutOriginal).to.equal(amountOutAdapter)
         })
     
@@ -281,7 +281,7 @@ describe("YakAdapter - Curve", function() {
             const amountOutOriginal = await Original.calculateSwap(tknFromIndex, tknToIndex, amountIn)
             // Query adapter 
             const amountOutAdapter = await Adapter.query(amountIn, tknFrom, tknTo)
-            // Compare two prices (original query does not include fee)
+            // Compare two prices
             expect(amountOutOriginal).to.equal(amountOutAdapter)
         })
     
@@ -390,7 +390,7 @@ describe("YakAdapter - Curve", function() {
             const amountOutOriginal = await Original.calculateSwap(tknFromIndex, tknToIndex, amountIn)
             // Query adapter 
             const amountOutAdapter = await Adapter.query(amountIn, tknFrom, tknTo)
-            // Compare two prices (original query does not include fee)
+            // Compare two prices
             expect(amountOutOriginal).to.equal(amountOutAdapter)
         })
     
