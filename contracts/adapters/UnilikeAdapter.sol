@@ -30,6 +30,7 @@ contract UnilikeAdapter is YakAdapter {
     using SafeMath for uint;
 
     bytes32 public constant ID = keccak256("UnilikeAdapter");
+    // todo: overriding FEE_DENOMINATOR should probably be handled differently? 
     uint internal constant FEE_DENOMINATOR = 1e3;
     uint public immutable feeCompliment;
     address public immutable factory;

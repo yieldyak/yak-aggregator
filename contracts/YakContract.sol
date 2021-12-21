@@ -18,66 +18,80 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
 
-import "../interface/IERC20.sol";
-import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "./lib/BytesManipulation.sol";
+import "./interface/IWETH.sol";
+import "./lib/SafeMath.sol";
+import "./lib/SafeERC20.sol";
+import "./lib/Ownable.sol";
 
-contract BridgeMigrationAdapter is YakAdapter {
+abstract contract YakContract is Ownable {
     using SafeERC20 for IERC20;
+    using SafeMath for uint;
 
-    bytes32 public constant ID = keccak256('BridgeMigrationAdapter');
-    mapping(address => bool) public isNewBridgeToken;
+    address public constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
+    address public constant AVAX = address(0);
 
-    constructor(
-        address[] memory _newTokens, 
-        address[] memory _oldTokens,
-        uint _swapGasEstimate
-    ) {
-        setSwapGasEstimate(_swapGasEstimate);
-        setNewBridgeTokens(_newTokens, _oldTokens);
+    event Recovered(
+        address indexed _asset, 
+        uint amount
+    );    
+
+    /**
+     * @notice Recover ERC20 from contract
+     * @param _tokenAddress token address
+     * @param _tokenAmount amount to recover
+     */
+    function recoverERC20(address _tokenAddress, uint _tokenAmount) external onlyOwner {
+        require(_tokenAmount > 0, 'YakRouter: Nothing to recover');
+        IERC20(_tokenAddress).safeTransfer(msg.sender, _tokenAmount);
+        emit Recovered(_tokenAddress, _tokenAmount);
     }
 
-    function _approveIfNeeded(address _tokenIn, uint _amount) internal override {}
+    /**
+     * @notice Recover AVAX from contract
+     * @param _amount amount
+     */
+    function recoverAVAX(uint _amount) external onlyOwner {
+        require(_amount > 0, 'YakAdapter: Nothing to recover');
+        payable(msg.sender).transfer(_amount);
+        emit Recovered(address(0), _amount);
+    }
 
-    function _approveIfNeeded(address _newToken, address _oldToken) internal {
-        uint allowance = IERC20(_oldToken).allowance(address(this), _newToken);
-        if (allowance < UINT_MAX) {
-            IERC20(_oldToken).safeApprove(_newToken, UINT_MAX);
+    // -- HELPERS -- 
+
+    /**
+     * @notice Wrap AVAX
+     * @param _amount amount
+     */
+    function _wrap(uint _amount) internal {
+        IWETH(WAVAX).deposit{value: _amount}();
+    }
+
+    /**
+     * @notice Unwrap WAVAX
+     * @param _amount amount
+     */
+    function _unwrap(uint _amount) internal {
+        IWETH(WAVAX).withdraw(_amount);
+    }
+
+    /**
+     * @notice Return tokens to user
+     * @dev Pass address(0) for AVAX
+     * @param _token address
+     * @param _amount tokens to return
+     * @param _to address where funds should be sent to
+     */
+    function _returnTokensTo(address _token, uint _amount, address _to) internal {
+        if (address(this)!=_to) {
+            if (_token == AVAX) {
+                payable(_to).transfer(_amount);
+            } else {
+                IERC20(_token).safeTransfer(_to, _amount);
+            }
         }
     }
 
-    function _query(
-        uint _amountIn, 
-        address _tokenIn, 
-        address _tokenOut
-    ) internal override view returns (uint amountOut) {  
-        if (
-            isNewBridgeToken[_tokenOut]
-            && IERC20(_tokenOut).swapSupply(_tokenIn) >= _amountIn
-        ) {
-            amountOut = _amountIn;
-        }
-    }
-
-    function _swap(
-        uint _amountIn, 
-        uint _amountOut, 
-        address _tokenIn, 
-        address _tokenOut, 
-        address _to
-    ) internal override {
-        IERC20(_tokenOut).swap(_tokenIn, _amountIn);
-        _returnTokensTo(_tokenOut, _amountOut, _to);
-    }
-
-    function setAllowances() public override {}
-
-    function setNewBridgeTokens(address[] memory _newTokens, address[] memory _oldTokens) public onlyOwner {
-        require(_newTokens.length == _oldTokens.length, 'BridgeMigrationAdapter: Needs to be surjective');
-        for (uint i; i<_newTokens.length; i++) {
-            require(IERC20(_newTokens[i]).swapSupply(_oldTokens[i]) > 0, 'BridgeMigrationAdapter: Invalid combination');
-            _approveIfNeeded(_newTokens[i], _oldTokens[i]);
-            isNewBridgeToken[_newTokens[i]] = true;
-        }
-    }
+    // Fallback
+    receive() external payable {}
 }

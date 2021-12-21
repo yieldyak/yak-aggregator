@@ -25,25 +25,19 @@ import "./interface/IERC20.sol";
 import "./interface/IWETH.sol";
 import "./lib/SafeMath.sol";
 import "./lib/SafeERC20.sol";
-import "./lib/Ownable.sol";
+import "./YakContract.sol";
 
-contract YakRouter is Ownable {
+contract YakRouter is YakContract {
     using SafeERC20 for IERC20;
-    using SafeMath for uint;
+    using SafeMath for uint;  
 
-    address public constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
-    address public constant AVAX = address(0);
-    string public constant NAME = 'YakRouter';
-    uint public constant FEE_DENOMINATOR = 1e4;
+    uint public FEE_DENOMINATOR = 1e4;
     uint public MIN_FEE = 0;
-    address public FEE_CLAIMER;
+    address public FEE_CLAIMER;  
+
+    string public constant NAME = 'YakRouter';
     address[] public TRUSTED_TOKENS;
     address[] public ADAPTERS;
-
-    event Recovered(
-        address indexed _asset, 
-        uint amount
-    );
 
     event UpdatedTrustedTokens(
 	    address[] _newTrustedTokens
@@ -157,52 +151,11 @@ contract YakRouter is Ownable {
         return ADAPTERS.length;
     }
 
-    function recoverERC20(address _tokenAddress, uint _tokenAmount) external onlyOwner {
-        require(_tokenAmount > 0, 'YakRouter: Nothing to recover');
-        IERC20(_tokenAddress).safeTransfer(msg.sender, _tokenAmount);
-        emit Recovered(_tokenAddress, _tokenAmount);
-    }
-
-    function recoverAVAX(uint _amount) external onlyOwner {
-        require(_amount > 0, 'YakRouter: Nothing to recover');
-        payable(msg.sender).transfer(_amount);
-        emit Recovered(address(0), _amount);
-    }
-
-    // Fallback
-    receive() external payable {}
-
-
     // -- HELPERS -- 
 
     function _applyFee(uint _amountIn, uint _fee) internal view returns (uint) {
         require(_fee>=MIN_FEE, 'YakRouter: Insufficient fee');
         return _amountIn.mul(FEE_DENOMINATOR.sub(_fee))/FEE_DENOMINATOR;
-    }
-
-    function _wrap(uint _amount) internal {
-        IWETH(WAVAX).deposit{value: _amount}();
-    }
-
-    function _unwrap(uint _amount) internal {
-        IWETH(WAVAX).withdraw(_amount);
-    }
-
-    /**
-     * @notice Return tokens to user
-     * @dev Pass address(0) for AVAX
-     * @param _token address
-     * @param _amount tokens to return
-     * @param _to address where funds should be sent to
-     */
-    function _returnTokensTo(address _token, uint _amount, address _to) internal {
-        if (address(this)!=_to) {
-            if (_token == AVAX) {
-                payable(_to).transfer(_amount);
-            } else {
-                IERC20(_token).safeTransfer(_to, _amount);
-            }
-        }
     }
 
     /**
@@ -263,6 +216,29 @@ contract YakRouter is Ownable {
     }
 
     /**
+     * Formats elements in the Offer object from byte-arrays to integers and addresses
+     */
+    function _formatOffer(Offer memory _queries) internal pure returns (FormattedOffer memory) {
+        return FormattedOffer(
+            _formatAmounts(_queries.amounts), 
+            _formatAddresses(_queries.adapters), 
+            _formatAddresses(_queries.path)
+        );
+    }
+
+    /**
+     * Formats elements in the Offer object from byte-arrays to integers and addresses
+     */
+    function _formatOfferWithGas(OfferWithGas memory _queries) internal pure returns (FormattedOfferWithGas memory) {
+        return FormattedOfferWithGas(
+            _formatAmounts(_queries.amounts), 
+            _formatAddresses(_queries.adapters), 
+            _formatAddresses(_queries.path), 
+            _queries.gasEstimate
+        );
+    }
+
+    /**
      * Converts byte-arrays to an array of integers
      */
     function _formatAmounts(bytes memory _amounts) internal pure returns (uint256[] memory) {
@@ -285,29 +261,6 @@ contract YakRouter is Ownable {
             addressesFormatted[i] = BytesManipulation.bytesToAddress(i*32+32, _addresses);
         }
         return addressesFormatted;
-    }
-
-    /**
-     * Formats elements in the Offer object from byte-arrays to integers and addresses
-     */
-    function _formatOffer(Offer memory _queries) internal pure returns (FormattedOffer memory) {
-        return FormattedOffer(
-            _formatAmounts(_queries.amounts), 
-            _formatAddresses(_queries.adapters), 
-            _formatAddresses(_queries.path)
-        );
-    }
-
-    /**
-     * Formats elements in the Offer object from byte-arrays to integers and addresses
-     */
-    function _formatOfferWithGas(OfferWithGas memory _queries) internal pure returns (FormattedOfferWithGas memory) {
-        return FormattedOfferWithGas(
-            _formatAmounts(_queries.amounts), 
-            _formatAddresses(_queries.adapters), 
-            _formatAddresses(_queries.path), 
-            _queries.gasEstimate
-        );
     }
 
 
