@@ -48,13 +48,73 @@ const _curveAdapter = async () => {
     }
 }
 
+const _axialAdapter = async () => {
+    const CurvelikeMetaAdapterFactory = ethers.getContractFactory('CurvelikeMetaAdapter')
+    const CurveLikeAdapterFactory = ethers.getContractFactory('CurveLikeAdapter')
+    const [
+        AxialAM3DUSDC, 
+        AxialAM3D, 
+        AxialAC4D,
+        AxialAA3D,
+        AxialAS4D,
+        AxialAM3DUSDCAdapter,
+        AxialAM3DAdapter,
+        AxialAC4DAdapter,
+        AxialAA3DAdapter,
+        AxialAS4DAdapter
+    ] = await Promise.all([
+        ethers.getContractAt('ICurvelikeMeta', curvelikePools.AxialAM3DUSDC),
+        ethers.getContractAt('ICurveLikePool', curvelikePools.AxialAM3D),
+        ethers.getContractAt('ICurveLikePool', curvelikePools.AxialAC4D),
+        ethers.getContractAt('ICurveLikePool', curvelikePools.AxialAA3D),
+        ethers.getContractAt('ICurveLikePool', curvelikePools.AxialAS4D),
+        CurvelikeMetaAdapterFactory.then(f => f.deploy(
+            'AxialAM3DUSDCAdapter',
+            curvelikePools.AxialAM3DUSDC,
+            6.5e5
+        )),
+        CurveLikeAdapterFactory.then(f => f.deploy(
+            'AxialAM3DAdapter',
+            curvelikePools.AxialAM3D,
+            3.6e5
+        )),
+        CurveLikeAdapterFactory.then(f => f.deploy(
+            'AxialAC4DAdapter',
+            curvelikePools.AxialAC4D,
+            3.6e5
+        )),
+        CurveLikeAdapterFactory.then(f => f.deploy(
+            'AxialAA3DAdapter',
+            curvelikePools.AxialAA3D,
+            3.6e5
+        )),
+        CurveLikeAdapterFactory.then(f => f.deploy(
+            'AxialAS4DAdapter',
+            curvelikePools.AxialAS4D,
+            3.6e5
+        ))
+    ])
+    return { 
+        AxialAM3DUSDC,
+        AxialAM3D,
+        AxialAC4D,
+        AxialAA3D,
+        AxialAS4D,
+        AxialAM3DUSDCAdapter,
+        AxialAM3DAdapter,
+        AxialAC4DAdapter,
+        AxialAA3DAdapter,
+        AxialAS4DAdapter
+    }
+}
+
 const _synapseAdapter = async () => {
     const [ deployer ] = await ethers.getSigners()
     // Import live contracts
-    const SynapsePool = await ethers.getContractAt('ISynapse', curvelikePools.SynapseDAIeUSDCeUSDTeNUSD)
+    const SynapsePool = await ethers.getContractAt('ICurvelikeMeta', curvelikePools.SynapseDAIeUSDCeUSDTeNUSD)
     // Init Adapters
-    const  SynapseAdapterFactory = await ethers.getContractFactory('SynapseAdapter')
-    const SynapseAdapter =  await SynapseAdapterFactory.connect(deployer).deploy(
+    const CurvelikeMetaAdapterFactory = await ethers.getContractFactory('CurvelikeMetaAdapter')
+    const SynapseAdapter =  await CurvelikeMetaAdapterFactory.connect(deployer).deploy(
         'Synapse YakAdapter',
         curvelikePools.SynapseDAIeUSDCeUSDTeNUSD, 
         2e5
@@ -341,6 +401,7 @@ const general = deployments.createFixture(async () => {
     }
 })
 
+const axialAdapter = deployments.createFixture(_axialAdapter)
 const curveAdapter = deployments.createFixture(_curveAdapter)
 const miniYakAdapter = deployments.createFixture(_miniYakAdapter)
 const synapseAdapter = deployments.createFixture(_synapseAdapter)
@@ -410,6 +471,7 @@ module.exports = {
     synapseAdapter,
     miniYakAdapter,
     curveAdapter,
+    axialAdapter,
     general, 
     simple,
     router

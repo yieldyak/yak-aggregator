@@ -1,10 +1,11 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
+    const { curvelikePools } = require('../../../test/addresses.json')
 
-    const NAME = 'AxialAS4DYakAdapterV0';
-    const POOL = '0x2a716c4933A20Cd8B9f9D9C39Ae7196A85c24228';
-    const GAS_ESTIMATE = 300000
+    const NAME = 'AxialAS4DYakAdapterV0'
+    const POOL = curvelikePools.AxialAS4D
+    const GAS_ESTIMATE = 3.6e5
 
     log(NAME)
     const deployResult = await deploy(NAME, {

@@ -1,9 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0;
+pragma abicoder v2;
 
 import "./IERC20.sol";
 
-interface ISynapse {
+struct SwapStorage {
+    uint256 initialA; 
+    uint256 futureA; 
+    uint256 initialATime; 
+    uint256 futureATime; 
+    uint256 swapFee; 
+    uint256 adminFee; 
+    address lpToken;
+}
+
+interface ICurvelikeMeta {
     function getToken(uint8 index) external view returns (address);
     function getVirtualPrice() external view returns (uint256);
     function owner() external view returns (address);
@@ -23,4 +34,5 @@ interface ISynapse {
         uint256 deadline
     ) external returns (uint256);
     function metaSwapStorage() external returns (address);
+    function swapStorage() external returns (SwapStorage memory);
 }

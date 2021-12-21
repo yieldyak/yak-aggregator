@@ -79,6 +79,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const CurveRenAdapterV0 = await deployments.get('CurveRenAdapterV0')
     const CurveAtricryptoAdapterV0 = await deployments.get('CurveAtricryptoAdapterV0')
     
+    const AxialAM3DUSDCYakAdapterV0 = await deployments.get('AxialAM3DUSDCYakAdapterV0')
+    const AxialAM3DYakAdapterV0 = await deployments.get('AxialAM3DYakAdapterV0')
+    const AxialAA3DYakAdapterV0 = await deployments.get('AxialAA3DYakAdapterV0')
+    const AxialAC4DYakAdapterV0 = await deployments.get('AxialAC4DYakAdapterV0')
+
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
         assets.WAVAX,
@@ -129,6 +134,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         MiniYakAdapterV0.address,
         PartyswapAdapterV0.address,
         AxialAS4DYakAdapterV0.address,
+        AxialAM3DUSDCYakAdapterV0.address,
+        AxialAM3DYakAdapterV0.address,
+        AxialAA3DYakAdapterV0.address,
+        AxialAC4DYakAdapterV0.address,
         // GondolaUSD4AdapterV0.address,
         GondolaUSDAdapterV0.address,
         GondolaUSDTeMIMAdapterV0.address,

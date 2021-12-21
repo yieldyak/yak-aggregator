@@ -17,42 +17,48 @@
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
+pragma abicoder v2;
 
-import "../interface/ISynapse.sol";
+import "../interface/ICurvelikeMeta.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
-contract SynapseAdapter is YakAdapter {
+contract CurvelikeMetaAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint;
 
-    bytes32 public constant id = keccak256("SynapseAdapter");
-    uint public constant poolFeeCompliment = 9996;  // In bips
-    uint public constant bips = 1e4;
+    bytes32 public constant id = keccak256("CurvelikeMetaAdapter");
+    uint public constant feeDenominator = 1e10;
+    address public metaPool;
+    address public pool;
     mapping (address => bool) public isPoolToken;
     mapping (address => uint8) public tokenIndex;
-    address public pool;
-    address public metaPool;
+    uint public poolFeeCompliment;
 
     constructor (string memory _name, address _pool, uint _swapGasEstimate) {
         pool = _pool;
         name = _name;
-        metaPool = ISynapse(pool).metaSwapStorage();  // Pool that holds USDCe, USDTe, DAIe 
-        _setPoolTokens();
+        metaPool = ICurvelikeMeta(pool).metaSwapStorage();  // Pool that holds USDCe, USDTe, DAIe 
         setSwapGasEstimate(_swapGasEstimate);
+        setPoolFeeCompliment();
+        _setPoolTokens();
+    }
+
+    function setPoolFeeCompliment() public onlyOwner {
+        poolFeeCompliment = feeDenominator - ICurvelikeMeta(pool).swapStorage().swapFee;
     }
 
     // Mapping indicator which tokens are included in the pool 
     function _setPoolTokens() internal {
         // Get nUSD from this pool
-        address nUSDAdd = ISynapse(pool).getToken(0);
-        isPoolToken[nUSDAdd] = true;
-        tokenIndex[nUSDAdd] = 0;
+        address baseTkn = ICurvelikeMeta(pool).getToken(0);
+        isPoolToken[baseTkn] = true;
+        tokenIndex[baseTkn] = 0;
         // Get stables from meta pool
         for (uint8 i=0; true; i++) {
-            try ISynapse(metaPool).getToken(i) returns (address token) {
+            try ICurvelikeMeta(metaPool).getToken(i) returns (address token) {
                 isPoolToken[token] = true;
                 tokenIndex[token] = i + 1;
             } catch {
@@ -71,7 +77,7 @@ contract SynapseAdapter is YakAdapter {
     }
 
     function _isPaused() internal view returns (bool) {
-        return ISynapse(pool).paused() || ISynapse(metaPool).paused();
+        return ICurvelikeMeta(pool).paused() || ICurvelikeMeta(metaPool).paused();
     }
 
     function _query(
@@ -86,12 +92,12 @@ contract SynapseAdapter is YakAdapter {
             !isPoolToken[_tokenOut] || 
             _isPaused()
         ) { return 0; }
-        try ISynapse(pool).calculateSwapUnderlying(
+        try ICurvelikeMeta(pool).calculateSwapUnderlying(
             tokenIndex[_tokenIn], 
             tokenIndex[_tokenOut], 
             _amountIn
         ) returns (uint amountOut) {
-            return amountOut.mul(poolFeeCompliment) / bips;
+            return amountOut.mul(poolFeeCompliment) / feeDenominator;
         } catch {
             return 0;
         }
@@ -104,7 +110,7 @@ contract SynapseAdapter is YakAdapter {
         address _tokenOut, 
         address _to
     ) internal override {
-        ISynapse(pool).swapUnderlying(
+        ICurvelikeMeta(pool).swapUnderlying(
             tokenIndex[_tokenIn], 
             tokenIndex[_tokenOut],
             _amountIn, 
