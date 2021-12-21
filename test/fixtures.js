@@ -109,24 +109,24 @@ const _axialAdapter = async () => {
 }
 
 const _synapseAdapter = async () => {
-    const [ deployer ] = await ethers.getSigners()
-    // Import live contracts
-    const SynapsePool = await ethers.getContractAt('ICurvelikeMeta', curvelikePools.SynapseDAIeUSDCeUSDTeNUSD)
-    // Init Adapters
-    const CurvelikeMetaAdapterFactory = await ethers.getContractFactory('CurvelikeMetaAdapter')
-    const SynapseAdapter =  await CurvelikeMetaAdapterFactory.connect(deployer).deploy(
-        'Synapse YakAdapter',
-        curvelikePools.SynapseDAIeUSDCeUSDTeNUSD, 
-        2e5
-    )
+    const CurvelikeAdapterFactory = ethers.getContractFactory('CurveLikeAdapter')
+    const [
+        SynapsePool, 
+        SynapseAdapter
+    ] = await Promise.all([
+        ethers.getContractAt('ICurveLikePool', curvelikePools.SynapseDAIeUSDCeUSDTeNUSD),
+        CurvelikeAdapterFactory.then(f => f.deploy(
+            'Synapse YakAdapter',
+            curvelikePools.SynapseDAIeUSDCeUSDTeNUSD, 
+            3.6e5
+        ))
+    ])
     return {
-        SynapseAdapterFactory,
         SynapseAdapter,
-        SynapsePool,
-        deployer
+        SynapsePool
     }
-    
 }
+
 const _curvelikeAdapters = async () => {
     const [ deployer ] = await ethers.getSigners()
     // Import live contracts

@@ -65,7 +65,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const BaguetteYakAdapterV0 = await deployments.get('BaguetteYakAdapterV0')
     const TraderJoeYakAdapterV0 = await deployments.get('TraderJoeYakAdapterV0')
     const BridgeMigrationAdapterV0 = await deployments.get('BridgeMigrationAdapterV0')
-    const SynapseAdapterV0 = await deployments.get('SynapseAdapterV0')
+    const SynapsePlainYakAdapterV0 = await deployments.get('SynapsePlainYakAdapterV0')
     const MiniYakAdapterV0 = await deployments.get('MiniYakAdapterV0')
     const AxialAS4DYakAdapterV0 = await deployments.get('AxialAS4DYakAdapterV0')
 
@@ -125,7 +125,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         CanaryYakAdapterV0.address, 
         TraderJoeYakAdapterV0.address,
         BridgeMigrationAdapterV0.address,
-        SynapseAdapterV0.address,
+        SynapsePlainYakAdapterV0.address,
         // ZeroYakAdapterV0.address, 
         YetiYakAdapterV0.address,
         OliveYakAdapterV0.address,

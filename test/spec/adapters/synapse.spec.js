@@ -1,177 +1,138 @@
 const { expect } = require("chai")
 const { ethers } = require("hardhat")
-const fixtures = require('../../fixtures')
 const { parseUnits } = ethers.utils
 
-describe("YakAdapter - Synapse", function() {
+const { setERC20Bal, getTokenContract } = require('../../helpers')
+const { assets } = require('../../addresses.json')
+const fix = require('../../fixtures')
 
-    let SynapseAdapterFactory
-    let SynapseAdapter
-    let SynapsePool
-    let deployer
+describe("YakAdapter - Curve", function() {
+
+    let fixCurve
     let genNewAccount
-    let PangolinRouter
+    let trader
     let tkns
 
     before(async () => {
-        fix = await fixtures.general()
-        const fixSynapse = await fixtures.synapseAdapter()
-        SynapseAdapterFactory = fixSynapse.SynapseAdapterFactory
-        SynapseAdapter = fixSynapse.SynapseAdapter
-        SynapsePool = fixSynapse.SynapsePool
-        deployer = fixSynapse.deployer
-        tkns = fix.tokenContracts
-        genNewAccount = fix.genNewAccount
-        PangolinRouter = fix.PangolinRouter
+        const fixSimple = await fix.simple()
+        fixCurve = await fix.synapseAdapter()
+        tkns = fixSimple.tokenContracts
+        genNewAccount = fixSimple.genNewAccount
     })
 
     beforeEach(async () => {
         trader = genNewAccount()
     })
-        
-    it('Querying adapter matches the price from original contract minus the fee', async () => {
-        // Options
-        const tokenFrom = tkns.NUSD
-        const tokenTo = tkns.USDTe
-        const applyFee = amountBn => amountBn.mul(9996).div(1e4)
-        let tokenFromIndex = 0
-        let tokenToIndex = 3
-        let amountIn = parseUnits('1000', await tokenFrom.decimals())
-        // Querying adapter 
-        let amountOutAdapter = await SynapseAdapter.query(amountIn, tokenFrom.address, tokenTo.address)
-        // Querying original contract
-        let amountOutOriginal = await SynapsePool.calculateSwapUnderlying(tokenFromIndex, tokenToIndex, amountIn)
-        // Comparing the prices
-        expect(applyFee(amountOutOriginal)).to.equal(amountOutAdapter)
-    })
 
-    it('Querying starting token that is not covered by adapter returns zero as output amount', async () => {
-        // Options
-        let tokenFrom = tkns.TUSD
-        let tokenTo = tkns.USDCe
-        let amountIn = parseUnits('1000', await tokenFrom.decimals())
-        // Output amount should be zero
-        expect(await SynapseAdapter.query(amountIn, tokenFrom.address, tokenTo.address)).to.equal(fix.ZERO)
-    })
+    describe('Synapse', async () => {
 
-    it('Querying ending token that is not covered by adapter returns zero as output amount', async () => {
-        // Options
-        let tokenFrom = tkns.DAIe
-        let tokenTo = tkns.TUSD
-        let amountIn = parseUnits('1000', await tokenFrom.decimals())
-        // Output amount should be zero
-        expect(await SynapseAdapter.query(amountIn, tokenFrom.address, tokenTo.address)).to.equal('0')
-    })
+        let Adapter
+        let Original
 
-    it('Query should return zero if amountIn is zero', async () => {
-        // Options
-        let tokenFrom = tkns.DAIe
-        let tokenTo = tkns.USDTe
-        let amountIn = parseUnits('0')
-        // Query adapter
-        expect(await SynapseAdapter.query(amountIn, tokenFrom.address, tokenTo.address)).to.equal('0')
-    })
-
-    it('Query should return zero if pool is paused', async () => {
-        // Impersonate contract owner to pause the pool and fund the account
-        let contractOwnerAddress = await SynapsePool.owner()
-        await trader.sendTransaction({to: contractOwnerAddress, value: parseUnits('5')})
-        await hre.network.provider.request({
-            method: "hardhat_impersonateAccount",
-            params: [contractOwnerAddress]
+        before(async () => {
+            Adapter = fixCurve.SynapseAdapter
+            Original = fixCurve.SynapsePool
         })
-        let contractOwner = ethers.provider.getSigner(contractOwnerAddress)
-        await SynapsePool.connect(contractOwner).pause()
-        // Options
-        let tokenFrom = tkns.DAIe
-        let tokenTo = tkns.NUSD
-        let amountIn = parseUnits('1000', await tokenFrom.decimals())
-        // Query adapter
-        let amountOutAdapter = await SynapseAdapter.query(
-            amountIn, 
-            tokenFrom.address, 
-            tokenTo.address
-        )
-        expect(amountOutAdapter).to.equal(fix.ZERO)
-        // Reset it
-        await SynapsePool.connect(contractOwner).unpause()
-    })
 
-    it('Swapping matches query (small num)', async () => {
-        // Options
-        let tokenFrom = tkns.USDCe
-        let tokenTo = tkns.NUSD
-        let amountIn = parseUnits('1000', await tokenFrom.decimals())
-        // Querying adapter 
-        let amountOutAdapter = await SynapseAdapter.query(
-            amountIn, 
-            tokenFrom.address, 
-            tokenTo.address
-        )
-        // Preparing for swap
-        await PangolinRouter.connect(trader).swapAVAXForExactTokens(
-            amountIn,  // Amount of tkns.USDT required to continue 
-            [ tkns.WAVAX.address, tokenFrom.address ],
-            trader.address,
-            parseInt(Date.now()/1e3)+300, 
-            { value: parseUnits('100') }
-        )
-        // Swapping
-        await tokenFrom.connect(trader).transfer(SynapseAdapter.address, amountIn)
-        let swap = () => SynapseAdapter.connect(trader).swap(
-            amountIn, 
-            amountOutAdapter, 
-            tokenFrom.address,
-            tokenTo.address, 
-            trader.address
-        )
-        await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutAdapter)
-    })
+        it('Adapter supports nUSD, USDTe, DAIe, USDCe', async () => {
+            const supportedTokens = [
+                assets.USDTe, 
+                assets.USDCe, 
+                assets.DAIe, 
+                assets.NUSD
+            ]
+            for (let tkn of supportedTokens) {
+                expect(await Adapter.isPoolToken(tkn)).to.be.true
+            }
+        })
 
-    it('Swapping matches query (big num)', async () => {
-        // Options
-        let tokenFrom = tkns.USDTe
-        let tokenTo = tkns.USDCe
-        let amountIn = parseUnits('25000', await tokenFrom.decimals())
+        it('Querying adapter matches the price from original contract', async () => {
+            // Options
+            const tknFrom = assets.NUSD
+            const tknTo = assets.USDTe
+            const [ tknFromIndex, tknToIndex ] = await Promise.all([
+                Adapter.tokenIndex(tknFrom),
+                Adapter.tokenIndex(tknTo)
+            ])
+            
+            const tknFromDecimals = await getTokenContract(tknFrom).then(t => t.decimals())
+            const amountIn = parseUnits('10000', tknFromDecimals)
+            // Query original contract
+            const amountOutOriginal = await Original.calculateSwap(tknFromIndex, tknToIndex, amountIn)
+            // Query adapter 
+            const amountOutAdapter = await Adapter.query(amountIn, tknFrom, tknTo)
+            // Compare two prices
+            expect(amountOutOriginal).to.equal(amountOutAdapter)
+        })
+    
+        it('Swapping matches query', async () => {
+            // Options
+            const tokenFrom = tkns.USDCe
+            const tokenTo = tkns.NUSD
+            const amountIn = parseUnits('133311', await tokenFrom.decimals())
+            // Querying adapter 
+            const amountOutQuery = await Adapter.query(
+                amountIn, 
+                tokenFrom.address, 
+                tokenTo.address
+            )
+            expect(amountOutQuery).to.be.above(0)
+            // Mint tokens to adapter address
+            await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+            expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
+            // Swapping
+            const swap = () => Adapter.connect(trader).swap(
+                amountIn, 
+                amountOutQuery,
+                tokenFrom.address,
+                tokenTo.address, 
+                trader.address
+            )
+            // Check that swap matches the query
+            await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
+        })
 
-        // Querying adapter 
-        let amountOutAdapter = await SynapseAdapter.query(
-            amountIn, 
-            tokenFrom.address, 
-            tokenTo.address
-        )
-        // Preparing for swap
-        await fix.PangolinRouter.connect(trader).swapAVAXForExactTokens(
-            amountIn,  // Amount of tkns.USDT required to continue 
-            [ tkns.WAVAX.address, tokenFrom.address ],
-            trader.address,
-            parseInt(Date.now()/1e3)+300, 
-            { value: parseUnits('1000000') }
-        )
-        
-        // Swapping
-        await tokenFrom.connect(trader).transfer(SynapseAdapter.address, amountIn)
-        let swap = () => SynapseAdapter.connect(trader).swap(
-            amountIn, 
-            amountOutAdapter,
-            tokenFrom.address,
-            tokenTo.address, 
-            trader.address
-        )
-        await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutAdapter)
-    })
+        it('Check gas cost', async () => {
+            // Options
+            const options = [
+                [ tkns.USDCe, tkns.USDTe ],
+                [ tkns.NUSD, tkns.DAIe ],
+                [ tkns.DAIe, tkns.USDCe ],
+                [ tkns.USDTe, tkns.NUSD ],
+            ]
+            let maxGas = 0
+            for (let [ tokenFrom, tokenTo ] of options) {
+                const amountIn = parseUnits('999999', await tokenFrom.decimals())
+                // Mint tokens to adapter address
+                await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+                expect(await tokenFrom.balanceOf(Adapter.address)).to.gte(amountIn) 
+                // Querying
+                const queryTx = await Adapter.populateTransaction.query(
+                    amountIn, 
+                    tokenFrom.address, 
+                    tokenTo.address
+                )
+                const queryGas = await ethers.provider.estimateGas(queryTx)
+                    .then(parseInt)
+                // Swapping
+                const swapGas = await Adapter.connect(trader).swap(
+                    amountIn, 
+                    1,
+                    tokenFrom.address,
+                    tokenTo.address, 
+                    trader.address
+                ).then(tr => tr.wait()).then(r => parseInt(r.gasUsed))
+                console.log(`swap-gas:${swapGas} | query-gas:${queryGas}`)
+                const gasUsed = swapGas + queryGas
+                if (gasUsed > maxGas) {
+                    maxGas = gasUsed
+                }
+            }
+            // Check that gas estimate is above max, but below 10% of max
+            const estimatedGas = await Adapter.swapGasEstimate().then(parseInt)
+            expect(estimatedGas).to.be.within(maxGas, maxGas * 1.1)
+        })
 
-    it('Initializing the adapter should set pool-tokens map', async () => {
-        // Create a new instance of adapter
-        let _SynapseAdapter = await SynapseAdapterFactory.connect(fix.deployer).deploy(
-            'SnobF3D YakAdapter',
-            fix.curvelikePools.SynapseDAIeUSDCeUSDTeNUSD, 
-            170000
-        )
-        // Check that expected tokens are supported
-        for (let tkn of [tkns.DAIe, tkns.USDTe, tkns.USDCe, tkns.NUSD]) {
-            expect(await _SynapseAdapter.isPoolToken(tkn.address)).to.be.true
-        }
     })
 
 })
