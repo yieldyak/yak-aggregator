@@ -6,6 +6,21 @@ TRACER_ENABLED = process.argv.includes('--logs')
 const { assets, unilikeFactories, curvelikePools, unilikeRouters } = addresses
 let ADAPTERS = {}
 
+const _xjoeAdapter = async () => {
+    const XJoeAdapterFactory = ethers.getContractFactory('XJoeAdapter')
+    const [
+        XJoe,
+        XJoeAdapter
+    ] = await Promise.all([
+        ethers.getContractAt('IxJOE', assets.xJOE),
+        XJoeAdapterFactory.then(f => f.deploy(1.5e5))
+    ])
+    return {
+        XJoeAdapter,
+        XJoe
+    }
+}
+
 const _kyberAdapter = async () => {
     const KyberAdapterFactory = ethers.getContractFactory('KyberAdapter')
     const [
@@ -447,6 +462,7 @@ const general = deployments.createFixture(async () => {
     }
 })
 
+const xjoeAdapter = deployments.createFixture(_xjoeAdapter)
 const kyberAdapter = deployments.createFixture(_kyberAdapter)
 const platypusAdapter = deployments.createFixture(_platypusAdapter)
 const axialAdapter = deployments.createFixture(_axialAdapter)
@@ -522,6 +538,7 @@ module.exports = {
     curveAdapter,
     axialAdapter,
     kyberAdapter,
+    xjoeAdapter,
     general, 
     simple,
     router
