@@ -84,6 +84,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const AxialAA3DYakAdapterV0 = await deployments.get('AxialAA3DYakAdapterV0')
     const AxialAC4DYakAdapterV0 = await deployments.get('AxialAC4DYakAdapterV0')
 
+    const PlatypusV1YakAdapterV0 = await deployments.get('PlatypusV1YakAdapterV0')
+
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
         assets.WAVAX,
@@ -147,6 +149,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         Curve3poolV2AdapterV0.address,
         CurveRenAdapterV0.address,
         CurveAtricryptoAdapterV0.address,
+        PlatypusV1YakAdapterV0.address
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)

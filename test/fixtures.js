@@ -48,6 +48,25 @@ const _curveAdapter = async () => {
     }
 }
 
+const _platypusAdapter = async () => {
+    const PlatypusAdapterFactory = ethers.getContractFactory('PlatypusAdapter')
+    const [
+        PlatypusV1,
+        PlatypusAdapter
+    ] = await Promise.all([
+        ethers.getContractAt('IPlatypus', curvelikePools.PlatypusV1),
+        PlatypusAdapterFactory.then(f => f.deploy(
+            'PlatypusV1Adapter',
+            curvelikePools.PlatypusV1, 
+            5.14e5
+        ))
+    ])
+    return {
+        PlatypusAdapter,
+        PlatypusV1
+    }
+}
+
 const _axialAdapter = async () => {
     const CurvelikeMetaAdapterFactory = ethers.getContractFactory('CurvelikeMetaAdapter')
     const CurveLikeAdapterFactory = ethers.getContractFactory('CurveLikeAdapter')
@@ -401,6 +420,7 @@ const general = deployments.createFixture(async () => {
     }
 })
 
+const platypusAdapter = deployments.createFixture(_platypusAdapter)
 const axialAdapter = deployments.createFixture(_axialAdapter)
 const curveAdapter = deployments.createFixture(_curveAdapter)
 const miniYakAdapter = deployments.createFixture(_miniYakAdapter)
@@ -466,6 +486,7 @@ const router = deployments.createFixture(async ({ }) => {
 
 module.exports = {
     curvelikeAdapters, 
+    platypusAdapter,
     unilikeAdapters,
     bridgeMigration,
     synapseAdapter,
