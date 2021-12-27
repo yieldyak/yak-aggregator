@@ -392,8 +392,12 @@ contract YakRouter is Ownable {
         queries.path = BytesManipulation.toBytes(_tokenIn);
         // Find the market price between AVAX and token-out and express gas price in token-out currency
         FormattedOffer memory gasQuery = findBestPath(1e18, WAVAX, _tokenOut, 2);  // Avoid low-liquidity price appreciation
-        // Leave result nWei to preserve digits for assets with low decimal places
-        uint tknOutPriceNwei = gasQuery.amounts[gasQuery.amounts.length-1].mul(_gasPrice/1e9);
+        // Include safety check if no 2-step path between WAVAX and tokenOut is found
+        uint tknOutPriceNwei = 0;
+        if (gasQuery.path.length != 0) {
+            // Leave result nWei to preserve digits for assets with low decimal places
+            tknOutPriceNwei = gasQuery.amounts[gasQuery.amounts.length-1].mul(_gasPrice/1e9);
+        }
         queries = _findBestPathWithGas(
             _amountIn, 
             _tokenIn, 
