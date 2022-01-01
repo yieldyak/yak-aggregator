@@ -2,7 +2,8 @@
 
 pragma solidity >=0.7.0;
 
-import "./Context.sol";
+import './Context.sol';
+
 /**
  * @dev Contract module which provides a basic access control mechanism, where
  * there is an account (an owner) that can be granted exclusive access to
@@ -23,7 +24,7 @@ abstract contract Ownable is Context {
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    constructor () {
+    constructor() {
         address msgSender = _msgSender();
         _owner = msgSender;
         emit OwnershipTransferred(address(0), msgSender);
@@ -40,7 +41,7 @@ abstract contract Ownable is Context {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(owner() == _msgSender(), "Ownable: Caller is not the owner");
+        require(owner() == _msgSender(), 'Ownable: Caller is not the owner');
         _;
     }
 
@@ -61,7 +62,7 @@ abstract contract Ownable is Context {
      * Can only be called by the current owner.
      */
     function transferOwnership(address newOwner) public virtual onlyOwner {
-        require(newOwner != address(0), "Ownable: New owner is the zero address");
+        require(newOwner != address(0), 'Ownable: New owner is the zero address');
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }

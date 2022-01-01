@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >= 0.7.0;
+pragma solidity >=0.7.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 
 contract TestToken is ERC20 {
-
     bytes32 public DOMAIN_SEPARATOR;
     // keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
     bytes32 public constant PERMIT_TYPEHASH = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
-    mapping(address => uint) public nonces;
+    mapping(address => uint256) public nonces;
 
     constructor(string memory _tokenName, string memory _tokenSymbol) ERC20(_tokenName, _tokenSymbol) {
-        uint chainId;
+        uint256 chainId;
         assembly {
             chainId := chainid()
         }
@@ -31,9 +30,17 @@ contract TestToken is ERC20 {
         _mint(_to, _amount);
     }
 
-    function burnFrom(address _from, uint _amount) public {}
+    function burnFrom(address _from, uint256 _amount) public {}
 
-    function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
         require(deadline >= block.timestamp, 'Pangolin: EXPIRED');
         bytes32 digest = keccak256(
             abi.encodePacked(

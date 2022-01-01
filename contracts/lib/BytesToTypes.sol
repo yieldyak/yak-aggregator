@@ -4,18 +4,15 @@
 pragma solidity >=0.7.0;
 
 library BytesToTypes {
-
-    function bytesToAddress(uint _offst, bytes memory _input) internal pure returns (address _output) {
-        
+    function bytesToAddress(uint256 _offst, bytes memory _input) internal pure returns (address _output) {
         assembly {
             _output := mload(add(_input, _offst))
         }
     }
 
-    function bytesToUint256(uint _offst, bytes memory _input) internal pure returns (uint256 _output) {
-        
+    function bytesToUint256(uint256 _offst, bytes memory _input) internal pure returns (uint256 _output) {
         assembly {
             _output := mload(add(_input, _offst))
         }
-    } 
+    }
 }

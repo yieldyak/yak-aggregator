@@ -1,13 +1,11 @@
 pragma solidity >=0.7.0;
 
-import "./IERC20.sol";
+import './IERC20.sol';
 
 interface IKyberRouter {
-
     function getAmountsOut(
         uint256 amountIn,
         address[] calldata poolsPath,
         IERC20[] calldata path
     ) external view returns (uint256[] memory amounts);
-
 }

@@ -9,19 +9,14 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const GAS_ESTIMATE = 120000
 
   log(`OliveYakAdapterV0`)
-  const deployResult = await deploy("OliveYakAdapterV0", {
+  const deployResult = await deploy('OliveYakAdapterV0', {
     from: deployer,
-    contract: "UnilikeAdapter",
+    contract: 'UnilikeAdapter',
     gas: 4000000,
-    args: [
-        NAME,
-        FACTORY,
-        FEE,
-        GAS_ESTIMATE
-    ],
-    skipIfAlreadyDeployed: true
+    args: [NAME, FACTORY, FEE, GAS_ESTIMATE],
+    skipIfAlreadyDeployed: true,
   })
-  
+
   if (deployResult.newlyDeployed) {
     log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`)
   } else {
