@@ -11,22 +11,17 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   log(NAME)
   const deployResult = await deploy(NAME, {
     from: deployer,
-    contract: "UnilikeAdapter",
+    contract: 'UnilikeAdapter',
     gas: 4000000,
-    args: [
-        NAME,
-        FACTORY,
-        FEE,
-        GAS_ESTIMATE
-    ],
-    skipIfAlreadyDeployed: true
+    args: [NAME, FACTORY, FEE, GAS_ESTIMATE],
+    skipIfAlreadyDeployed: true,
   })
-  
-    if (deployResult.newlyDeployed) {
-      log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`);
-    } else {
-      log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
-    }
-  };
 
-  module.exports.tags = ['V0', 'adapter', 'partyswap'];
+  if (deployResult.newlyDeployed) {
+    log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`)
+  } else {
+    log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
+  }
+}
+
+module.exports.tags = ['V0', 'adapter', 'partyswap']

@@ -13,48 +13,45 @@
 //                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//                              
+//
 
 // Supports Curve MIM pool (manually enter base tokens)
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
 
-import "../interface/ICurveMim.sol";
-import "../interface/IERC20.sol";
-import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
-import "../YakAdapter.sol";
+import '../interface/ICurveMim.sol';
+import '../interface/IERC20.sol';
+import '../lib/SafeERC20.sol';
+import '../lib/SafeMath.sol';
+import '../YakAdapter.sol';
 
 contract CurveMimAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint;
+    using SafeMath for uint256;
 
     address public constant basePool = 0x7f90122BF0700F9E7e1F688fe926940E8839F353;
     address public constant swapper = 0x001E3BA199B4FF4B5B6e97aCD96daFC0E2e4156e;
     address public constant pool = 0x30dF229cefa463e991e29D42DB0bae2e122B2AC7;
-    bytes32 public constant id = keccak256("CurveMimAdapter");
-    mapping (address => int128) public tokenIndex;
-    mapping (address => bool) public isPoolToken;
+    bytes32 public constant id = keccak256('CurveMimAdapter');
+    mapping(address => int128) public tokenIndex;
+    mapping(address => bool) public isPoolToken;
 
-    constructor (
-        string memory _name, 
-        uint _swapGasEstimate
-    ) {
+    constructor(string memory _name, uint256 _swapGasEstimate) {
         name = _name;
         _setPoolTokens();
         setSwapGasEstimate(_swapGasEstimate);
     }
 
-    // Mapping indicator which tokens are included in the pool 
+    // Mapping indicator which tokens are included in the pool
     function _setPoolTokens() internal {
         address metaTkn = ICurveMim(pool).coins(0);
         isPoolToken[metaTkn] = true;
         tokenIndex[metaTkn] = 0;
-        for (uint i=0; true; i++) {
+        for (uint256 i = 0; true; i++) {
             try ICurveMim(basePool).underlying_coins(i) returns (address token) {
                 isPoolToken[token] = true;
-                tokenIndex[token] = int128(int(i)) + 1;
+                tokenIndex[token] = int128(int256(i)) + 1;
             } catch {
                 break;
             }
@@ -63,56 +60,50 @@ contract CurveMimAdapter is YakAdapter {
 
     function setAllowances() public override onlyOwner {}
 
-    function _approveIfNeeded(address _tokenIn, uint _amount) internal override {
-        uint allowance = IERC20(_tokenIn).allowance(address(this), swapper);
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
+        uint256 allowance = IERC20(_tokenIn).allowance(address(this), swapper);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(swapper, UINT_MAX);
         }
     }
 
     function _query(
-        uint _amountIn, 
-        address _tokenIn, 
+        uint256 _amountIn,
+        address _tokenIn,
         address _tokenOut
-    ) internal override view returns (uint) {
-        if (
-            _amountIn==0 || 
-            _tokenIn==_tokenOut ||
-            !isPoolToken[_tokenIn] || 
-            !isPoolToken[_tokenOut]
-        ) { return 0; }
-        try ICurveMim(pool).get_dy_underlying(
-            tokenIndex[_tokenIn], 
-            tokenIndex[_tokenOut], 
-            _amountIn
-        ) returns (uint amountOut) {
+    ) internal view override returns (uint256) {
+        if (_amountIn == 0 || _tokenIn == _tokenOut || !isPoolToken[_tokenIn] || !isPoolToken[_tokenOut]) {
+            return 0;
+        }
+        try ICurveMim(pool).get_dy_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+            uint256 amountOut
+        ) {
             // `calc_token_amount` in base_pool is used in part of the query
             // this method does account for deposit fee which causes discrepancy
             // between the query result and the actual swap amount by few bps(0-3.2)
             // Additionally there is a rounding error (swap and query may calc different amounts)
             // Account for that with 4 bps discount
-            return amountOut == 0 ? 0 : amountOut*(1e4-4)/1e4;
+            return amountOut == 0 ? 0 : (amountOut * (1e4 - 4)) / 1e4;
         } catch {
             return 0;
         }
     }
 
     function _swap(
-        uint _amountIn, 
-        uint _amountOut, 
-        address _tokenIn, 
-        address _tokenOut, 
+        uint256 _amountIn,
+        uint256 _amountOut,
+        address _tokenIn,
+        address _tokenOut,
         address _to
     ) internal override {
         ICurveMim(swapper).exchange_underlying(
             pool,
-            tokenIndex[_tokenIn], 
+            tokenIndex[_tokenIn],
             tokenIndex[_tokenOut],
-            _amountIn, 
+            _amountIn,
             _amountOut
         );
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }
-
 }
