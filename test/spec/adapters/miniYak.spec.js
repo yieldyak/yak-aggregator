@@ -71,7 +71,7 @@ describe("YakAdapter - MiniYak", function() {
         it('mYak/Yak should be 1M - moon', async () => {
             // Get trader some YAK
             const mintYAKAmount = parseUnits('10', await YAK.decimals())
-            await setERC20Bal(YAK.address, mintYAKAmount, trader.address, 4)
+            await setERC20Bal(YAK.address, trader.address, mintYAKAmount);
             expect(await YAK.balanceOf(trader.address)).to.equal(mintYAKAmount)
             // Swap
             const tknIn = YAK
@@ -94,7 +94,7 @@ describe("YakAdapter - MiniYak", function() {
         it('YAK/mYAK should be 1μ - unmoon', async () => {
             // Get trader some mYak
             const mintMiniYAKAmount = parseUnits('1', await mYAK.decimals())
-            await setERC20Bal(mYAK.address, mintMiniYAKAmount, trader.address, 0)
+            await setERC20Bal(mYAK.address, trader.address, mintMiniYAKAmount)
             expect(await mYAK.balanceOf(trader.address)).to.equal(mintMiniYAKAmount)
             // Swap
             const tknIn = mYAK
