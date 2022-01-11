@@ -115,4 +115,3 @@ describe("YakAdapter - MiniYak", function() {
 
     })
 })
-        
