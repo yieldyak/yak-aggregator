@@ -3,7 +3,7 @@ const helpers = require('./helpers')
 const addresses = require('./addresses.json')
 
 TRACER_ENABLED = process.argv.includes('--logs')
-const { assets, unilikeFactories, curvelikePools, unilikeRouters } = addresses
+const { assets, unilikeFactories, curvelikePools, unilikeRouters, balancerlikeVaults, balancerlikePools } = addresses
 let ADAPTERS = {}
 
 const _xjoeAdapter = async () => {
@@ -270,6 +270,36 @@ const _curvelikeAdapters = async () => {
         pools,
     }
 }
+
+const _balancerlikeAdapters = async () => {
+    const [ deployer ] = await ethers.getSigners()
+    const BalancerlikeAdapterFactory = await ethers.getContractFactory('BalancerlikeAdapter')
+    const [
+        EmbrVault,
+        EmbrAUSDWAVAX,
+        EmbrUSDCUSDCeWAVAX,
+        EmbrAUSDAVE,
+        EmbrAdapter,
+    ] = await Promise.all([
+        ethers.getContractAt('IVault', balancerlikeVaults.embr),
+        ethers.getContractAt('IBasePool', balancerlikePools.embrAUSDWAVAX),
+        ethers.getContractAt('IBasePool', balancerlikePools.embrUSDCUSDCeWAVAX),
+        ethers.getContractAt('IBasePool', balancerlikePools.embrAUSDAVE),
+        BalancerlikeAdapterFactory.connect(deployer).deploy(
+            'Embr YakAdapter', 
+            balancerlikeVaults.embr,
+            Object.values(balancerlikePools),
+            258000),   
+    ])
+    return {
+        EmbrVault,
+        EmbrAUSDWAVAX,
+        EmbrUSDCUSDCeWAVAX,
+        EmbrAUSDAVE,
+        EmbrAdapter,
+    }
+}
+
 const _unilikeAdapters = async () => {
     const [ deployer ] = await ethers.getSigners()
     const adapters = {}
@@ -451,6 +481,7 @@ const general = deployments.createFixture(async () => {
         tokenContracts,
         unilikeRouters,
         curvelikePools,
+        balancerlikePools,
         PangolinRouter,
         genNewAccount,
         LydiaRouter,
@@ -471,6 +502,7 @@ const miniYakAdapter = deployments.createFixture(_miniYakAdapter)
 const synapseAdapter = deployments.createFixture(_synapseAdapter)
 const unilikeAdapters = deployments.createFixture(_unilikeAdapters)
 const curvelikeAdapters = deployments.createFixture(_curvelikeAdapters)
+const balancerlikeAdapters = deployments.createFixture(_balancerlikeAdapters)
 const bridgeMigration = deployments.createFixture(_bridgeMigrationAdapters)
 const router = deployments.createFixture(async ({ }) => {
     const [ deployer ] = await ethers.getSigners()
@@ -530,6 +562,7 @@ const router = deployments.createFixture(async ({ }) => {
 
 module.exports = {
     curvelikeAdapters, 
+    balancerlikeAdapters,
     platypusAdapter,
     unilikeAdapters,
     bridgeMigration,
