@@ -130,5 +130,8 @@
         "embrUSDCeUSDTe": "0x12Bb93F630802a60e5A459d323b5BFD770dAc0a4",
         "embrMIMAUSD": "0xC5355a1127140897B84c44010489034e25ee33FF",
         "embrAUSDUSDC": "0x2af262DD90bd2D124E95Fc778D9c85aA03734Ff2"
+    }, 
+    "other": {
+        "GmxVault": "0x9ab2De34A33fB459b538c43f251eB825645e8595"
     }
 }

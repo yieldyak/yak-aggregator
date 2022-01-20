@@ -88,6 +88,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const KyberAdapter = await deployments.get('KyberAdapter')
     const XJoeAdapter = await deployments.get('XJoeAdapter')
     const WAvaxAdapter = await deployments.get('WAvaxAdapter')
+    const GmxAdapterV0 = await deployments.get('GmxAdapterV0')
 
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
@@ -155,7 +156,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         PlatypusV1YakAdapterV0.address,
         KyberAdapter.address,
         XJoeAdapter.address,
-        WAvaxAdapter.address
+        WAvaxAdapter.address,
+        GmxAdapterV0.address
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)

@@ -3,8 +3,35 @@ const helpers = require('./helpers')
 const addresses = require('./addresses.json')
 
 TRACER_ENABLED = process.argv.includes('--logs')
-const { assets, unilikeFactories, curvelikePools, unilikeRouters, balancerlikeVaults, balancerlikePools } = addresses
+const { 
+    balancerlikeVaults, 
+    balancerlikePools, 
+    unilikeFactories, 
+    curvelikePools, 
+    unilikeRouters, 
+    assets, 
+    other 
+} = addresses
 let ADAPTERS = {}
+
+const _gmxAdapter = async () => {
+    const GmxAdapterFactory = ethers.getContractFactory('GmxAdapter')
+    const [
+        GmxVault,
+        GmxAdapterV0
+    ] = await Promise.all([
+        ethers.getContractAt('IGmxVault', other.GmxVault),
+        GmxAdapterFactory.then(f => f.deploy(
+            'GmxAdapterV0', 
+            other.GmxVault,
+            6.32e5
+        ))
+    ])
+    return {
+        GmxAdapterV0,
+        GmxVault
+    }
+}
 
 const _xjoeAdapter = async () => {
     const XJoeAdapterFactory = ethers.getContractFactory('XJoeAdapter')
@@ -493,6 +520,7 @@ const general = deployments.createFixture(async () => {
     }
 })
 
+const gmxAdapter = deployments.createFixture(_gmxAdapter)
 const xjoeAdapter = deployments.createFixture(_xjoeAdapter)
 const kyberAdapter = deployments.createFixture(_kyberAdapter)
 const platypusAdapter = deployments.createFixture(_platypusAdapter)
@@ -572,6 +600,7 @@ module.exports = {
     axialAdapter,
     kyberAdapter,
     xjoeAdapter,
+    gmxAdapter,
     general, 
     simple,
     router
