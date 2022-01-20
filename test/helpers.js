@@ -109,7 +109,9 @@ module.exports.getTokenContract = tokenAddress => ethers.getContractAt(
 
 module.exports.setERC20Bal = async (_token, _holder, _amount) => {
     const storageSlot = await getERC20Slot(_token)
-    const key = addressToBytes32(ethers.BigNumber.from(_holder.toString()))
-    const index = ethers.utils.keccak256(key + storageSlot.toString().padStart(64, '0'))
+    const key = addressToBytes32(_holder)
+    const index = ethers.utils.keccak256(
+        key + storageSlot.toString().padStart(64, '0')
+    ).replace(/0x0+/, "0x")  // Hardhat doesn't like leading zeroes
     await setStorageAt(_token, index, bigNumToBytes32(_amount))
 }
