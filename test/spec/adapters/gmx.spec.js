@@ -72,6 +72,8 @@ describe("YakAdapter - Gmx", function() {
             )
             // Check that swap matches the query
             await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
+            // Check leftovers arent left in the adapter
+            expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
         })
 
         it('Swapping matches query #2', async () => {
@@ -98,6 +100,8 @@ describe("YakAdapter - Gmx", function() {
             )
             // Check that swap matches the query
             await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
+            // Check leftovers arent left in the adapter
+            expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
         })
 
         it('Swapping matches query #3', async () => {
@@ -124,6 +128,8 @@ describe("YakAdapter - Gmx", function() {
             )
             // Check that swap matches the query
             await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
+            // Check leftovers arent left in the adapter
+            expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
         })
 
         it('Swap 120% of token balance', async () => {
@@ -151,6 +157,8 @@ describe("YakAdapter - Gmx", function() {
             )
             // Check that swap matches the query
             await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
+            // Check leftovers arent left in the adapter
+            expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
         })
 
         it('Swap invalid token', async () => {
