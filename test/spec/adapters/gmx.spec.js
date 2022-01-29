@@ -2,13 +2,12 @@ const { expect } = require("chai")
 const { ethers } = require("hardhat")
 const { parseUnits } = ethers.utils
 
-const { setERC20Bal, getTokenContract } = require('../../helpers')
+const { setERC20Bal } = require('../../helpers')
 const { assets } = require('../../addresses.json')
 const fix = require('../../fixtures')
 
 describe("YakAdapter - Gmx", function() {
 
-    let fixCurve
     let genNewAccount
     let trader
     let tkns
@@ -48,11 +47,11 @@ describe("YakAdapter - Gmx", function() {
             }
         })
     
-        it('Swapping matches query #1', async () => {
+        xit('Swapping matches query #1', async () => {
             // Options
             const tokenFrom = tkns.MIM
             const tokenTo = tkns.WBTCe
-            const amountIn = parseUnits('133311', await tokenFrom.decimals())
+            const amountIn = parseUnits('4')
             // Querying adapter 
             const amountOutQuery = await Adapter.query(
                 amountIn, 
@@ -161,7 +160,27 @@ describe("YakAdapter - Gmx", function() {
             expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
         })
 
-        it('Swap invalid token', async () => {
+        it('Swapping invalid token raises an error', async () => {
+            // Options
+            const tokenFrom = tkns.FRAX
+            const tokenTo = tkns.USDC
+            const amountIn = parseUnits('33', await tokenFrom.decimals())
+            // Mint tokens to adapter address
+            await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+            expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)    
+            // Swapping
+            const swap = () => Adapter.connect(trader).swap(
+                amountIn, 
+                amountIn,
+                tokenFrom.address,
+                tokenTo.address, 
+                trader.address
+            )
+            // Check that swap matches the query
+            await expect(swap()).to.revertedWith('Vault: _tokenIn not whitelisted')
+        })
+
+        it('Except query to return zero for token not whitelisted', async () => {
             // Options
             const tokenFrom = tkns.FRAX
             const tokenTo = tkns.WAVAX
@@ -173,28 +192,30 @@ describe("YakAdapter - Gmx", function() {
                 tokenTo.address
             )
             expect(amountOutQuery).to.equal(0)
-            // Mint tokens to adapter address
-            await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
-            expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)    
-            // Swapping
-            const swap = () => Adapter.connect(trader).swap(
+        })
+
+        it('Expect the query to return zero if swap amount is greater than vault bal', async () => {
+            // Options
+            const tokenFrom = tkns.WAVAX
+            const tokenTo = tkns.WBTCe
+            const amountIn = parseUnits('33311', await tokenFrom.decimals())
+            // Trade more tokens that are in the pool
+            await setERC20Bal(tokenTo.address, Original.address, parseUnits('4'))
+            // Querying adapter
+            const amountOutQuery = await Adapter.query(
                 amountIn, 
-                amountOutQuery,
-                tokenFrom.address,
-                tokenTo.address, 
-                trader.address
+                tokenFrom.address, 
+                tokenTo.address
             )
-            // Check that swap matches the query
-            await expect(swap()).to.revertedWith('Vault: _tokenIn not whitelisted')
+            await expect(amountOutQuery).to.equal(0)
         })
 
         it('Check gas cost', async () => {
             // Options
             const options = [
-                // [ tkns.USDCe, tkns.USDC ],
+                [ tkns.USDCe, tkns.WAVAX ],
                 [ tkns.MIM, tkns.WBTCe ],
-                // [ tkns.WETHe, tkns.USDCe ],
-                // [ tkns.USDC, tkns.MIM ],
+                [ tkns.WETHe, tkns.USDCe ],
             ]
             let maxGas = 0
             for (let [ tokenFrom, tokenTo ] of options) {

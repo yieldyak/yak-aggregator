@@ -80,6 +80,13 @@ contract GmxAdapter is YakAdapter {
         priceOut = priceFeed.getPrice(_tokenOut, true, true, true);
     }
 
+    function hasVaultEnoughBal(
+        address _token, 
+        uint _amount
+    ) private view returns (bool) {
+        return IERC20(_token).balanceOf(vault) >= _amount;
+    }
+
     function _query(
         uint _amountIn, 
         address _tokenIn, 
@@ -88,9 +95,10 @@ contract GmxAdapter is YakAdapter {
         if (
             _amountIn==0 || 
             _tokenIn==_tokenOut ||
-            !isPoolToken[_tokenIn] || 
-            !isPoolToken[_tokenOut] ||
-            !IGmxVault(vault).isSwapEnabled()
+            !IGmxVault(vault).whitelistedTokens(_tokenIn) ||
+            !IGmxVault(vault).whitelistedTokens(_tokenOut) ||
+            !IGmxVault(vault).isSwapEnabled() ||
+            !hasVaultEnoughBal(_tokenIn, 1)
         ) { return 0; }
 
         ( uint priceIn, uint priceOut ) = getPrices(_tokenIn, _tokenOut);
@@ -117,7 +125,12 @@ contract GmxAdapter is YakAdapter {
             .mul(BASIS_POINTS_DIVISOR.sub(feeBasisPoints))
             / BASIS_POINTS_DIVISOR;
 
-        return amountOutAfterFees;
+        if (hasVaultEnoughBal(_tokenOut, _amountIn)) {
+            return amountOutAfterFees;
+        } else {
+            return 0;
+        }
+
     }
 
     function _swap(

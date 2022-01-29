@@ -12,6 +12,7 @@ interface IGmxVault {
 
     function swap(address,address,address) external;
 
+    function whitelistedTokens(address) external view returns (bool);
     function isSwapEnabled() external view returns (bool);
     function vaultUtils() external view returns (IGmxVaultUtils);
     function priceFeed() external view returns (IGmxVaultPriceFeed);
