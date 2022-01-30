@@ -3,7 +3,7 @@ const { ethers } = require("hardhat")
 const fixtures = require('../../fixtures')
 const { parseUnits, formatUnits } = ethers.utils
 
-describe('Yak Router - query', () => {
+describe.only('Yak Router - query', () => {
 
     before(async () => {
         fix = await fixtures.general()
@@ -194,6 +194,33 @@ describe('Yak Router - query', () => {
         // console.log(result)
         // console.log('Gas estimate:', ethers.utils.formatUnits(result.gasEstimate, 9))
     })
+
+    it.only('Return the best path between two tokens that are directly connected', async () => {
+        let amountIn = ethers.utils.parseUnits('10')
+        let tokenIn = assets.WAVAX
+        let tokenOut = assets.SUSHI
+        let steps = 2
+        let result = await YakRouter.findBestPath(
+            amountIn, 
+            tokenIn, 
+            tokenOut, 
+            steps
+        )
+        // Only one step (direct connection)
+        expect(result.adapters.length).to.equal(1)
+        // Path consists of from and to token
+        expect(result.path[0]).to.equal(tokenIn)
+        expect(result.path[result.path.length-1]).to.equal(tokenOut)
+        // First amount equals input amount
+        expect(result.amounts[0]).to.equal(amountIn)
+        // Amountout equals the query without split
+        let bestOptionQuery = await YakRouter['queryNoSplit(uint256,address,address)'](
+            amountIn, 
+            tokenIn,
+            tokenOut
+        )
+        expect(bestOptionQuery.amountOut).to.equal(result.amounts[1])
+    }).timeout(1e6)
 
 
 })

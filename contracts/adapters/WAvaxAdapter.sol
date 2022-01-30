@@ -20,6 +20,7 @@
 pragma solidity >=0.7.0;
 
 import "../YakAdapter.sol";
+import "../interface/IERC20.sol";
 
 contract WAvaxAdapter is YakAdapter {
 
@@ -52,6 +53,14 @@ contract WAvaxAdapter is YakAdapter {
         address _to
     ) internal override {
         _returnTo(_tokenOut, _amountOut, _to);
+    }
+
+    function getVolumeEfficency(
+        uint _amountIn, 
+        address _tokenIn, 
+        address _tokenOut) 
+        external view returns (uint){
+            return type(uint64).max;
     }
 
 }

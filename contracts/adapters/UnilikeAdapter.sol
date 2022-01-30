@@ -98,4 +98,18 @@ contract UnilikeAdapter is YakAdapter {
             new bytes(0)
         );
     }
+
+    function getVolumeEfficency(
+        uint _amountIn, 
+        address _tokenIn, 
+        address _tokenOut) 
+        external view returns (uint){
+        if (_tokenIn == _tokenOut || _amountIn==0) { return 0; }
+        address pair = IUnilikeFactory(factory).getPair(_tokenIn, _tokenOut);
+        if (pair == address(0)) { return 0; }
+        (uint r0, uint r1, ) = IUnilikePair(pair).getReserves();
+        (uint reserveIn, uint reserveOut) = _tokenIn < _tokenOut ? (r0, r1) : (r1, r0);
+
+        return reserveIn;
+    }
 }

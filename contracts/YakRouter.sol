@@ -77,6 +77,14 @@ contract YakRouter is Ownable {
         uint256 amountOut;
     }
 
+    struct SplittedQuery {
+        address[] adapters;
+        uint[] amounts;
+        address tokenIn;
+        address tokenOut;
+        uint256 amountOut;
+    }
+
     struct OfferWithGas {
         bytes amounts;
         bytes adapters;
@@ -246,6 +254,7 @@ contract YakRouter is Ownable {
         _queries.adapters = BytesManipulation.mergeBytes(_queries.adapters, BytesManipulation.toBytes(_adapter));
     }
 
+
     /**
      * Appends Query elements to Offer struct
      */
@@ -373,6 +382,55 @@ contract YakRouter is Ownable {
             }
         }
         return bestQuery;
+    }
+
+    function queryWithSplit(
+        uint256 _amountIn, 
+        address _tokenIn, 
+        address _tokenOut
+    ) public view returns (SplittedQuery memory) {
+        
+        uint[] memory amounts = new uint[](ADAPTERS.length);
+        address[] memory adapters = new address[](ADAPTERS.length);
+        uint amountOutSum;
+
+        uint volumeSum = 0;
+
+        for (uint8 i; i<ADAPTERS.length; i++) {
+            uint volEfficency = IAdapter(ADAPTERS[i]).getVolumeEfficency(_amountIn, _tokenIn, _tokenOut);
+
+            volumeSum += volEfficency;
+            amounts[i] = volEfficency;
+        }
+
+        uint coefficent = (_amountIn * type(uint128).max) / volumeSum;
+
+        // Get amounts for each part
+        for (uint i=0; i< ADAPTERS.length; i++) {
+            if(amounts[i] == 0){
+                continue;
+            }
+
+            // if (amounts[i] * coefficent < _amountIn / 100){
+            //     volumeSum -= amounts[i];
+            //     coefficent = _amountIn/volumeSum;
+            //     continue;
+            // }
+
+            address _adapter = ADAPTERS[i];
+            amounts[i] = (_amountIn * coefficent) / type(uint128).max;
+            adapters[i] = _adapter;
+
+            uint amountOut = IAdapter(_adapter).query(
+                amounts[i], 
+                _tokenIn, 
+                _tokenOut
+            );
+
+            amountOutSum += amountOut;  
+        }
+
+        return SplittedQuery(adapters, amounts, _tokenIn, _tokenOut, amountOutSum);
     }
 
     /**
@@ -511,7 +569,58 @@ contract YakRouter is Ownable {
         uint256 bestAmountOut;
         // First check if there is a path directly from tokenIn to tokenOut
         Query memory queryDirect = queryNoSplit(_amountIn, _tokenIn, _tokenOut);
+
         if (queryDirect.amountOut!=0) {
+            _addQuery(bestOption, queryDirect.amountOut, queryDirect.adapter, queryDirect.tokenOut);
+            bestAmountOut = queryDirect.amountOut;
+        }
+        // Only check the rest if they would go beyond step limit (Need at least 2 more steps)
+        if (_maxSteps>1 && _queries.adapters.length/32<=_maxSteps-2) {
+            // Check for paths that pass through trusted tokens
+            for (uint256 i=0; i<TRUSTED_TOKENS.length; i++) {
+                if (_tokenIn == TRUSTED_TOKENS[i]) {
+                    continue;
+                }
+                // Loop through all adapters to find the best one for swapping tokenIn for one of the trusted tokens
+                Query memory bestSwap = queryNoSplit(_amountIn, _tokenIn, TRUSTED_TOKENS[i]);
+                if (bestSwap.amountOut==0) {
+                    continue;
+                }
+                // Explore options that connect the current path to the tokenOut
+                Offer memory newOffer = _cloneOffer(_queries);
+                _addQuery(newOffer, bestSwap.amountOut, bestSwap.adapter, bestSwap.tokenOut);
+                newOffer = _findBestPath(
+                    bestSwap.amountOut, 
+                    TRUSTED_TOKENS[i], 
+                    _tokenOut, 
+                    _maxSteps,
+                    newOffer
+                );  // Recursive step
+                address tokenOut = BytesManipulation.bytesToAddress(newOffer.path.length, newOffer.path);
+                uint256 amountOut = BytesManipulation.bytesToUint256(newOffer.amounts.length, newOffer.amounts);
+                // Check that the last token in the path is the tokenOut and update the new best option if neccesary
+                if (_tokenOut == tokenOut && amountOut>bestAmountOut) {
+                    bestAmountOut = amountOut;
+                    bestOption = newOffer;
+                }
+            }
+        }
+        return bestOption;   
+    }
+
+    function _findBestSplitPath(
+        uint256 _amountIn, 
+        address _tokenIn, 
+        address _tokenOut, 
+        uint _maxSteps,
+        Offer memory _queries
+    ) internal view returns (Offer memory) {
+        Offer memory bestOption = _cloneOffer(_queries);
+        uint256 bestAmountOut;
+        // First check if there is a path directly from tokenIn to tokenOut
+        SplittedQuery memory querySplit = queryWithSplit(_amountIn, _tokenIn, _tokenOut);
+
+        if (querySplit.amountOut!=0) {
             _addQuery(bestOption, queryDirect.amountOut, queryDirect.adapter, queryDirect.tokenOut);
             bestAmountOut = queryDirect.amountOut;
         }
@@ -553,6 +662,60 @@ contract YakRouter is Ownable {
     // -- SWAPPERS --
 
     function _swapNoSplit(
+        Trade calldata _trade,
+        address _from,
+        address _to, 
+        uint _fee
+    ) internal returns (uint) {
+        uint[] memory amounts = new uint[](_trade.path.length);
+        if (_fee > 0 || MIN_FEE > 0) {
+            // Transfer fees to the claimer account and decrease initial amount
+            amounts[0] = _applyFee(_trade.amountIn, _fee);
+            IERC20(_trade.path[0]).safeTransferFrom(
+                _from, 
+                FEE_CLAIMER, 
+                _trade.amountIn.sub(amounts[0])
+            );
+        } else {
+            amounts[0] = _trade.amountIn;
+        }
+        IERC20(_trade.path[0]).safeTransferFrom(
+            _from, 
+            _trade.adapters[0], 
+            amounts[0]
+        );
+        // Get amounts that will be swapped
+        for (uint i=0; i<_trade.adapters.length; i++) {
+            amounts[i+1] = IAdapter(_trade.adapters[i]).query(
+                amounts[i], 
+                _trade.path[i], 
+                _trade.path[i+1]
+            );
+        }
+        require(amounts[amounts.length-1] >= _trade.amountOut, 'YakRouter: Insufficient output amount');
+        for (uint256 i=0; i<_trade.adapters.length; i++) {
+            // All adapters should transfer output token to the following target
+            // All targets are the adapters, expect for the last swap where tokens are sent out
+            address targetAddress = i<_trade.adapters.length-1 ? _trade.adapters[i+1] : _to;
+            IAdapter(_trade.adapters[i]).swap(
+                amounts[i], 
+                amounts[i+1], 
+                _trade.path[i], 
+                _trade.path[i+1],
+                targetAddress
+            );
+        }
+        emit YakSwap(
+            _trade.path[0], 
+            _trade.path[_trade.path.length-1], 
+            _trade.amountIn, 
+            amounts[amounts.length-1]
+        );
+        return amounts[amounts.length-1];
+    }
+
+
+    function _swapWithSplit(
         Trade calldata _trade,
         address _from,
         address _to, 
