@@ -1,8 +1,8 @@
 const { expect } = require("chai")
 const { ethers } = require("hardhat")
-const { parseUnits } = ethers.utils
+const { parseUnits, formatUnits } = ethers.utils
 
-const { setERC20Bal } = require('../../helpers')
+const { setERC20Bal, impersonateAccount, injectFunds } = require('../../helpers')
 const { assets } = require('../../addresses.json')
 const fix = require('../../fixtures')
 
@@ -46,36 +46,8 @@ describe("YakAdapter - Gmx", function() {
                 expect(await Adapter.isPoolToken(tkn)).to.be.true
             }
         })
-    
-        xit('Swapping matches query #1', async () => {
-            // Options
-            const tokenFrom = tkns.MIM
-            const tokenTo = tkns.WBTCe
-            const amountIn = parseUnits('4')
-            // Querying adapter 
-            const amountOutQuery = await Adapter.query(
-                amountIn, 
-                tokenFrom.address, 
-                tokenTo.address
-            )
-            // Mint tokens to adapter address
-            await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
-            expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
-            // Swapping
-            const swap = () => Adapter.connect(trader).swap(
-                amountIn, 
-                amountOutQuery,
-                tokenFrom.address,
-                tokenTo.address, 
-                trader.address
-            )
-            // Check that swap matches the query
-            await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
-            // Check leftovers arent left in the adapter
-            expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
-        })
 
-        it('Swapping matches query #2', async () => {
+        it('Swapping matches query #1', async () => {
             // Options
             const tokenFrom = tkns.USDCe
             const tokenTo = tkns.WETHe
@@ -103,7 +75,7 @@ describe("YakAdapter - Gmx", function() {
             expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
         })
 
-        it('Swapping matches query #3', async () => {
+        it('Swapping matches query #2', async () => {
             // Options
             const tokenFrom = tkns.USDC
             const tokenTo = tkns.WAVAX
@@ -131,11 +103,12 @@ describe("YakAdapter - Gmx", function() {
             expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
         })
 
-        it('Swap 120% of token balance', async () => {
+        it('Swap more tokens than the pool holds', async () => {
             // Options
             const tokenFrom = tkns.USDC
-            const tokenTo = tkns.WAVAX
-            const vaultBal = await tokenFrom.balanceOf(Original.address)
+            const tokenTo = tkns.USDCe
+            const vaultBal = await tokenTo.balanceOf(Original.address)
+            // Swap 120% of token balance
             const amountIn = vaultBal.mul('12').div('10')
             // Querying adapter 
             const amountOutQuery = await Adapter.query(
@@ -143,6 +116,9 @@ describe("YakAdapter - Gmx", function() {
                 tokenFrom.address, 
                 tokenTo.address
             )
+            // Expect query to return zero amount out
+            expect(amountOutQuery).to.equal(0)
+
             // Mint tokens to adapter address
             await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
             expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
@@ -155,9 +131,111 @@ describe("YakAdapter - Gmx", function() {
                 trader.address
             )
             // Check that swap matches the query
-            await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
-            // Check leftovers arent left in the adapter
-            expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
+            await expect(swap()).to.revertedWith('Vault: max USDG exceeded')
+        })
+
+        it('Swap more tokens than reserved', async () => {
+            // Options
+            const tokenFrom = tkns.USDC
+            const tokenTo = tkns.USDCe
+            const reserved = await Original.reservedAmounts(tokenTo.address)
+            const vaultBal = await tokenTo.balanceOf(Original.address)
+            const amountIn = vaultBal.sub(reserved.mul('8').div('10'))
+            // Querying adapter 
+            const amountOutQuery = await Adapter.query(
+                amountIn, 
+                tokenFrom.address, 
+                tokenTo.address
+            )
+            // Expect query to return zero amount out
+            expect(amountOutQuery).to.equal(0)
+
+            // Mint tokens to adapter address
+            await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+            expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
+            // Swapping
+            const swap = () => Adapter.connect(trader).swap(
+                amountIn, 
+                amountOutQuery,
+                tokenFrom.address,
+                tokenTo.address, 
+                trader.address
+            )
+            // Check that swap matches the query
+            await expect(swap()).to.revertedWith('Vault: reserve exceeds pool')
+        })
+
+        it('Swap more tokens than max-usdg allows', async () => {
+            // Options
+            const tokenFrom = tkns.USDC
+            const tokenTo = tkns.USDCe
+            const maxUsdg = await Original.maxUsdgAmounts(tokenFrom.address)
+            const amountIn = maxUsdg.mul('12').div('10')
+            // Querying adapter 
+            const amountOutQuery = await Adapter.query(
+                amountIn, 
+                tokenFrom.address, 
+                tokenTo.address
+            )
+            // Expect query to return zero amount out
+            expect(amountOutQuery).to.equal(0)
+
+            // Mint tokens to adapter address
+            await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+            expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
+            // Swapping
+            const swap = () => Adapter.connect(trader).swap(
+                amountIn, 
+                amountOutQuery,
+                tokenFrom.address,
+                tokenTo.address, 
+                trader.address
+            )
+            // Check that swap matches the query
+            await expect(swap()).to.revertedWith('Vault: max USDG exceeded')
+        })
+
+        it('Swap more than token buffer allows', async () => {
+            // Options
+            const tokenFrom = tkns.USDC
+            const tokenTo = tkns.USDCe
+            // Decrease pool token balance by 60%
+            // Code below only makes sense if from and to tokens are 1:1
+            const vaultBal = await tokenTo.balanceOf(Original.address)
+            const amountIn = vaultBal.mul(5).div(10)
+            // Pretend to be gov to modify the `bufferAmounts`
+            const gov = await Original.gov()
+            await impersonateAccount(gov)
+            // Send gov enough money to pay for gas
+            await injectFunds(trader, gov, parseUnits('1'))
+            const govWallet = ethers.provider.getSigner(gov)
+            // Set buffer amount to 50% of the pool balance
+            const newBufferAmount = vaultBal.mul(5).div(10)
+            await Original.connect(govWallet).setBufferAmount(
+                tokenTo.address, 
+                newBufferAmount
+            )   
+            // Querying adapter 
+            const amountOutQuery = await Adapter.query(
+                amountIn, 
+                tokenFrom.address, 
+                tokenTo.address
+            )
+            // Expect query to return zero amount out
+            expect(amountOutQuery).to.equal(0)
+            // Mint tokens to adapter address
+            await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+            expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
+            // Swapping
+            const swap = () => Adapter.connect(trader).swap(
+                amountIn, 
+                amountOutQuery,
+                tokenFrom.address,
+                tokenTo.address, 
+                trader.address
+            )
+            // Check that swap matches the query
+            await expect(swap()).to.revertedWith('Vault: poolAmount < buffer')
         })
 
         it('Swapping invalid token raises an error', async () => {
@@ -194,27 +272,11 @@ describe("YakAdapter - Gmx", function() {
             expect(amountOutQuery).to.equal(0)
         })
 
-        it('Expect the query to return zero if swap amount is greater than vault bal', async () => {
-            // Options
-            const tokenFrom = tkns.WAVAX
-            const tokenTo = tkns.WBTCe
-            const amountIn = parseUnits('33311', await tokenFrom.decimals())
-            // Trade more tokens that are in the pool
-            await setERC20Bal(tokenTo.address, Original.address, parseUnits('4'))
-            // Querying adapter
-            const amountOutQuery = await Adapter.query(
-                amountIn, 
-                tokenFrom.address, 
-                tokenTo.address
-            )
-            await expect(amountOutQuery).to.equal(0)
-        })
-
         it('Check gas cost', async () => {
             // Options
             const options = [
                 [ tkns.USDCe, tkns.WAVAX ],
-                [ tkns.MIM, tkns.WBTCe ],
+                [ tkns.WAVAX, tkns.WBTCe ],
                 [ tkns.WETHe, tkns.USDCe ],
             ]
             let maxGas = 0

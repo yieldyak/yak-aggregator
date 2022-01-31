@@ -87,6 +87,33 @@ contract GmxAdapter is YakAdapter {
         return IERC20(_token).balanceOf(vault) >= _amount;
     }
 
+    function isWithinVaultLimits(
+        address _tokenIn,
+        address _tokenOut, 
+        uint _amountInUsdg,
+        uint _amountOut
+    ) private view returns (bool) {
+        // Check pool balance is not exceeded
+        uint poolBalTknOut = IGmxVault(vault).poolAmounts(_tokenOut);
+        if (poolBalTknOut >= _amountOut) {
+            // Check if amountOut exceeds reserved amount
+            uint newPoolBalTknOut = poolBalTknOut.sub(_amountOut);
+            uint reservedAmount = IGmxVault(vault).reservedAmounts(_tokenOut);
+            bool reservedAmountNotExceeded = newPoolBalTknOut >= reservedAmount;
+            // Check if amountOut exceeds buffer amount
+            uint bufferAmount = IGmxVault(vault).bufferAmounts(_tokenOut);
+            bool bufferAmountNotExceeded = newPoolBalTknOut >= bufferAmount;
+            // Check if amountIn(usdg) exceeds max debt
+            uint newUsdgAmount = IGmxVault(vault).usdgAmounts(_tokenIn).add(_amountInUsdg);
+            uint maxUsdgAmount = IGmxVault(vault).maxUsdgAmounts(_tokenIn);
+            bool maxDebtNotExceeded = newUsdgAmount <= maxUsdgAmount;
+
+            if (reservedAmountNotExceeded && bufferAmountNotExceeded && maxDebtNotExceeded) {
+                return true;
+            }
+        }   
+    }
+
     function _query(
         uint _amountIn, 
         address _tokenIn, 
@@ -123,12 +150,16 @@ contract GmxAdapter is YakAdapter {
             );
         uint amountOutAfterFees = amountOut
             .mul(BASIS_POINTS_DIVISOR.sub(feeBasisPoints))
-            / BASIS_POINTS_DIVISOR;
+            / BASIS_POINTS_DIVISOR;   
 
-        if (hasVaultEnoughBal(_tokenOut, _amountIn)) {
+        bool withinVaultLimits = isWithinVaultLimits(
+            _tokenIn, 
+            _tokenOut, 
+            usdgAmount, 
+            amountOutAfterFees
+        );
+        if (withinVaultLimits) {
             return amountOutAfterFees;
-        } else {
-            return 0;
         }
 
     }

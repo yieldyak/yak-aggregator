@@ -115,3 +115,18 @@ module.exports.setERC20Bal = async (_token, _holder, _amount) => {
     ).replace(/0x0+/, "0x")  // Hardhat doesn't like leading zeroes
     await setStorageAt(_token, index, bigNumToBytes32(_amount))
 }
+
+module.exports.impersonateAccount = async (account) => {
+    return hre.network.provider.request({
+        method: "hardhat_impersonateAccount",
+        params: [account]}
+    )
+}
+
+module.exports.injectFunds = async (sender, reciever, amount) => {
+    // Deploy and fund NTInjector
+    const NTInjector = await ethers.getContractFactory('NTInjector')
+        .then(f => f.connect(sender).deploy({value: amount}))
+    // Inject funds
+    await NTInjector.injectFunds(reciever)
+}
