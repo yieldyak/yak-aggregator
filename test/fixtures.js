@@ -80,6 +80,7 @@ const _curveAdapter = async () => {
     const Curve2AdaptorFactory = ethers.getContractFactory('Curve2Adapter')
     const CurvePlainAdapterFactory = ethers.getContractFactory('CurvePlainAdapter')
     const CurveMimAdapterFactory = ethers.getContractFactory('CurveMimAdapter')
+    const CurveMoreAdapterFactory = ethers.getContractFactory('CurveMoreAdapter')
     const [ 
         CurveAave,
         CurveAtricrypto,
@@ -87,12 +88,14 @@ const _curveAdapter = async () => {
         Curve3poolV2,
         CurveUSDC,
         CurveMim,
+        CurveMorePool,
         CurveAaveAdapter,
         CurveAtricryptoAdapter, 
         CurveRenAdapter, 
         Curve3poolV2Adapter, 
         CurveUSDCAdapter,
-        CurveMimAdapter
+        CurveMimAdapter,
+        CurveMoreAdapter
     ] = await Promise.all([
         ethers.getContractAt('ICurve2', curvelikePools.CurveAave),
         ethers.getContractAt('ICurve1', curvelikePools.CurveAtricrypto),
@@ -100,12 +103,14 @@ const _curveAdapter = async () => {
         ethers.getContractAt('ICurvePlain', curvelikePools.Curve3poolV2),
         ethers.getContractAt('ICurvePlain', curvelikePools.CurveUSDC),
         ethers.getContractAt('ICurveMim', curvelikePools.CurveMim),
+        ethers.getContractAt('ICurve2', curvelikePools.CurveMore),
         Curve2AdaptorFactory.then(f => f.deploy('CurveAaveAdapter', curvelikePools.CurveAave, 9.1e5)),
         Curve1AdaptorFactory.then(f => f.deploy('CurveAtricryptoAdapter', curvelikePools.CurveAtricrypto, 1.098e6)),
         Curve2AdaptorFactory.then(f => f.deploy('CurveRenAdapter', curvelikePools.CurveRen, 6.3e5)),
         CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.9e5)),
         CurvePlainAdapterFactory.then(f => f.deploy('CurveUSDCAdapter', curvelikePools.CurveUSDC, 2.9e5)),
-        CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.25e6))
+        CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.25e6)),
+        CurveMoreAdapterFactory.then(f => f.deploy('CurveMoreAdapter', 1.23e6))
     ])
     return { 
         CurveAave,
@@ -113,13 +118,15 @@ const _curveAdapter = async () => {
         CurveRen,
         Curve3poolV2,
         CurveUSDC,
-        CurveMim, 
+        CurveMim,
+        CurveMorePool,
         CurveAaveAdapter,
         CurveAtricryptoAdapter, 
         CurveRenAdapter, 
         Curve3poolV2Adapter, 
         CurveUSDCAdapter,
-        CurveMimAdapter
+        CurveMimAdapter,
+        CurveMoreAdapter
     }
 }
 

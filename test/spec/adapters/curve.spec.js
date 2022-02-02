@@ -665,4 +665,117 @@ describe("YakAdapter - Curve", function() {
 
     })
 
+    describe('more', async () => {
+
+        let Adapter
+        let Original
+
+        before(async () => {
+            Adapter = fixCurve.CurveMoreAdapter
+            Original = fixCurve.CurveMorePool
+        })
+
+        it('Adapter supports underlying DAIe, USDCe, USDTe', async () => {
+            const supportedTokens = [
+                assets.USDCe,
+                assets.USDTe,
+                assets.DAIe,
+            ]
+            for (let tkn of supportedTokens) {
+                expect(await Adapter.isUnderlyingToken(tkn)).to.be.true
+            }
+        })
+    
+        it('Swapping matches query', async () => {
+
+            async function checkAdapterSwapMatchesQuery(tokenFrom, tokenTo) {
+                const amountIn = parseUnits('1200', await tokenFrom.decimals())
+                // Querying adapter 
+                const amountOutQuery = await Adapter.query(
+                    amountIn, 
+                    tokenFrom.address, 
+                    tokenTo.address
+                )
+                // Mint tokens to adapter address
+                await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+                expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
+                // Swapping
+                const swap = () => Adapter.connect(trader).swap(
+                    amountIn, 
+                    amountOutQuery,
+                    tokenFrom.address,
+                    tokenTo.address, 
+                    trader.address
+                )
+                // Check that swap matches the query
+                await expect(swap()).to.not.reverted
+                expect(await tokenTo.balanceOf(trader.address)).to.gte(amountOutQuery)
+                // Check leftovers arent left in the adapter
+                expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
+            }
+
+            await checkAdapterSwapMatchesQuery(tkns.MONEY, tkns.USDTe)
+            await checkAdapterSwapMatchesQuery(tkns.DAIe, tkns.MONEY)
+            await checkAdapterSwapMatchesQuery(tkns.MONEY, tkns.USDCe)    
+        })
+
+        it('At least one pair needs to include $MONEY', async () => {
+
+            async function getAmountOut(tokenFrom, tokenTo) {
+                const amountIn = parseUnits('12000', await tokenFrom.decimals())
+                // Querying adapter 
+                return Adapter.query(
+                    amountIn, 
+                    tokenFrom.address, 
+                    tokenTo.address
+                )
+            }
+
+            expect(await getAmountOut(tkns.DAIe, tkns.USDCe)).to.be.equal(0)
+            expect(await getAmountOut(tkns.USDTe, tkns.DAIe)).to.be.equal(0)
+            expect(await getAmountOut(tkns.USDCe, tkns.USDTe)).to.be.equal(0)
+
+        })
+
+        it('Check gas cost', async () => {
+            // Options
+            const options = [
+                [ tkns.MONEY, tkns.USDCe ],
+                [ tkns.DAIe, tkns.MONEY ],
+                [ tkns.MONEY, tkns.USDTe ],
+            ]
+            let maxGas = 0
+            for (let [ tokenFrom, tokenTo ] of options) {
+                const amountIn = parseUnits('10000', await tokenFrom.decimals())
+                // Mint tokens to adapter address
+                await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+                // Querying
+                const queryTx = await Adapter.populateTransaction.query(
+                    amountIn, 
+                    tokenFrom.address, 
+                    tokenTo.address
+                )
+                const queryGas = await ethers.provider.estimateGas(queryTx)
+                    .then(parseInt)
+                // Swapping
+                const swapGas = await Adapter.connect(trader).swap(
+                    amountIn, 
+                    1,
+                    tokenFrom.address,
+                    tokenTo.address, 
+                    trader.address
+                ).then(tr => tr.wait()).then(r => parseInt(r.gasUsed))
+                console.log(`swap-gas:${swapGas} | query-gas:${queryGas}`)
+                const gasUsed = swapGas + queryGas
+                if (gasUsed > maxGas) {
+                    maxGas = gasUsed
+                }
+            }
+            // Check that gas estimate is above max, but below 10% of max
+            const estimatedGas = await Adapter.swapGasEstimate().then(parseInt)
+            expect(estimatedGas).to.be.within(maxGas, maxGas * 1.1)
+        })
+
+    })
+
 })

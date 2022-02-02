@@ -90,6 +90,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const WAvaxAdapter = await deployments.get('WAvaxAdapter')
     const GmxAdapterV0 = await deployments.get('GmxAdapterV0')
     const CurveUSDCAdapterV0 = await deployments.get('CurveUSDCAdapterV0')
+    const CurveMoreAdapterV0 = await deployments.get('CurveMoreAdapterV0')
 
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
@@ -159,7 +160,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         XJoeAdapter.address,
         WAvaxAdapter.address,
         GmxAdapterV0.address,
-        CurveUSDCAdapterV0.address
+        CurveUSDCAdapterV0.address,
+        CurveMoreAdapterV0.address
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
