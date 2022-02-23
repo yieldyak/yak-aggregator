@@ -77,7 +77,8 @@
         "canary": "0xCFBA329d49C24b70F3a8b9CC0853493d4645436b", 
         "baguette": "0x3587B8c0136c2C3605a9E5B03ab54Da3e4044b50", 
         "joe": "0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10",
-        "partyswap": "0x58A08bc28f3E8dab8Fb2773D8f243bC740398b09"
+        "partyswap": "0x58A08bc28f3E8dab8Fb2773D8f243bC740398b09",
+        "hakuswap": "0x2Db46fEB38C57a6621BCa4d97820e1fc1de40f41"
     },
     "curvelikePools": {
         "snobS3D": "0x6B41E5c07F2d382B921DE5C34ce8E2057d84C042", 
