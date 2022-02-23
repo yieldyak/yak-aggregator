@@ -14,6 +14,21 @@ const {
 } = addresses
 let ADAPTERS = {}
 
+const _savaxAdapter = async () => {
+    const SAvaxAdapterFactory = ethers.getContractFactory('SAvaxAdapter')
+    const [
+        SAVAX,
+        SAvaxAdapter
+    ] = await Promise.all([
+        ethers.getContractAt('ISAVAX', assets.SAVAX),
+        SAvaxAdapterFactory.then(f => f.deploy(1.7e5))
+    ])
+    return {
+        SAvaxAdapter,
+        SAVAX
+    }
+}
+
 const _gmxAdapter = async () => {
     const GmxAdapterFactory = ethers.getContractFactory('GmxAdapter')
     const [
@@ -533,6 +548,7 @@ const general = deployments.createFixture(async () => {
     }
 })
 
+const savaxAdapter = deployments.createFixture(_savaxAdapter)
 const gmxAdapter = deployments.createFixture(_gmxAdapter)
 const xjoeAdapter = deployments.createFixture(_xjoeAdapter)
 const kyberAdapter = deployments.createFixture(_kyberAdapter)
@@ -609,6 +625,7 @@ module.exports = {
     bridgeMigration,
     synapseAdapter,
     miniYakAdapter,
+    savaxAdapter,
     curveAdapter,
     axialAdapter,
     kyberAdapter,
