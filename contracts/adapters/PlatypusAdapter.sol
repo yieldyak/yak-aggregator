@@ -46,13 +46,13 @@ contract PlatypusAdapter is YakAdapter {
         pool = _pool;
         name = _name;
         setSwapGasEstimate(_swapGasEstimate);
-        _setPoolTokens();
+        setPoolTokens();
     }
 
     function setAllowances() public override onlyOwner {}
 
     // Mapping indicator which tokens are included in the pool 
-    function _setPoolTokens() internal {
+    function setPoolTokens() public {
         address[] memory poolTkns = IPlatypus(pool).getTokenAddresses();
         for (uint8 i=0; i<poolTkns.length; i++) {
             isPoolToken[poolTkns[i]] = true;

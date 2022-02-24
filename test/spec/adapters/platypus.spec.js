@@ -34,12 +34,13 @@ describe("YakAdapter - Platypus", function() {
             Original = fixCurve.PlatypusV1
         })
 
-        it('Adapter supports USDCe, USDTe, USDCe, MIM', async () => {
+        it('Adapter supports USDCe, USDTe, USDCe, USDC, USDt', async () => {
             const supportedTokens = [
                 assets.USDCe, 
                 assets.USDTe, 
-                assets.DAIe, 
-                assets.MIM
+                assets.DAIe,
+                assets.USDt, 
+                assets.USDC, 
             ]
             for (let tkn of supportedTokens) {
                 expect(await Adapter.isPoolToken(tkn)).to.be.true
@@ -49,7 +50,7 @@ describe("YakAdapter - Platypus", function() {
         it('Querying adapter matches the price from original contract', async () => {
             // Options
             const tknFrom = assets.DAIe
-            const tknTo = assets.MIM
+            const tknTo = assets.USDt
             const tknFromDecimals = await getTokenContract(tknFrom).then(t => t.decimals())
             const amountIn = parseUnits('10000', tknFromDecimals)
             // Query original contract
@@ -90,9 +91,9 @@ describe("YakAdapter - Platypus", function() {
             // Options
             const options = [
                 [ tkns.USDCe, tkns.USDTe ],
-                [ tkns.MIM, tkns.DAIe ],
+                [ tkns.USDt, tkns.DAIe ],
                 [ tkns.DAIe, tkns.USDCe ],
-                [ tkns.USDTe, tkns.MIM ],
+                [ tkns.USDTe, tkns.USDt ],
             ]
             let maxGas = 0
             for (let [ tokenFrom, tokenTo ] of options) {
