@@ -107,6 +107,56 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "swapStorage",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "initialA",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "futureA",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "initialATime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "futureATime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "swapFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "adminFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "lpToken",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct SwapStorage",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint8",

@@ -37,7 +37,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     
     // const SnobS3YakAdapterV0 = await deployments.get("SnobS3YakAdapterV0")
     const SnobF3YakAdapterV0 = await deployments.get("SnobF3YakAdapterV0")
-    const SnobS4YakAdapterV0 = await deployments.get("SnobS4YakAdapterV0")
+    // const SnobS4YakAdapterV0 = await deployments.get("SnobS4YakAdapterV0")
     // const GondolaUSDTYakAdapterV0 = await deployments.get("GondolaUSDTYakAdapterV0")
     // const GondolaBTCYakAdapterV0 = await deployments.get("GondolaBTCYakAdapterV0")
     // const GondolaDAIYakAdapterV0 = await deployments.get("GondolaDAIYakAdapterV0")
@@ -50,7 +50,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     // const GondolaUSDTeDAIeYakAdapterV0 = await deployments.get("GondolaUSDTeDAIeYakAdapterV0")
     // const GondolaUSDTeUSDCeAdapterV0 = await deployments.get('GondolaUSDTeUSDCeAdapterV0')
     // const GondolaUSDTeTSDAdapterV0 = await deployments.get('GondolaUSDTeTSDAdapterV0')
-    const GondolaYAKmYAKAdapterV0 = await deployments.get('GondolaYAKmYAKAdapterV0')
+    // const GondolaYAKmYAKAdapterV0 = await deployments.get('GondolaYAKmYAKAdapterV0')
     const SushiswapYakAdapterV0 = await deployments.get("SushiYakAdapterV0")
     const PangolinYakAdapterV0 = await deployments.get("PangolinYakAdapterV0")
     const PartyswapAdapterV0 = await deployments.get('PartyswapAdapterV0')
@@ -64,19 +64,19 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const CanaryYakAdapterV0 = await deployments.get("CanaryYakAdapterV0")
     const BaguetteYakAdapterV0 = await deployments.get('BaguetteYakAdapterV0')
     const TraderJoeYakAdapterV0 = await deployments.get('TraderJoeYakAdapterV0')
-    const BridgeMigrationAdapterV0 = await deployments.get('BridgeMigrationAdapterV0')
+    // const BridgeMigrationAdapterV0 = await deployments.get('BridgeMigrationAdapterV0')
     const SynapsePlainYakAdapterV0 = await deployments.get('SynapsePlainYakAdapterV0')
     const MiniYakAdapterV0 = await deployments.get('MiniYakAdapterV0')
     const AxialAS4DYakAdapterV0 = await deployments.get('AxialAS4DYakAdapterV0')
 
     // const GondolaUSD4AdapterV0 = await deployments.get('GondolaUSD4AdapterV0')
-    const GondolaUSDAdapterV0 = await deployments.get('GondolaUSDAdapterV0')
+    // const GondolaUSDAdapterV0 = await deployments.get('GondolaUSDAdapterV0')
     const GondolaUSDTeMIMAdapterV0 = await deployments.get('GondolaUSDTeMIMAdapterV0')
-    const GondolaYAKmYAKv2AdapterV0 = await deployments.get('GondolaYAKmYAKv2AdapterV0')
+    // const GondolaYAKmYAKv2AdapterV0 = await deployments.get('GondolaYAKmYAKv2AdapterV0')
     const CurveAaveAdapterV0 = await deployments.get('CurveAaveAdapterV0')
-    const CurveMimAdapterV0 = await deployments.get('CurveMimAdapterV0')
+    // const CurveMimAdapterV0 = await deployments.get('CurveMimAdapterV0')
     const Curve3poolV2AdapterV0 = await deployments.get('Curve3poolV2AdapterV0')
-    const CurveRenAdapterV0 = await deployments.get('CurveRenAdapterV0')
+    // const CurveRenAdapterV0 = await deployments.get('CurveRenAdapterV0')
     const CurveAtricryptoAdapterV0 = await deployments.get('CurveAtricryptoAdapterV0')
     
     const AxialAM3DUSDCYakAdapterV0 = await deployments.get('AxialAM3DUSDCYakAdapterV0')
@@ -125,16 +125,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         // GondolaUSDTeDAIeYakAdapterV0.address,
         // GondolaUSDTeUSDCeAdapterV0.address, 
         // GondolaUSDTeTSDAdapterV0.address,
-        GondolaYAKmYAKAdapterV0.address,
+        // GondolaYAKmYAKAdapterV0.address,
         SnobF3YakAdapterV0.address,
         // SnobS3YakAdapterV0.address,
-        SnobS4YakAdapterV0.address, 
+        // SnobS4YakAdapterV0.address, 
         LydiaYakAdapterV0.address,
         ElkYakAdapterV0.address, 
         // PandaYakAdapterV0.address, 
         CanaryYakAdapterV0.address, 
         TraderJoeYakAdapterV0.address,
-        BridgeMigrationAdapterV0.address,
+        // BridgeMigrationAdapterV0.address,
         SynapsePlainYakAdapterV0.address,
         // ZeroYakAdapterV0.address, 
         YetiYakAdapterV0.address,
@@ -149,11 +149,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         AxialAA3DYakAdapterV0.address,
         AxialAC4DYakAdapterV0.address,
         // GondolaUSD4AdapterV0.address,
-        GondolaUSDAdapterV0.address,
+        // GondolaUSDAdapterV0.address,
         GondolaUSDTeMIMAdapterV0.address,
-        GondolaYAKmYAKv2AdapterV0.address,
+        // GondolaYAKmYAKv2AdapterV0.address,
         CurveAaveAdapterV0.address, 
-        CurveMimAdapterV0.address,
+        // CurveMimAdapterV0.address,
         Curve3poolV2AdapterV0.address,
         // CurveRenAdapterV0.address,
         CurveAtricryptoAdapterV0.address,

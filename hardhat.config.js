@@ -32,6 +32,7 @@ task("verifyContract", "Verifies the contract in the snowtrace")
     async({deploymentFilePath}, hre) => verifyContract(deploymentFilePath, hre)
   )
 
+// npx hardhat list-adapters --network mainnet
 task("list-adapters", "Lists all adapters for the current YakRouter", async (_, hre) => {
   const YakRouter = await hre.ethers.getContract("YakRouterV0")
   const adapterLen = await YakRouter.adaptersCount()
