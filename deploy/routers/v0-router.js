@@ -94,6 +94,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const HakuSwapAdapterV0 = await deployments.get('HakuSwapAdapterV0')
     const SAvaxAdapterV0 = await deployments.get('SAvaxAdapterV0')
     const WoofiAdapter = await deployments.get('WoofiAdapter')
+    const Curve3poolfAdapterV0 = await deployments.get('Curve3poolfAdapterV0')
 
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
@@ -167,7 +168,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         CurveMoreAdapterV0.address,
         HakuSwapAdapterV0.address,
         SAvaxAdapterV0.address,
-        WoofiAdapter.address
+        WoofiAdapter.address,
+        Curve3poolfAdapterV0.address
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)

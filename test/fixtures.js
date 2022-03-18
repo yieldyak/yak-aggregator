@@ -121,6 +121,7 @@ const _curveAdapter = async () => {
         CurveRen,
         Curve3poolV2,
         CurveUSDC,
+        Curve3poolf,
         CurveMim,
         CurveMorePool,
         CurveAaveAdapter,
@@ -128,6 +129,7 @@ const _curveAdapter = async () => {
         CurveRenAdapter, 
         Curve3poolV2Adapter, 
         CurveUSDCAdapter,
+        Curve3poolfAdapter,
         CurveMimAdapter,
         CurveMoreAdapter
     ] = await Promise.all([
@@ -136,6 +138,7 @@ const _curveAdapter = async () => {
         ethers.getContractAt('ICurve2', curvelikePools.CurveRen),
         ethers.getContractAt('ICurvePlain', curvelikePools.Curve3poolV2),
         ethers.getContractAt('ICurvePlain', curvelikePools.CurveUSDC),
+        ethers.getContractAt('ICurvePlain', curvelikePools.Curve3poolf),
         ethers.getContractAt('ICurveMim', curvelikePools.CurveMim),
         ethers.getContractAt('ICurve2', curvelikePools.CurveMore),
         Curve2AdaptorFactory.then(f => f.deploy('CurveAaveAdapter', curvelikePools.CurveAave, 9.1e5)),
@@ -143,6 +146,7 @@ const _curveAdapter = async () => {
         Curve2AdaptorFactory.then(f => f.deploy('CurveRenAdapter', curvelikePools.CurveRen, 6.3e5)),
         CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.9e5)),
         CurvePlainAdapterFactory.then(f => f.deploy('CurveUSDCAdapter', curvelikePools.CurveUSDC, 2.9e5)),
+        CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolfAdapter', curvelikePools.Curve3poolf, 3.3e5)),
         CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.25e6)),
         CurveMoreAdapterFactory.then(f => f.deploy('CurveMoreAdapter', 1.23e6))
     ])
@@ -152,6 +156,7 @@ const _curveAdapter = async () => {
         CurveRen,
         Curve3poolV2,
         CurveUSDC,
+        Curve3poolf,
         CurveMim,
         CurveMorePool,
         CurveAaveAdapter,
@@ -159,6 +164,7 @@ const _curveAdapter = async () => {
         CurveRenAdapter, 
         Curve3poolV2Adapter, 
         CurveUSDCAdapter,
+        Curve3poolfAdapter,
         CurveMimAdapter,
         CurveMoreAdapter
     }
