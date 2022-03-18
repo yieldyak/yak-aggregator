@@ -14,6 +14,25 @@ const {
 } = addresses
 let ADAPTERS = {}
 
+const _woofiAdapter = async () => {
+    const WoofiAdapterFactory = ethers.getContractFactory('WoofiAdapter')
+    const [
+        WoofiPool,
+        WoofiAdapter
+    ] = await Promise.all([
+        ethers.getContractAt('IWooPP', other.WoofiPool),
+        WoofiAdapterFactory.then(f => f.deploy(
+            'WoofiAdapter', 
+            5.25e5,
+            other.WoofiPool
+        ))
+    ])
+    return {
+        WoofiAdapter,
+        WoofiPool
+    }
+}
+
 const _savaxAdapter = async () => {
     const SAvaxAdapterFactory = ethers.getContractFactory('SAvaxAdapter')
     const [
@@ -548,6 +567,7 @@ const general = deployments.createFixture(async () => {
     }
 })
 
+const woofiAdapter = deployments.createFixture(_woofiAdapter)
 const savaxAdapter = deployments.createFixture(_savaxAdapter)
 const gmxAdapter = deployments.createFixture(_gmxAdapter)
 const xjoeAdapter = deployments.createFixture(_xjoeAdapter)
@@ -629,6 +649,7 @@ module.exports = {
     curveAdapter,
     axialAdapter,
     kyberAdapter,
+    woofiAdapter,
     xjoeAdapter,
     gmxAdapter,
     general, 
