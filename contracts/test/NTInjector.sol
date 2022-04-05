@@ -9,4 +9,13 @@ contract NTInjector {
         selfdestruct(_reciever);
     }
 
+    /*
+    Simpler version:
+    
+        constructor(address payable _reciever) payable {
+            selfdestruct(_reciever);
+        }
+
+    */
+
 }
