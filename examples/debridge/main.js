@@ -42,7 +42,7 @@ async function swap(signer, tknFrom, tknTo, amountIn) {
      .then(console.log)
 }
 
-async function testQuery() {
+async function exampleQuery() {
     const amountIn = ethers.utils.parseUnits('1000', 6)
     const tknFrom = assets.deUSDC
     const tknTo = assets.YAK
@@ -50,7 +50,7 @@ async function testQuery() {
     console.log(r)
 }
 
-async function testSwap() {
+async function exampleSwap() {
     const signer = new ethers.Wallet(process.env.PK_TEST, PROVIDER)
     const amountIn = ethers.utils.parseUnits('0.5')
     const tknFrom = assets.WAVAX
@@ -59,5 +59,5 @@ async function testSwap() {
     console.log(r)
 }
 
-// testQuery()
-testSwap()
+// exampleQuery()
+exampleSwap()
