@@ -147,7 +147,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         MiniYakAdapterV0.address,
         PartyswapAdapterV0.address,
         AxialAS4DYakAdapterV0.address,
-        AxialAM3DUSDCYakAdapterV0.address,
+        // AxialAM3DUSDCYakAdapterV0.address,
         AxialAM3DYakAdapterV0.address,
         AxialAA3DYakAdapterV0.address,
         AxialAC4DYakAdapterV0.address,
