@@ -14,6 +14,16 @@ const {
 } = addresses
 let ADAPTERS = {}
 
+const _platypusAdapter = async () => {
+    const [ deployer ] = await ethers.getSigners()
+    const PlatypusAdapter = await ethers.getContractFactory('PlatypusAdapter')
+        .then(f => f.connect(deployer).deploy('PlatypusAdapter', 5e5))
+    return {
+        PlatypusAdapter, 
+        deployer
+    }
+}
+
 const _woofiAdapter = async () => {
     const WoofiAdapterFactory = ethers.getContractFactory('WoofiAdapter')
     const [
@@ -174,25 +184,6 @@ const _curveAdapter = async () => {
         CurveMimAdapter,
         CurveMoreAdapter,
         CurveDeUSDCAdapter
-    }
-}
-
-const _platypusAdapter = async () => {
-    const PlatypusAdapterFactory = ethers.getContractFactory('PlatypusAdapter')
-    const [
-        PlatypusV1,
-        PlatypusAdapter
-    ] = await Promise.all([
-        ethers.getContractAt('IPlatypus', curvelikePools.PlatypusV1),
-        PlatypusAdapterFactory.then(f => f.deploy(
-            'PlatypusV1Adapter',
-            curvelikePools.PlatypusV1, 
-            5.14e5
-        ))
-    ])
-    return {
-        PlatypusAdapter,
-        PlatypusV1
     }
 }
 

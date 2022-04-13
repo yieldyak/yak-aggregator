@@ -3,69 +3,147 @@ const { ethers } = require("hardhat")
 const { parseUnits } = ethers.utils
 
 const { setERC20Bal, getTokenContract } = require('../../helpers')
-const { assets } = require('../../addresses.json')
+const { assets, platypus } = require('../../addresses.json')
 const fix = require('../../fixtures')
 
 describe("YakAdapter - Platypus", function() {
 
-    let fixCurve
+    let Adapter
     let genNewAccount
-    let trader
+    let owner
     let tkns
 
     before(async () => {
         const fixSimple = await fix.simple()
-        fixCurve = await fix.platypusAdapter()
-        tkns = fixSimple.tokenContracts
         genNewAccount = fixSimple.genNewAccount
+        tkns = fixSimple.tokenContracts
+        fixPlatypus = await fix.platypusAdapter()
+        Adapter = fixPlatypus.PlatypusAdapter
+        owner = fixPlatypus.deployer
     })
 
-    beforeEach(async () => {
-        trader = genNewAccount()
+    describe('maintanance', async () => {
+
+        beforeEach(() => {
+            Adapter = Adapter.connect(owner)
+        })
+
+        afterEach(async () => {
+            // Clear after each tests
+            await Adapter.rmPools([
+                platypus.main,
+                platypus.frax, 
+                platypus.mim, 
+                platypus.ust,
+            ])
+        })
+
+        it('Adapter supports adding pools', async () => {
+            const addPoolsPromise = Adapter.addPools([
+                platypus.mim, 
+                platypus.ust
+            ])
+            // Add pool support and check events were emitted
+            await expect(addPoolsPromise)
+                .to.emit(Adapter, 'AddPoolSupport')
+                .withArgs(platypus.mim)
+                .to.emit(Adapter, 'AddPoolSupport')
+                .withArgs(platypus.ust)
+            // Check adapter maps tkns to correct pools
+            expect(await Adapter.getPoolForTkns(assets.USDC, assets.MIM))
+                .to.be.equal(platypus.mim)
+            expect(await Adapter.getPoolForTkns(assets.MIM, assets.USDC))
+                .to.be.equal(platypus.mim)
+            expect(await Adapter.getPoolForTkns(assets.USDC, assets.UST))
+                .to.be.equal(platypus.ust)
+            expect(await Adapter.getPoolForTkns(assets.UST, assets.USDC))
+                .to.be.equal(platypus.ust)
+        })
+
+        it('Adapter adding pool for specific tkns', async () => {
+            const addPoolsPromise = Adapter.setPoolForTkns(
+                platypus.main,
+                [ assets.DAIe, assets.USDt, assets.USDC ]
+            )
+            // Add pool support and check events were emitted
+            await expect(addPoolsPromise)
+                .to.emit(Adapter, 'PartialPoolSupport')
+                .withArgs(
+                    platypus.main, 
+                    [ assets.DAIe, assets.USDt, assets.USDC ]
+                )
+            // Check adapter maps tkns to correct pools
+            expect(await Adapter.getPoolForTkns(assets.USDt, assets.DAIe))
+                .to.be.equal(platypus.main)
+            expect(await Adapter.getPoolForTkns(assets.DAIe, assets.USDt))
+                .to.be.equal(platypus.main)
+            expect(await Adapter.getPoolForTkns(assets.DAIe, assets.USDC))
+                .to.be.equal(platypus.main)
+            expect(await Adapter.getPoolForTkns(assets.USDC, assets.USDt))
+                .to.be.equal(platypus.main)
+        })
+
+        it('Adapter supports removing pools', async () => {
+            // First add pools 
+            await Adapter.addPools([platypus.frax])
+            expect(await Adapter.getPoolForTkns(assets.USDC, assets.FRAXc))
+                .to.be.equal(platypus.frax)
+            expect(await Adapter.getPoolForTkns(assets.FRAXc, assets.USDC))
+                .to.be.equal(platypus.frax)
+            // Then remove them
+            const rmPoolsPromise = Adapter.rmPools([platypus.frax])
+            await expect(rmPoolsPromise)
+                .to.emit(Adapter, 'RmPoolSupport')
+                .withArgs(platypus.frax)
+            expect(await Adapter.getPoolForTkns(assets.USDC, assets.FRAXc))
+                .to.be.equal(ethers.constants.AddressZero)
+            expect(await Adapter.getPoolForTkns(assets.FRAXc, assets.USDC))
+                .to.be.equal(ethers.constants.AddressZero)
+        })
+
+        it('Cant rm pools for specific tkns', async () => {
+            const rmPoolPromise = Adapter.setPoolForTkns(
+                ethers.constants.AddressZero,
+                [ assets.DAIe, assets.USDt ]
+            )
+            await expect(rmPoolPromise).to.revertedWith('Only non-zero pool')
+        })
+
+        it('Cannot add unsupported token', async () => {
+            const addPoolPromise = Adapter.setPoolForTkns(
+                platypus.main,
+                [assets.DAIe, assets.MIM]
+            )
+            await expect(addPoolPromise)
+                .to.revertedWith('Pool does not support tkns')
+        })
+
+        it('Tkn repeats not supported', async () => {
+            const addPoolPromise = Adapter.setPoolForTkns(
+                platypus.main,
+                [assets.DAIe, assets.DAIe]
+            )
+            await expect(addPoolPromise)
+                .to.revertedWith('Pool does not support tkns')
+        })
+
     })
 
-    describe('V1', async () => {
 
-        let Adapter
+    describe('swap & query', async () => {
+
         let Original
+        let trader
 
-        before(async () => {
-            Adapter = fixCurve.PlatypusAdapter
-            Original = fixCurve.PlatypusV1
-        })
-
-        it('Adapter supports USDCe, USDTe, USDCe, USDC, USDt', async () => {
-            const supportedTokens = [
-                assets.USDCe, 
-                assets.USDTe, 
-                assets.DAIe,
-                assets.USDt, 
-                assets.USDC, 
-            ]
-            for (let tkn of supportedTokens) {
-                expect(await Adapter.isPoolToken(tkn)).to.be.true
-            }
-        })
-
-        it('Querying adapter matches the price from original contract', async () => {
-            // Options
-            const tknFrom = assets.DAIe
-            const tknTo = assets.USDt
-            const tknFromDecimals = await getTokenContract(tknFrom).then(t => t.decimals())
-            const amountIn = parseUnits('10000', tknFromDecimals)
-            // Query original contract
-            const amountOutOriginal = await Original.quotePotentialSwap(tknFrom, tknTo, amountIn)
-            // Query adapter 
-            const amountOutAdapter = await Adapter.query(amountIn, tknFrom, tknTo)
-            // Compare two prices
-            expect(amountOutOriginal).to.equal(amountOutAdapter)
-        })
-    
-        it('Swapping matches query', async () => {
-            // Options
-            const tokenFrom = tkns.USDTe
-            const tokenTo = tkns.USDCe
-            const amountIn = parseUnits('133311', await tokenFrom.decimals())
+        async function checkAdapterSwapMatchesQuery(
+            tokenFrom, 
+            tokenTo, 
+            amountIn
+        ) {
+            amountIn = amountIn || parseUnits(
+                '1332.2', 
+                await tokenFrom.decimals()
+            )
             // Querying adapter 
             const amountOutQuery = await Adapter.query(
                 amountIn, 
@@ -74,7 +152,6 @@ describe("YakAdapter - Platypus", function() {
             )
             // Mint tokens to adapter address
             await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
-            expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
             // Swapping
             const swap = () => Adapter.connect(trader).swap(
                 amountIn, 
@@ -84,16 +161,187 @@ describe("YakAdapter - Platypus", function() {
                 trader.address
             )
             // Check that swap matches the query
-            await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
+            await expect(swap).to.changeTokenBalance(
+                tokenTo, 
+                trader, 
+                amountOutQuery
+            )
+            // Check leftovers arent left in the adapter
+            expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
+        }
+
+        async function checkAdapterQueryMatchesOriginal(
+            tokenFrom, 
+            tokenTo, 
+            amountIn
+        ) {
+            amountIn = amountIn || parseUnits(
+                '1332.2', 
+                await tokenFrom.decimals()
+            )
+            // Query original contract
+            const amountOutOriginal = await Original.quotePotentialSwap(
+                tokenFrom.address, 
+                tokenTo.address,
+                amountIn
+            )
+            // Query adapter 
+            const amountOutAdapter = await Adapter.query(
+                amountIn, 
+                tokenFrom.address, 
+                tokenTo.address
+            )
+            // Compare two prices
+            expect(amountOutOriginal).to.equal(amountOutAdapter)
+        }
+
+        beforeEach(async () => {
+            trader = genNewAccount()
+            Adapter = Adapter.connect(trader)
+        })
+
+        it('Query returns zero if pool doesnt exist', async () => {
+            const amountOut = await Adapter.query(
+                parseUnits('100'), 
+                assets.DAIe,
+                assets.USDC
+            )
+            expect(amountOut).to.eq(0)
+        })
+
+        describe('main', async () => {
+
+            before(async () => {
+                Original = await ethers.getContractAt(
+                    'IPlatypus',
+                    platypus.main
+                )
+                await Adapter.connect(owner).addPools([platypus.main])
+            })
+    
+            it('Querying adapter matches the price from original contract', async () => {
+                const tknFrom = tkns.DAIe
+                const tknTo = tkns.USDt
+                const amountIn = parseUnits('10000', await tknFrom.decimals())
+                await checkAdapterSwapMatchesQuery(tknFrom, tknTo, amountIn)  
+            })
+        
+            it('Swapping matches query', async () => {
+                const tokenFrom = tkns.USDTe
+                const tokenTo = tkns.USDCe
+                const amountIn = parseUnits('3333', await tokenFrom.decimals())
+                await checkAdapterQueryMatchesOriginal(tokenFrom, tokenTo, amountIn)
+            })
+            
+        })
+
+        describe('mim', async () => {
+
+            before(async () => {
+                Original = await ethers.getContractAt(
+                    'IPlatypus',
+                    platypus.mim
+                )
+                await Adapter.connect(owner).addPools([platypus.mim])
+            })
+            
+            beforeEach(async () => {
+                trader = genNewAccount()
+                Adapter = Adapter.connect(trader)
+            })
+    
+            it('Querying adapter matches the price from original contract', async () => {
+                const tknFrom = tkns.MIM
+                const tknTo = tkns.USDC
+                const amountIn = parseUnits('10000', await tknFrom.decimals())
+                await checkAdapterSwapMatchesQuery(tknFrom, tknTo, amountIn)  
+            })
+        
+            it('Swapping matches query', async () => {
+                const tokenFrom = tkns.USDC
+                const tokenTo = tkns.MIM
+                const amountIn = parseUnits('3333', await tokenFrom.decimals())
+                await checkAdapterQueryMatchesOriginal(tokenFrom, tokenTo, amountIn)
+            })
+            
+        })
+
+        describe('ust', async () => {
+
+            before(async () => {
+                Original = await ethers.getContractAt(
+                    'IPlatypus',
+                    platypus.ust
+                )
+                await Adapter.connect(owner).addPools([platypus.ust])
+            })
+            
+            beforeEach(async () => {
+                trader = genNewAccount()
+                Adapter = Adapter.connect(trader)
+            })
+    
+            it('Querying adapter matches the price from original contract', async () => {
+                const tknFrom = tkns.UST
+                const tknTo = tkns.USDC
+                const amountIn = parseUnits('10000', await tknFrom.decimals())
+                await checkAdapterSwapMatchesQuery(tknFrom, tknTo, amountIn)  
+            })
+        
+            it('Swapping matches query', async () => {
+                const tokenFrom = tkns.USDC
+                const tokenTo = tkns.UST
+                const amountIn = parseUnits('3333', await tokenFrom.decimals())
+                await checkAdapterQueryMatchesOriginal(tokenFrom, tokenTo, amountIn)
+            })
+            
+        })
+
+        describe('frax', async () => {
+
+            before(async () => {
+                Original = await ethers.getContractAt(
+                    'IPlatypus',
+                    platypus.frax
+                )
+                await Adapter.connect(owner).addPools([platypus.frax])
+            })
+            
+            beforeEach(async () => {
+                trader = genNewAccount()
+                Adapter = Adapter.connect(trader)
+            })
+    
+            it('Querying adapter matches the price from original contract', async () => {
+                const tknFrom = tkns.FRAXc
+                const tknTo = tkns.USDC
+                const amountIn = parseUnits('10000', await tknFrom.decimals())
+                await checkAdapterSwapMatchesQuery(tknFrom, tknTo, amountIn)  
+            })
+        
+            it('Swapping matches query', async () => {
+                const tokenFrom = tkns.USDC
+                const tokenTo = tkns.FRAXc
+                const amountIn = parseUnits('3333', await tokenFrom.decimals())
+                await checkAdapterQueryMatchesOriginal(tokenFrom, tokenTo, amountIn)
+            })
+            
         })
 
         it('Check gas cost', async () => {
+            const trader = genNewAccount()
+            await Adapter.connect(owner).addPools([
+                platypus.main, 
+                platypus.frax,
+                platypus.mim,
+                platypus.ust,
+            ])
             // Options
             const options = [
-                [ tkns.USDCe, tkns.USDTe ],
-                [ tkns.USDt, tkns.DAIe ],
-                [ tkns.DAIe, tkns.USDCe ],
-                [ tkns.USDTe, tkns.USDt ],
+                [ tkns.USDC, tkns.FRAXc ],
+                [ tkns.USDC, tkns.DAIe ],
+                [ tkns.USDC, tkns.UST ],
+                [ tkns.USDC, tkns.MIM ],
             ]
             let maxGas = 0
             for (let [ tokenFrom, tokenTo ] of options) {

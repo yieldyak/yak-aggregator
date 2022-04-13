@@ -96,7 +96,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const WoofiAdapter = await deployments.get('WoofiAdapter')
     const Curve3poolfAdapterV0 = await deployments.get('Curve3poolfAdapterV0')
     const CurveDeUSDCAdapterV0 = await deployments.get('CurveDeUSDCAdapterV0')
-
+    const PlatypusYakAdapterV2 = await deployments.get('PlatypusYakAdapterV2')
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
         assets.WAVAX,
@@ -160,7 +160,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         Curve3poolV2AdapterV0.address,
         // CurveRenAdapterV0.address,
         CurveAtricryptoAdapterV0.address,
-        PlatypusV1YakAdapterV0.address,
+        // PlatypusV1YakAdapterV0.address,
         KyberAdapter.address,
         XJoeAdapter.address,
         WAvaxAdapter.address,
@@ -171,7 +171,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         SAvaxAdapterV0.address,
         WoofiAdapter.address,
         Curve3poolfAdapterV0.address,
-        CurveDeUSDCAdapterV0.address
+        CurveDeUSDCAdapterV0.address, 
+        PlatypusYakAdapterV2.address
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
