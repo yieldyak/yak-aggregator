@@ -103,6 +103,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         assets.WETHe,
         assets.USDTe,
         assets.USDCe,
+        assets.USDC,
         assets.JOE,
         assets.DAIe,
         assets.LINKe,
