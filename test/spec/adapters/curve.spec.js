@@ -665,7 +665,7 @@ describe("YakAdapter - Curve", function() {
 
     })
 
-    describe.only('deUSDC', async () => {
+    describe('deUSDC', async () => {
 
         let Adapter
         let Original
