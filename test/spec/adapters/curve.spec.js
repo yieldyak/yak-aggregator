@@ -998,4 +998,117 @@ describe("YakAdapter - Curve", function() {
 
     })
 
+    describe('yusd', async () => {
+
+        let Adapter
+        let Original
+
+        before(async () => {
+            Adapter = fixCurve.CurveYUSDAdapter
+            Original = fixCurve.CurveYUSD
+        })
+
+        it('Adapter supports YUSD, USDC, USDt', async () => {
+            const supportedTokens = [
+                assets.USDt,
+                assets.USDC,
+                assets.YUSD,
+            ]
+            for (let tkn of supportedTokens) {
+                expect(await Adapter.isPoolToken(tkn)).to.be.true
+            }
+        })
+
+        it('Querying adapter matches the price from original contract', async () => {
+            // Options
+            const tknIndexFrom = 2
+            const tknIndexTo = 0
+            const [ tknFrom, tknTo ] = await Promise.all([
+                Original.coins(tknIndexFrom),
+                Original.coins(tknIndexTo)
+            ])
+            const tknFromDecimals = await getTokenContract(tknFrom).then(t => t.decimals())
+            const amountIn = parseUnits('100', tknFromDecimals)
+            // Query original contract
+            const amountOutOriginal = await Original['get_dy(int128,int128,uint256)'](tknIndexFrom, tknIndexTo, amountIn)
+            // Query adapter 
+            const amountOutAdapter = await Adapter.query(amountIn, tknFrom, tknTo)
+            // Compare two prices (there should be 1 wei difference to account for error in rounding)
+            expect(amountOutOriginal).to.equal(amountOutAdapter.add(parseUnits('1', 'wei')))
+        })
+
+        it('Swapping matches query', async () => {
+
+            async function checkAdapterSwapMatchesQuery(tokenFrom, tokenTo) {
+                const amountIn = parseUnits('1200', await tokenFrom.decimals())
+                // Querying adapter 
+                const amountOutQuery = await Adapter.query(
+                    amountIn, 
+                    tokenFrom.address, 
+                    tokenTo.address
+                )
+                // Mint tokens to adapter address
+                await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+                expect(await tokenFrom.balanceOf(Adapter.address)).to.equal(amountIn)     
+                // Swapping
+                const swap = () => Adapter.connect(trader).swap(
+                    amountIn, 
+                    amountOutQuery,
+                    tokenFrom.address,
+                    tokenTo.address, 
+                    trader.address
+                )
+                // Check that swap matches the query
+                await expect(swap()).to.not.reverted
+                expect(await tokenTo.balanceOf(trader.address)).to.gte(amountOutQuery)
+                // Check leftovers arent left in the adapter
+                expect(await tokenTo.balanceOf(Adapter.address)).to.equal(1)  // 1 wei is left in the contract
+            }
+
+            await checkAdapterSwapMatchesQuery(tkns.YUSD, tkns.USDt)
+            await checkAdapterSwapMatchesQuery(tkns.USDt, tkns.USDC)
+            await checkAdapterSwapMatchesQuery(tkns.USDC, tkns.YUSD)    
+        })
+
+        it('Check gas cost', async () => {
+            // Options
+            const options = [
+                [ tkns.YUSD, tkns.USDt ],
+                [ tkns.USDt, tkns.USDC ],
+                [ tkns.USDC, tkns.YUSD ],
+            ]
+            let maxGas = 0
+            for (let [ tokenFrom, tokenTo ] of options) {
+                const amountIn = parseUnits('10000', await tokenFrom.decimals())
+                // Mint tokens to adapter address
+                await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
+                // Querying
+                const queryTx = await Adapter.populateTransaction.query(
+                    amountIn, 
+                    tokenFrom.address, 
+                    tokenTo.address
+                )
+                const queryGas = await ethers.provider.estimateGas(queryTx)
+                    .then(parseInt)
+                // Swapping
+                const swapGas = await Adapter.connect(trader).swap(
+                    amountIn, 
+                    1,
+                    tokenFrom.address,
+                    tokenTo.address, 
+                    trader.address
+                ).then(tr => tr.wait()).then(r => parseInt(r.gasUsed))
+                console.log(`swap-gas:${swapGas} | query-gas:${queryGas}`)
+                const gasUsed = swapGas + queryGas
+                if (gasUsed > maxGas) {
+                    maxGas = gasUsed
+                }
+            }
+            // Check that gas estimate is above max, but below 10% of max
+            const estimatedGas = await Adapter.swapGasEstimate().then(parseInt)
+            expect(estimatedGas).to.be.within(maxGas, maxGas * 1.1)
+        })
+
+    })
+
 })

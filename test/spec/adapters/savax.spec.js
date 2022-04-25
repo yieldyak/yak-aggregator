@@ -47,7 +47,7 @@ describe("YakAdapter - Curve", function() {
         )).to.gte(amountIn)
     })
 
-    it.only('Query returns zero if max-cap is exceeded', async () => {
+    it('Query returns zero if max-cap is exceeded', async () => {
         const tokenFrom = tkns.WAVAX
         const tokenTo = tkns.SAVAX
         const cap = await Original.totalPooledAvaxCap()

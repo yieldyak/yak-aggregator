@@ -79,12 +79,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     // const CurveRenAdapterV0 = await deployments.get('CurveRenAdapterV0')
     const CurveAtricryptoAdapterV0 = await deployments.get('CurveAtricryptoAdapterV0')
     
-    const AxialAM3DUSDCYakAdapterV0 = await deployments.get('AxialAM3DUSDCYakAdapterV0')
+    // const AxialAM3DUSDCYakAdapterV0 = await deployments.get('AxialAM3DUSDCYakAdapterV0')
     const AxialAM3DYakAdapterV0 = await deployments.get('AxialAM3DYakAdapterV0')
     const AxialAA3DYakAdapterV0 = await deployments.get('AxialAA3DYakAdapterV0')
     const AxialAC4DYakAdapterV0 = await deployments.get('AxialAC4DYakAdapterV0')
 
-    const PlatypusV1YakAdapterV0 = await deployments.get('PlatypusV1YakAdapterV0')
+    // const PlatypusV1YakAdapterV0 = await deployments.get('PlatypusV1YakAdapterV0')
     const KyberAdapter = await deployments.get('KyberAdapter')
     const XJoeAdapter = await deployments.get('XJoeAdapter')
     const WAvaxAdapter = await deployments.get('WAvaxAdapter')
@@ -97,6 +97,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const Curve3poolfAdapterV0 = await deployments.get('Curve3poolfAdapterV0')
     const CurveDeUSDCAdapterV0 = await deployments.get('CurveDeUSDCAdapterV0')
     const PlatypusYakAdapterV2 = await deployments.get('PlatypusYakAdapterV2')
+    const CurveYUSDAdapter = await deployments.get('CurveYUSDAdapter')
     // Bottom arguments can all be changed after the deployment
     const TRUSTED_TOKENS = [
         assets.WAVAX,
@@ -173,7 +174,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         WoofiAdapter.address,
         Curve3poolfAdapterV0.address,
         CurveDeUSDCAdapterV0.address, 
-        PlatypusYakAdapterV2.address
+        PlatypusYakAdapterV2.address, 
+        CurveYUSDAdapter.address
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
