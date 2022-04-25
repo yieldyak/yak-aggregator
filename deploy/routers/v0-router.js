@@ -76,7 +76,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const CurveAaveAdapterV0 = await deployments.get('CurveAaveAdapterV0')
     // const CurveMimAdapterV0 = await deployments.get('CurveMimAdapterV0')
     const Curve3poolV2AdapterV0 = await deployments.get('Curve3poolV2AdapterV0')
-    // const CurveRenAdapterV0 = await deployments.get('CurveRenAdapterV0')
+    const CurveRenAdapterV0 = await deployments.get('CurveRenAdapterV0')
     const CurveAtricryptoAdapterV0 = await deployments.get('CurveAtricryptoAdapterV0')
     
     // const AxialAM3DUSDCYakAdapterV0 = await deployments.get('AxialAM3DUSDCYakAdapterV0')
@@ -160,7 +160,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         CurveAaveAdapterV0.address, 
         // CurveMimAdapterV0.address,
         Curve3poolV2AdapterV0.address,
-        // CurveRenAdapterV0.address,
+        CurveRenAdapterV0.address,
         CurveAtricryptoAdapterV0.address,
         // PlatypusV1YakAdapterV0.address,
         KyberAdapter.address,
