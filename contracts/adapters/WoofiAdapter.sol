@@ -101,7 +101,7 @@ contract WoofiAdapter is YakAdapter {
                 _amountIn,
                 _amountOut,
                 _to,
-                address(this)
+                rebateCollector
             );
         } else if (_tokenOut == quoteToken) {
             realToAmount = IWooPP(pool).sellBase(
