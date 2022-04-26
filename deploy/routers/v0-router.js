@@ -109,8 +109,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         assets.WBTCe,
         assets.DAIe,
         assets.USDt,
+        assets.JOE, // Needed to swap WAVAX to yyJOE
         // assets.PNG,
-        // assets.JOE,
         // assets.LINKe,
         // assets.YAK,
         // assets.QI,
