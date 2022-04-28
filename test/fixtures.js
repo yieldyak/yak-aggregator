@@ -1,6 +1,7 @@
 const { deployments, ethers } = require("hardhat")
 const helpers = require('./helpers')
 const addresses = require('./addresses.json')
+const constants = require('./constants.json')
 
 TRACER_ENABLED = process.argv.includes('--logs')
 const { 
@@ -13,6 +14,31 @@ const {
     other 
 } = addresses
 let ADAPTERS = {}
+
+const _geodeWPAdapter = async () => {
+    const [ deployer ] = await ethers.getSigners()
+    const GeodeWPAdapterFactory = ethers.getContractFactory('GeodeWPAdapter')
+    const [
+        gAVAX,
+        GeodeWP,
+        GeodeWPAdapter
+    ] = await Promise.all([
+        ethers.getContractAt('IgAVAX', addresses.assets.gAVAX),
+        ethers.getContractAt('IGeodeWP', addresses.other.GWPyyAvax),
+        GeodeWPAdapterFactory.then(f => f.connect(deployer).deploy(
+            'GWPyyAvaxAdapter',
+            addresses.other.GeodePortal,
+            constants.geode.yyPlanet,
+            4.1e5
+        ))
+    ])
+    return {
+        GeodeWPAdapter,
+        GeodeWP,
+        gAVAX,
+        deployer,
+    }
+}
 
 const _platypusAdapter = async () => {
     const [ deployer ] = await ethers.getSigners()
@@ -577,6 +603,7 @@ const general = deployments.createFixture(async () => {
     }
 })
 
+const geodeWPAdapter = deployments.createFixture(_geodeWPAdapter)
 const woofiAdapter = deployments.createFixture(_woofiAdapter)
 const savaxAdapter = deployments.createFixture(_savaxAdapter)
 const gmxAdapter = deployments.createFixture(_gmxAdapter)
@@ -655,6 +682,7 @@ module.exports = {
     bridgeMigration,
     synapseAdapter,
     miniYakAdapter,
+    geodeWPAdapter,
     savaxAdapter,
     curveAdapter,
     axialAdapter,

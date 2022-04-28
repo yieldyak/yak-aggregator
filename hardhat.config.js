@@ -75,7 +75,7 @@ module.exports = {
       chainId: 43114,
       forking: {
         url: AVALANCHE_FORK_RPC, 
-        blockNumber: 13878548
+        blockNumber: 13945066
       },
       accounts: {
         accountsBalance: "10000000000000000000000000", 
