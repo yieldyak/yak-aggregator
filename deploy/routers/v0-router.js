@@ -99,6 +99,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const PlatypusYakAdapterV2 = await deployments.get('PlatypusYakAdapterV2')
     const CurveYUSDAdapter = await deployments.get('CurveYUSDAdapter')
     const GWPyyAvaxAdapter = await deployments.get('GWPyyAvaxAdapter')
+    const WoofiUSDCAdapter = await deployments.get('WoofiUSDCAdapter')
 
 
     // Bottom arguments can all be changed after the deployment
@@ -180,7 +181,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         CurveDeUSDCAdapterV0.address, 
         PlatypusYakAdapterV2.address, 
         CurveYUSDAdapter.address, 
-        GWPyyAvaxAdapter.address
+        GWPyyAvaxAdapter.address,
+        WoofiUSDCAdapter.address
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)
