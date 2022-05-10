@@ -176,7 +176,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         CurveMoreAdapterV0.address,
         HakuSwapAdapterV0.address,
         SAvaxAdapterV0.address,
-        WoofiAdapter.address,
+        // WoofiAdapter.address,
         Curve3poolfAdapterV0.address,
         CurveDeUSDCAdapterV0.address, 
         PlatypusYakAdapterV2.address, 
