@@ -95,8 +95,7 @@ contract GeodeWPAdapter is YakAdapter {
     }
 
     function _stakingPaused() internal view returns (bool) {
-        // Geode naming of method `isStakingPausedForPool` is counter-intuitive
-        return !IGeodePortal(portal).isStakingPausedForPool(pooledTknId);
+        return IGeodePortal(portal).isStakingPausedForPool(pooledTknId);
     }
 
     function _calcSwap(

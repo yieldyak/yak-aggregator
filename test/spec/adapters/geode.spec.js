@@ -52,10 +52,13 @@ describe("YakAdapter - Geode", function() {
 
             it('revoke/set token allowance', async () => {
                 // First except allowance as it is set in the constructor
-                expect(await gAVAX.isApprovedForAll(
+                const approved = await gAVAX.isApprovedForAll(
                     Adapter.address, 
                     Original.address
-                )).to.be.true
+                )
+                if (!approved) {
+                    await Adapter.setAllowances()      
+                }
 
                 // Revoke allowance and check allowance is revoked
                 await Adapter['revokeAllowance()']()
@@ -208,7 +211,7 @@ describe("YakAdapter - Geode", function() {
                 })
 
                 it('WAVAX -> yyAVAX query should match original', async () => {
-                    const amountIn = parseUnits('11')
+                    const amountIn = parseUnits('0.13')
                     await checkAdapterQueryMatchesOriginal(
                         tkns.WAVAX, 
                         tkns.yyAVAX, 
@@ -217,7 +220,7 @@ describe("YakAdapter - Geode", function() {
                 })
 
                 it('WAVAX -> yyAVAX swap should match query', async () => {
-                    const amountIn = parseUnits('1.3456789')
+                    const amountIn = parseUnits('0.3456789')
                     const tknIn = tkns.WAVAX
                     const tknOut = tkns.yyAVAX
                     // Mint tokens to adapter address
@@ -287,7 +290,7 @@ describe("YakAdapter - Geode", function() {
                         })
 
                         it('query should offer better price than original', async () => {
-                            const amountIn = parseUnits('11')
+                            const amountIn = parseUnits('2')
                             await checkAdapterQueryGtThanOriginal(
                                 tknIn, 
                                 tknOut, 

@@ -8,7 +8,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const NAME = 'GWPyyAvaxAdapter'
     const PORTAL = other.GeodePortal
     const PLANET_ID = geode.yyPlanet
-    const GAS_ESTIMATE = 4.1e5
+    const GAS_ESTIMATE = 4.6e5
 
     log(NAME)
     const deployResult = await deploy(NAME, {
