@@ -4,7 +4,11 @@ const { parseUnits, formatUnits } = ethers.utils
 
 const { assets, other } = require('../../addresses.json')
 const { yyPlanet } = require('../../constants.json').geode
-const { setERC20Bal, impersonateAccount } = require('../../helpers')
+const { 
+    impersonateAccount, 
+    forkGlobalNetwork,
+    setERC20Bal, 
+} = require('../../helpers')
 const fix = require('../../fixtures')
 
 describe("YakAdapter - Geode", function() {
@@ -19,6 +23,8 @@ describe("YakAdapter - Geode", function() {
     let Portal
 
     before(async () => {
+        const forkBlock = 16452180;
+        forkGlobalNetwork(forkBlock)
         const fixSimple = await fix.simple()
         genNewAccount = fixSimple.genNewAccount
         tkns = fixSimple.tokenContracts
@@ -85,7 +91,34 @@ describe("YakAdapter - Geode", function() {
 
         describe('query & swap', async () => {
 
-            // Note: this method wont't produce debt in ceratain conditions
+            async function addLiquidity(amountInOneSide) {
+                const deadline = Math.floor(Date.now()/1e3) + 300
+                const amountInAvax = amountInOneSide
+                // Mint yyavax
+                await Portal.connect(trader).stake(
+                    ethers.BigNumber.from(yyPlanet), 
+                    parseUnits("0"),
+                    deadline, 
+                    { value: amountInAvax }
+                )
+                const balYYavax = await gAVAX.balanceOf(trader.address, yyPlanet)
+                // Approve gAvax for pool 
+                const isApproved = await gAVAX.isApprovedForAll(
+                    trader.address, 
+                    Original.address
+                )
+                if (!isApproved)
+                    await gAVAX.connect(trader).setApprovalForAll(Original.address, true)
+                // Add liquidity
+                await Original.connect(trader).addLiquidity(
+                    [amountInAvax, balYYavax],
+                    ethers.constants.Zero,
+                    deadline, 
+                    { value: amountInAvax }
+                )
+            }
+
+            // Note: this method wont't produce debt in certain conditions
             async function createDebt() {
                 const trader = genNewAccount()
                 // Sell for half of the pooled avax
@@ -99,7 +132,7 @@ describe("YakAdapter - Geode", function() {
                     ethers.BigNumber.from(yyPlanet), 
                     avaxIn.div(2),
                     deadline, 
-                    { value: parseUnits('10') }
+                    { value: avaxIn }
                 )
                 const yyAvaxIn = await tkns.yyAVAX.balanceOf(trader.address)
                 await tkns.yyAVAX.connect(trader).transfer(
@@ -189,6 +222,11 @@ describe("YakAdapter - Geode", function() {
             }
 
             let trader
+
+            before(async () => {
+                trader = genNewAccount()
+                await addLiquidity(parseUnits("100"))
+            })
 
             beforeEach(() => {
                 trader = genNewAccount()

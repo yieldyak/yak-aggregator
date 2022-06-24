@@ -29,7 +29,7 @@ const _geodeWPAdapter = async () => {
             'GWPyyAvaxAdapter',
             addresses.other.GeodePortal,
             constants.geode.yyPlanet,
-            4.6e5
+            4.5e5
         ))
     ])
     return {

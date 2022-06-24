@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat")
+const { ethers, network } = require("hardhat")
 const fs = require('fs')
 
 const bigNumToBytes32 = (bn) => {
@@ -129,4 +129,29 @@ module.exports.injectFunds = async (sender, reciever, amount) => {
         .then(f => f.connect(sender).deploy({value: amount}))
     // Inject funds
     await NTInjector.injectFunds(reciever)
+}
+
+const _setHardhatNetwork = async ({forkBlockNumber, chainId, rpcUrl}) => { 
+    return network.provider.request({
+        method: "hardhat_reset",
+        params: [
+          {
+            chainId: chainId,
+            forking: {
+              blockNumber: forkBlockNumber,
+              jsonRpcUrl: rpcUrl,
+            },
+          },
+        ],
+      });
+}
+
+module.exports.setHardhatNetwork = _setHardhatNetwork
+
+module.exports.forkGlobalNetwork = async (_blockNumber) => {
+    _setHardhatNetwork({
+        forkBlockNumber: _blockNumber, 
+        rpcUrl: network.config.forking.url,
+        chainId: network.config.chainId
+    })
 }
