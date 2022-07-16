@@ -55,11 +55,12 @@ describe('Yak Router - query', () => {
         let tokenIn = assets.WAVAX
         let tokenOut = assets.SUSHI
         let steps = 2
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Only one step (direct connection)
         expect(result.adapters.length).to.equal(1)
@@ -82,11 +83,12 @@ describe('Yak Router - query', () => {
         let tokenIn = assets.WAVAX
         let tokenOut = assets.ZDAI
         let steps = 2
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Expect to find a path 
         expect(result.amounts[result.amounts.length-1]).to.gt('0')
@@ -101,11 +103,12 @@ describe('Yak Router - query', () => {
         let tokenIn = assets.ZERO
         let tokenOut = assets.LYD
         let steps = 2
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Expect to find a path 
         expect(result.amounts[result.amounts.length-1]).to.gt('0')
@@ -120,11 +123,12 @@ describe('Yak Router - query', () => {
         let tokenIn = assets.DAI
         let tokenOut = assets.DAI
         let steps = 2
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Expect to find a path 
         expect(result.amounts[result.amounts.length-1]).to.gt('0')
@@ -139,11 +143,12 @@ describe('Yak Router - query', () => {
         let tokenIn = assets.WBTC
         let tokenOut = YakRouter.address  // Not a token
         let steps = 2
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Expect empty arrays
         expect(result.amounts).to.be.empty
@@ -156,11 +161,12 @@ describe('Yak Router - query', () => {
         let tokenIn = assets.ZUSDT
         let tokenOut = assets.TUSD
         let steps = 4
-        let result = await YakRouter.findBestPath(
+        let result = await YakRouter.findBestPathWithGas(
             amountIn, 
             tokenIn, 
             tokenOut, 
-            steps
+            steps,
+            0
         )
         // Expect to find a path 
         expect(result.amounts[result.amounts.length-1]).to.gt('0')
