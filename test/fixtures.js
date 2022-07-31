@@ -103,6 +103,25 @@ const _gmxAdapter = async () => {
     }
 }
 
+const _arableAdapter = async () => {
+    const ArableAdapterFactory = ethers.getContractFactory('ArableSFAdapter')
+    const [
+        ArableSF,
+        ArableAdapterV0
+    ] = await Promise.all([
+        ethers.getContractAt('IStabilityFund', other.ArableSF),
+        ArableAdapterFactory.then(f => f.deploy(
+            'ArableAdapterV0', 
+            other.ArableSF,
+            2.35e5
+        )).catch(err => console.log(err))
+    ])
+    return {
+        ArableAdapterV0,
+        ArableSF
+    }
+}
+
 const _xjoeAdapter = async () => {
     const XJoeAdapterFactory = ethers.getContractFactory('XJoeAdapter')
     const [
@@ -607,6 +626,7 @@ const geodeWPAdapter = deployments.createFixture(_geodeWPAdapter)
 const woofiAdapter = deployments.createFixture(_woofiAdapter)
 const savaxAdapter = deployments.createFixture(_savaxAdapter)
 const gmxAdapter = deployments.createFixture(_gmxAdapter)
+const arableAdapter = deployments.createFixture(_arableAdapter)
 const xjoeAdapter = deployments.createFixture(_xjoeAdapter)
 const kyberAdapter = deployments.createFixture(_kyberAdapter)
 const platypusAdapter = deployments.createFixture(_platypusAdapter)
@@ -690,6 +710,7 @@ module.exports = {
     woofiAdapter,
     xjoeAdapter,
     gmxAdapter,
+    arableAdapter,
     general, 
     simple,
     router
