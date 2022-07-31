@@ -29,7 +29,7 @@ contract GeodeWPAdapter is YakAdapter {
 
     bytes32 constant id = keccak256("GeodeWPAdapter");
     uint constant gAVAX_DENOMINATOR = 1e18;
-    uint constant IGNORABLE_DEBT = 1e15;
+    uint constant IGNORABLE_DEBT = 1e18;
 
     uint public pooledTknId;
     address public pooledTknInterface;
@@ -127,9 +127,11 @@ contract GeodeWPAdapter is YakAdapter {
         } else {
             // Swap debt and mint the rest
             uint amountOutBought;
-            if (debt > IGNORABLE_DEBT)
+            if (debt > IGNORABLE_DEBT){
                 amountOutBought = _calcSwap(0, 1, debt);
-            uint amountOutMinted = _calculateMint(amountIn - debt);
+                amountIn -= debt
+            }
+            uint amountOutMinted = _calculateMint(amountIn);
             return amountOutBought + amountOutMinted;
         }
     }
