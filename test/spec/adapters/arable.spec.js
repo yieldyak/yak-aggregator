@@ -39,7 +39,7 @@ describe("YakAdapter - ArableSF", function() {
                 assets.USDC, 
                 assets.USDt, 
                 assets.USDTe,
-                assets.FRAX2, 
+                assets.FRAXc, 
                 assets.YUSD, 
                 assets.arUSD, 
             ]
@@ -173,7 +173,7 @@ describe("YakAdapter - ArableSF", function() {
             // Options
             const options = [
                 [ tkns.USDCe, tkns.USDt ],
-                [ tkns.FRAX2, tkns.YUSD ],
+                [ tkns.FRAXc, tkns.YUSD ],
                 [ tkns.USDTe, tkns.USDC ],
             ]
             let maxGas = 0

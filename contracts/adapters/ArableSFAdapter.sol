@@ -40,18 +40,17 @@ contract ArableSFAdapter is YakAdapter {
         setPoolTokens();
     }
 
-    function _approveIfNeeded(address _tokenIn, uint _amount) internal override {
-        uint allowance = IERC20(_tokenIn).allowance(address(this), vault);
-        if (allowance < _amount) {
-            IERC20(_tokenIn).safeApprove(vault, UINT_MAX);
-        }
-    }
+    function _approveIfNeeded(address _tokenIn, uint _amount) internal override {}
 
     function setPoolTokens() public {
         uint whitelistedTknsLen = IStabilityFund(vault).getStableTokensCount();
         for (uint i = 0; i < whitelistedTknsLen; i++) {
             address token = IStabilityFund(vault).getStableTokens()[i];
             tokenDecimals[token] = IERC20(token).decimals();
+            uint allowance = IERC20(token).allowance(address(this), vault);
+            if (allowance < UINT_MAX) {
+                IERC20(token).safeApprove(vault, UINT_MAX);
+            }
         }
     }
 
