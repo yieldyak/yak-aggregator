@@ -29,7 +29,7 @@ contract GeodeWPAdapter is YakAdapter {
 
     bytes32 constant id = keccak256("GeodeWPAdapter");
     uint constant gAVAX_DENOMINATOR = 1e18;
-    uint constant IGNORABLE_DEBT = 1e15;
+    uint constant IGNORABLE_DEBT = 1e18;
 
     uint public pooledTknId;
     address public pooledTknInterface;
