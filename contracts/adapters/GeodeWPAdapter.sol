@@ -127,9 +127,11 @@ contract GeodeWPAdapter is YakAdapter {
         } else {
             // Swap debt and mint the rest
             uint amountOutBought;
-            if (debt > IGNORABLE_DEBT)
+            if (debt > IGNORABLE_DEBT) {
                 amountOutBought = _calcSwap(0, 1, debt);
-            uint amountOutMinted = _calculateMint(amountIn - debt);
+                amountIn -= debt;
+            }
+            uint amountOutMinted = _calculateMint(amountIn);
             return amountOutBought + amountOutMinted;
         }
     }
