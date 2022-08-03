@@ -71,7 +71,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     // const GondolaUSD4AdapterV0 = await deployments.get('GondolaUSD4AdapterV0')
     // const GondolaUSDAdapterV0 = await deployments.get('GondolaUSDAdapterV0')
-    const GondolaUSDTeMIMAdapterV0 = await deployments.get('GondolaUSDTeMIMAdapterV0')
+    // const GondolaUSDTeMIMAdapterV0 = await deployments.get('GondolaUSDTeMIMAdapterV0')
     // const GondolaYAKmYAKv2AdapterV0 = await deployments.get('GondolaYAKmYAKv2AdapterV0')
     const CurveAaveAdapterV0 = await deployments.get('CurveAaveAdapterV0')
     // const CurveMimAdapterV0 = await deployments.get('CurveMimAdapterV0')
@@ -100,6 +100,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const CurveYUSDAdapter = await deployments.get('CurveYUSDAdapter')
     const GWPyyAvaxAdapter = await deployments.get('GWPyyAvaxAdapter')
     const WoofiUSDCAdapter = await deployments.get('WoofiUSDCAdapter')
+    const ArableAdapter = await deployments.get('ArableAdapter')
 
 
     // Bottom arguments can all be changed after the deployment
@@ -182,7 +183,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         PlatypusYakAdapterV2.address, 
         CurveYUSDAdapter.address, 
         GWPyyAvaxAdapter.address,
-        WoofiUSDCAdapter.address
+        WoofiUSDCAdapter.address,
+        ArableAdapter.address,
       ];
     const FEE_CLAIMER = deployer
     noDuplicates(TRUSTED_TOKENS)

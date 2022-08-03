@@ -48,7 +48,7 @@ describe("YakAdapter - ArableSF", function() {
             }
         })
 
-        it('Swapping matches query #1', async () => {
+        it.only('Swapping matches query #1', async () => {
             // Options
             const tokenFrom = tkns.USDCe
             const tokenTo = tkns.USDC
