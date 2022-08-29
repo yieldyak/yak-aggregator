@@ -1,6 +1,6 @@
 const { expect } = require("chai")
 const { ethers } = require("hardhat")
-const fixtures = require('../../../fixtures')
+const fixtures = require('../../fixtures')
 const { parseUnits } = ethers.utils
 
 describe("YakAdapter - Snob", function() {

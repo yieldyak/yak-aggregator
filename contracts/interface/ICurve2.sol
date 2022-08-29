@@ -3,11 +3,13 @@ pragma solidity >=0.7.0;
 
 interface ICurve2 {
     function underlying_coins(uint256 index) external view returns (address);
+
     function get_dy_underlying(
         int128 tokenIndexFrom,
         int128 tokenIndexTo,
         uint256 dx
     ) external view returns (uint256);
+
     function exchange_underlying(
         int128 tokenIndexFrom,
         int128 tokenIndexTo,

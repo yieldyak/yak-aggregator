@@ -64,7 +64,7 @@ describe("YakAdapter - MiniYak", function() {
                 YAK.address, 
                 YAK.address, 
                 trader.address
-            )).to.revertedWith('MiniYakAdapter: Unsupported token')
+            )).to.revertedWith('Unsupported token')
         })
         
         

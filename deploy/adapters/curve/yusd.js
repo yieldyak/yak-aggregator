@@ -6,7 +6,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const NAME = 'CurveYUSDAdapter';
     const POOL = curvelikePools.CurveYUSD
-    const GAS_ESTIMATE = 3.3e5
+    const GAS_ESTIMATE = 3e5
 
     log(NAME)
     const deployResult = await deploy(NAME, {

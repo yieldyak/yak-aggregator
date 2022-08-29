@@ -2,9 +2,10 @@
 pragma solidity >=0.7.0;
 
 interface IWooPP {
-
     function quoteToken() external view returns (address);
+
     function querySellQuote(address, uint256) external view returns (uint256);
+
     function querySellBase(address, uint256) external view returns (uint256);
 
     function sellBase(
@@ -14,6 +15,7 @@ interface IWooPP {
         address to,
         address rebateTo
     ) external returns (uint256 quoteAmount);
+
     function sellQuote(
         address baseToken,
         uint256 quoteAmount,
@@ -21,5 +23,4 @@ interface IWooPP {
         address to,
         address rebateTo
     ) external returns (uint256 baseAmount);
-
 }
