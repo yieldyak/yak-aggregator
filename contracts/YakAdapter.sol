@@ -13,7 +13,7 @@
 //                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//                              
+//
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
@@ -27,30 +27,25 @@ abstract contract YakAdapter is Ownable {
     using SafeERC20 for IERC20;
 
     event YakAdapterSwap(
-        address indexed _tokenFrom, 
-        address indexed _tokenTo, 
-        uint _amountIn, 
-        uint _amountOut
+        address indexed _tokenFrom,
+        address indexed _tokenTo,
+        uint256 _amountIn,
+        uint256 _amountOut
     );
 
-    event UpdatedGasEstimate(
-        address indexed _adapter,
-        uint _newEstimate
-    );
+    event UpdatedGasEstimate(address indexed _adapter, uint256 _newEstimate);
 
-    event Recovered(
-        address indexed _asset, 
-        uint amount
-    );
+    event Recovered(address indexed _asset, uint256 amount);
 
-    address internal constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
+    address internal constant WAVAX =
+        0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
     address internal constant AVAX = address(0);
-    uint internal constant UINT_MAX = type(uint).max;
+    uint256 internal constant UINT_MAX = type(uint256).max;
 
-    uint public swapGasEstimate;
+    uint256 public swapGasEstimate;
     string public name;
 
-    function setSwapGasEstimate(uint _estimate) public onlyOwner {
+    function setSwapGasEstimate(uint256 _estimate) public onlyOwner {
         swapGasEstimate = _estimate;
         emit UpdatedGasEstimate(address(this), _estimate);
     }
@@ -60,7 +55,10 @@ abstract contract YakAdapter is Ownable {
      * @param _token address
      * @param _spender address
      */
-    function revokeAllowance(address _token, address _spender) external onlyOwner {
+    function revokeAllowance(address _token, address _spender)
+        external
+        onlyOwner
+    {
         IERC20(_token).safeApprove(_spender, 0);
     }
 
@@ -69,8 +67,11 @@ abstract contract YakAdapter is Ownable {
      * @param _tokenAddress token address
      * @param _tokenAmount amount to recover
      */
-    function recoverERC20(address _tokenAddress, uint _tokenAmount) external onlyOwner {
-        require(_tokenAmount > 0, 'YakAdapter: Nothing to recover');
+    function recoverERC20(address _tokenAddress, uint256 _tokenAmount)
+        external
+        onlyOwner
+    {
+        require(_tokenAmount > 0, "YakAdapter: Nothing to recover");
         IERC20(_tokenAddress).safeTransfer(msg.sender, _tokenAmount);
         emit Recovered(_tokenAddress, _tokenAmount);
     }
@@ -79,22 +80,18 @@ abstract contract YakAdapter is Ownable {
      * @notice Recover AVAX from contract
      * @param _amount amount
      */
-    function recoverAVAX(uint _amount) external onlyOwner {
-        require(_amount > 0, 'YakAdapter: Nothing to recover');
+    function recoverAVAX(uint256 _amount) external onlyOwner {
+        require(_amount > 0, "YakAdapter: Nothing to recover");
         payable(msg.sender).transfer(_amount);
         emit Recovered(address(0), _amount);
     }
 
     function query(
-        uint _amountIn, 
-        address _tokenIn, 
+        uint256 _amountIn,
+        address _tokenIn,
         address _tokenOut
-    ) external view returns (uint) {
-        return _query(
-            _amountIn, 
-            _tokenIn, 
-            _tokenOut
-        );
+    ) external view returns (uint256) {
+        return _query(_amountIn, _tokenIn, _tokenOut);
     }
 
     /**
@@ -107,21 +104,16 @@ abstract contract YakAdapter is Ownable {
      * @param _to address where swapped funds should be sent to
      */
     function swap(
-        uint _amountIn, 
-        uint _amountOut,
-        address _fromToken, 
-        address _toToken, 
+        uint256 _amountIn,
+        uint256 _amountOut,
+        address _fromToken,
+        address _toToken,
         address _to
     ) external {
         _approveIfNeeded(_fromToken, _amountIn);
         _swap(_amountIn, _amountOut, _fromToken, _toToken, _to);
-        emit YakAdapterSwap(
-            _fromToken, 
-            _toToken,
-            _amountIn, 
-            _amountOut 
-        );
-    } 
+        emit YakAdapterSwap(_fromToken, _toToken, _amountIn, _amountOut);
+    }
 
     /**
      * @notice Return expected funds to user
@@ -130,8 +122,12 @@ abstract contract YakAdapter is Ownable {
      * @param _amount tokens to return
      * @param _to address where funds should be sent to
      */
-    function _returnTo(address _token, uint _amount, address _to) internal {
-        if (address(this)!=_to) {
+    function _returnTo(
+        address _token,
+        uint256 _amount,
+        address _to
+    ) internal {
+        if (address(this) != _to) {
             IERC20(_token).safeTransfer(_to, _amount);
         }
     }
@@ -140,15 +136,15 @@ abstract contract YakAdapter is Ownable {
      * @notice Wrap AVAX
      * @param _amount amount
      */
-    function _wrap(uint _amount) internal {
-        IWETH(WAVAX).deposit{value: _amount}();
+    function _wrap(uint256 _amount) internal {
+        IWETH(WAVAX).deposit{ value: _amount }();
     }
 
     /**
      * @notice Unwrap WAVAX
      * @param _amount amount
      */
-    function _unwrap(uint _amount) internal {
+    function _unwrap(uint256 _amount) internal {
         IWETH(WAVAX).withdraw(_amount);
     }
 
@@ -163,18 +159,18 @@ abstract contract YakAdapter is Ownable {
      * @param _to Where recieved tokens are sent to
      */
     function _swap(
-        uint _amountIn, 
-        uint _amountOut, 
-        address _fromToken, 
-        address _toToken, 
+        uint256 _amountIn,
+        uint256 _amountOut,
+        address _fromToken,
+        address _toToken,
         address _to
     ) internal virtual;
 
     function _query(
-        uint _amountIn,
-        address _tokenIn, 
+        uint256 _amountIn,
+        address _tokenIn,
         address _tokenOut
-    ) internal virtual view returns (uint);
+    ) internal view virtual returns (uint256);
 
     /**
      * @notice Approve tokens for use in Strategy
@@ -182,7 +178,9 @@ abstract contract YakAdapter is Ownable {
      */
     function setAllowances() public virtual;
 
-    function _approveIfNeeded(address _tokenIn, uint _amount) internal virtual;
+    function _approveIfNeeded(address _tokenIn, uint256 _amount)
+        internal
+        virtual;
 
     receive() external payable {}
 }

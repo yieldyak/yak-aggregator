@@ -6,8 +6,8 @@
   "scripts": {
     "test": "npx hardhat test",
     "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
-    "prettier:solidity:write": "./node_modules/.bin/prettier -w contracts/**/*.sol",
-    "prettier:solidity": "./node_modules/.bin/prettier -c contracts/**/*.sol",
+    "prettier:solidity:write": "./node_modules/.bin/prettier -w ./contracts",
+    "prettier:solidity": "./node_modules/.bin/prettier -c ./contracts",
     "prepare": "husky install"
   },
   "author": "",
