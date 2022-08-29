@@ -17,7 +17,7 @@
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IGmxVault.sol";
 import "../interface/IERC20.sol";
