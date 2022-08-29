@@ -6,7 +6,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const NAME = 'CurveAtricryptoAdapterV0';
     const POOL = curvelikePools.CurveAtricrypto
-    const GAS_ESTIMATE = 1.098e6
+    const GAS_ESTIMATE = 9.5e5
 
     log(NAME)
     const deployResult = await deploy(NAME, {

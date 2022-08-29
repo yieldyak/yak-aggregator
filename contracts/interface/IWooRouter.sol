@@ -3,7 +3,6 @@ pragma solidity >=0.7.0;
 pragma experimental ABIEncoderV2;
 
 interface IWooRouter {
-
     function querySwap(
         address fromToken,
         address toToken,
@@ -18,5 +17,4 @@ interface IWooRouter {
         address payable to,
         address rebateTo
     ) external payable returns (uint256 realToAmount);
-
 }

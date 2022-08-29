@@ -13,7 +13,7 @@
 //                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//                              
+//
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
@@ -26,16 +26,16 @@ import "../YakAdapter.sol";
 
 contract KyberAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint;
+    using SafeMath for uint256;
 
     bytes32 public constant ID = keccak256("KyberAdapter");
-    uint public constant PRECISION = 1e18;
-    mapping(address => mapping(address => address)) internal TKNS_TO_POOL; 
+    uint256 public constant PRECISION = 1e18;
+    mapping(address => mapping(address => address)) internal TKNS_TO_POOL;
 
     constructor(
-        string memory _name, 
+        string memory _name,
         address[] memory _pools,
-        uint _swapGasEstimate
+        uint256 _swapGasEstimate
     ) {
         name = _name;
         setSwapGasEstimate(_swapGasEstimate);
@@ -49,7 +49,7 @@ contract KyberAdapter is YakAdapter {
 
     function addPools(address[] memory _pools) public onlyOwner {
         // Note: Overrides existing if pool has same tkns but different APR
-        for (uint i = 0; i < _pools.length; i++) {
+        for (uint256 i = 0; i < _pools.length; i++) {
             address tkn0 = IKyberPool(_pools[i]).token0();
             address tkn1 = IKyberPool(_pools[i]).token1();
             TKNS_TO_POOL[tkn0][tkn1] = _pools[i];
@@ -59,7 +59,7 @@ contract KyberAdapter is YakAdapter {
 
     function removePools(address[] memory _pools) public onlyOwner {
         // Note: Overrides existing if pool has same tkns but different APR
-        for (uint i = 0; i < _pools.length; i++) {
+        for (uint256 i = 0; i < _pools.length; i++) {
             address tkn0 = IKyberPool(_pools[i]).token0();
             address tkn1 = IKyberPool(_pools[i]).token1();
             TKNS_TO_POOL[tkn0][tkn1] = address(0);
@@ -71,7 +71,10 @@ contract KyberAdapter is YakAdapter {
         return TKNS_TO_POOL[tkn0][tkn1];
     }
 
-    function _approveIfNeeded(address tokenIn, uint amount) internal override {}
+    function _approveIfNeeded(address tokenIn, uint256 amount)
+        internal
+        override
+    {}
 
     function _getAmountOut(
         uint256 amountIn,
@@ -80,7 +83,8 @@ contract KyberAdapter is YakAdapter {
         uint256 feeInPrecision
     ) internal pure returns (uint256 amountOut) {
         // Based on https://github.com/dynamic-amm/smart-contracts/blob/master/contracts/libraries/DMMLibrary.sol
-        uint256 amountInWithFee = amountIn.mul(PRECISION.sub(feeInPrecision))/(PRECISION);
+        uint256 amountInWithFee = amountIn.mul(PRECISION.sub(feeInPrecision)) /
+            (PRECISION);
         uint256 numerator = amountInWithFee.mul(vReserveOut);
         uint256 denominator = vReserveIn.add(amountInWithFee);
         amountOut = numerator / denominator;
@@ -90,7 +94,7 @@ contract KyberAdapter is YakAdapter {
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
-    ) internal view override returns (uint) {
+    ) internal view override returns (uint256 amountOut) {
         if (_tokenIn == _tokenOut || _amountIn == 0) {
             return 0;
         }
@@ -112,35 +116,28 @@ contract KyberAdapter is YakAdapter {
             ? (vr0, vr1)
             : (vr1, vr0);
         if (reserveIn > 0 && reserveOut > 0) {
-            uint256 amountOut = _getAmountOut(
+            uint256 _amountOut = _getAmountOut(
                 _amountIn,
                 vReserveIn,
                 vReserveOut,
                 feeInPrecision
             );
-            if (reserveOut > amountOut) return amountOut;
-            else return 0;
+            if (reserveOut > amountOut) amountOut = _amountOut;
         }
     }
 
     function _swap(
-        uint _amountIn, 
-        uint _amountOut, 
-        address _tokenIn, 
-        address _tokenOut, 
+        uint256 _amountIn,
+        uint256 _amountOut,
+        address _tokenIn,
+        address _tokenOut,
         address to
     ) internal override {
         address pair = getPool(_tokenIn, _tokenOut);
-        (
-            uint amount0Out, 
-            uint amount1Out
-        ) = (_tokenIn < _tokenOut) ? (uint(0), _amountOut) : (_amountOut, uint(0));
+        (uint256 amount0Out, uint256 amount1Out) = (_tokenIn < _tokenOut)
+            ? (uint256(0), _amountOut)
+            : (_amountOut, uint256(0));
         IERC20(_tokenIn).safeTransfer(pair, _amountIn);
-        IKyberPool(pair).swap(
-            amount0Out, 
-            amount1Out,
-            to, 
-            new bytes(0)
-        );
+        IKyberPool(pair).swap(amount0Out, amount1Out, to, new bytes(0));
     }
 }

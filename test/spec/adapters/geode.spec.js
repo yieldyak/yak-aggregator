@@ -53,7 +53,7 @@ describe("YakAdapter - Geode", function() {
 
             it('cant set invalid interface', async () => {
                 await expect(Adapter.setInterfaceForPooledTkn(owner.address))
-                    .to.revertedWith('Not interface for the pooled token')
+                    .to.revertedWith('Not valid interface')
             })
 
             it('revoke/set token allowance', async () => {

@@ -6,7 +6,8 @@ const { setERC20Bal, impersonateAccount, injectFunds } = require('../../helpers'
 const { assets } = require('../../addresses.json')
 const fix = require('../../fixtures')
 
-describe("YakAdapter - ArableSF", function() {
+// swapping is paused
+describe.skip("YakAdapter - ArableSF", function() {
 
     let genNewAccount
     let trader
@@ -48,7 +49,7 @@ describe("YakAdapter - ArableSF", function() {
             }
         })
 
-        it.only('Swapping matches query #1', async () => {
+        it('Swapping matches query #1', async () => {
             // Options
             const tokenFrom = tkns.USDCe
             const tokenTo = tkns.USDC

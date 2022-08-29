@@ -69,10 +69,12 @@ describe("YakAdapter - Gmx", function() {
                 tokenTo.address, 
                 trader.address
             )
-            // Check that swap matches the query
-            await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
-            // Check leftovers arent left in the adapter
-            expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
+            // Check that swap matches the query and no leftovers in adapter
+            await expect(swap).to.changeTokenBalances(
+                tokenTo,
+                [trader, Adapter],
+                [amountOutQuery, parseUnits('0')]
+            )
         })
 
         it('Swapping matches query #2', async () => {
