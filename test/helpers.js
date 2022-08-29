@@ -124,11 +124,8 @@ module.exports.impersonateAccount = async (account) => {
 }
 
 module.exports.injectFunds = async (sender, reciever, amount) => {
-    // Deploy and fund NTInjector
-    const NTInjector = await ethers.getContractFactory('NTInjector')
-        .then(f => f.connect(sender).deploy({value: amount}))
-    // Inject funds
-    await NTInjector.injectFunds(reciever)
+    await ethers.getContractFactory('NTInjector')
+        .then(f => f.connect(sender).deploy(reciever, {value: amount}))
 }
 
 const _setHardhatNetwork = async ({forkBlockNumber, chainId, rpcUrl}) => { 
