@@ -2,7 +2,9 @@
 pragma solidity >=0.7.0;
 
 interface IxJOE {
-    function leave(uint) external;
-    function enter(uint) external;
-    function totalSupply() external view returns (uint);
+    function leave(uint256) external;
+
+    function enter(uint256) external;
+
+    function totalSupply() external view returns (uint256);
 }

@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
+    "prettier:solidity:write": "./node_modules/.bin/prettier -w contracts/**/*.sol",
+    "prettier:solidity": "./node_modules/.bin/prettier -c contracts/**/*.sol",
+    "prepare": "husky install"
   },
   "author": "",
   "license": "ISC",
@@ -21,13 +25,18 @@
     "hardhat-contract-sizer": "^2.0.3",
     "hardhat-deploy": "^0.7.10",
     "hardhat-deploy-ethers": "*",
-    "hardhat-gas-reporter": "^1.0.4"
+    "hardhat-gas-reporter": "^1.0.4",
+    "husky": "^8.0.1"
   },
   "dependencies": {
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "dotenv": "^8.2.0",
     "hardhat-tracer": "^1.0.0-alpha.5",
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.24",
     "solc": "^0.6.12",
+    "solhint": "^3.3.7",
+    "solhint-plugin-prettier": "^0.0.5",
     "typescript": "^4.2.4"
   },
   "mocha": {

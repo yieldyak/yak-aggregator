@@ -57,7 +57,7 @@ describe("YakAdapter - Kyber", function() {
 
     it('Querying adapter matches the price from original contract', async () => {
         // Options
-        const tknFrom = assets.WETHe
+        const tknFrom = assets.XAVA
         const tknTo = assets.WAVAX
         const pool = await Adapter.getPool(tknFrom, tknTo)
         const tknFromDecimals = await getTokenContract(tknFrom).then(t => t.decimals())
@@ -66,6 +66,7 @@ describe("YakAdapter - Kyber", function() {
         const [ ,amountOutOriginal ] = await Original.getAmountsOut(amountIn, [pool], [tknFrom, tknTo])
         // Query adapter 
         const amountOutAdapter = await Adapter.query(amountIn, tknFrom, tknTo)
+        
         // Compare two prices
         expect(amountOutOriginal).to.equal(amountOutAdapter)
     })

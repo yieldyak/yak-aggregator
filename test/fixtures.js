@@ -56,11 +56,11 @@ const _woofiAdapter = async () => {
         WoofiPool,
         WoofiAdapter
     ] = await Promise.all([
-        ethers.getContractAt('IWooPP', other.WoofiPool),
+        ethers.getContractAt('IWooPP', other.WoofiPoolUSDC),
         WoofiAdapterFactory.then(f => f.deploy(
             'WoofiAdapter', 
             5.25e5,
-            other.WoofiPool
+            other.WoofiPoolUSDC
         ))
     ])
     return {
@@ -203,16 +203,16 @@ const _curveAdapter = async () => {
         ethers.getContractAt('ICurveMim', curvelikePools.CurveMim),
         ethers.getContractAt('ICurve2', curvelikePools.CurveMore),
         ethers.getContractAt('ICurveMim', curvelikePools.CurveDeUSDC),
-        Curve2AdaptorFactory.then(f => f.deploy('CurveAaveAdapter', curvelikePools.CurveAave, 9.1e5)),
-        Curve1AdaptorFactory.then(f => f.deploy('CurveAtricryptoAdapter', curvelikePools.CurveAtricrypto, 1.098e6)),
-        Curve2AdaptorFactory.then(f => f.deploy('CurveRenAdapter', curvelikePools.CurveRen, 6.3e5)),
+        Curve2AdaptorFactory.then(f => f.deploy('CurveAaveAdapter', curvelikePools.CurveAave, 8e5)),
+        Curve1AdaptorFactory.then(f => f.deploy('CurveAtricryptoAdapter', curvelikePools.CurveAtricrypto, 9.5e5)),
+        Curve2AdaptorFactory.then(f => f.deploy('CurveRenAdapter', curvelikePools.CurveRen, 5.3e5)),
         CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.9e5)),
         CurvePlainAdapterFactory.then(f => f.deploy('CurveUSDCAdapter', curvelikePools.CurveUSDC, 2.9e5)),
         CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolfAdapter', curvelikePools.Curve3poolf, 3.3e5)),
-        CurvePlainAdapterFactory.then(f => f.deploy('CurveYUSDAdapter', curvelikePools.CurveYUSD, 3.3e5)),
-        CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.25e6)),
-        CurveMoreAdapterFactory.then(f => f.deploy('CurveMoreAdapter', 1.23e6)),
-        CurveDeUSDCAdapterFactory.then(f => f.deploy('CurveDeUSDCAdapter', 1.23e6))
+        CurvePlainAdapterFactory.then(f => f.deploy('CurveYUSDAdapter', curvelikePools.CurveYUSD, 3e5)),
+        CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.1e6)),
+        CurveMoreAdapterFactory.then(f => f.deploy('CurveMoreAdapter', 1.1e6)),
+        CurveDeUSDCAdapterFactory.then(f => f.deploy('CurveDeUSDCAdapter', 1.1e6))
     ])
     return { 
         CurveAave,
@@ -266,7 +266,7 @@ const _axialAdapter = async () => {
         CurveLikeAdapterFactory.then(f => f.deploy(
             'AxialAM3DAdapter',
             curvelikePools.AxialAM3D,
-            3.6e5
+            3.7e5
         )),
         CurveLikeAdapterFactory.then(f => f.deploy(
             'AxialAC4DAdapter',
@@ -276,7 +276,7 @@ const _axialAdapter = async () => {
         CurveLikeAdapterFactory.then(f => f.deploy(
             'AxialAA3DAdapter',
             curvelikePools.AxialAA3D,
-            3.6e5
+            4e5
         )),
         CurveLikeAdapterFactory.then(f => f.deploy(
             'AxialAS4DAdapter',

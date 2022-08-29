@@ -5,7 +5,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const NAME = 'AxialAM3DYakAdapterV0'
     const POOL = curvelikePools.AxialAM3D
-    const GAS_ESTIMATE = 3.6e5
+    const GAS_ESTIMATE = 3.7e5
 
     log(NAME)
     const deployResult = await deploy(NAME, {

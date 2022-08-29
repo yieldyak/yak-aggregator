@@ -17,7 +17,7 @@ contract BridgeToken is ERC20Burnable {
         address tokenContract;
         uint256 supply;
     }
-    mapping(address => SwapToken) swapTokens;
+    mapping(address => SwapToken) public swapTokens;
 
     mapping(uint256 => bool) public chainIds;
 
@@ -35,7 +35,9 @@ contract BridgeToken is ERC20Burnable {
     event RemoveSwapToken(address contractAddress, uint256 supplyDecrement);
     event Swap(address token, uint256 amount);
 
-    constructor(string memory _tokenName, string memory _tokenSymbol) ERC20(_tokenName, _tokenSymbol) {
+    constructor(string memory _tokenName, string memory _tokenSymbol)
+        ERC20(_tokenName, _tokenSymbol)
+    {
         TOKEN_NAME = _tokenName;
         TOKEN_SYMBOL = _tokenSymbol;
         bridgeRoles.add(msg.sender);
@@ -47,7 +49,9 @@ contract BridgeToken is ERC20Burnable {
     }
 
     /**
-     * @dev Mint function used by bridge. Optional FeeAddress and FeeAmount parameters used to mint small percentage of transfered assets directly to bridge.
+     * @dev Mint function used by bridge. 
+        Optional FeeAddress and FeeAmount parameters used to mint small percentage of 
+        transfered assets directly to bridge.
      * @param to Address to mint funds to.
      * @param amount Amount of funds to mint.
      * @param feeAddress Address to mint bridge fees to.
@@ -100,7 +104,7 @@ contract BridgeToken is ERC20Burnable {
      *                Zero by default for bridge deployment with only 2 networks.
      */
     function unwrap(uint256 amount, uint256 chainId) public {
-        require(tx.origin == msg.sender, "Contract calls not supported.");
+        require(tx.origin == msg.sender, "Contract calls not supported."); // solhint-disable-line avoid-tx-origin
         require(chainIds[chainId] == true, "Chain ID not supported.");
         _burn(msg.sender, amount);
         emit Unwrap(amount, chainId);
@@ -224,7 +228,7 @@ contract BridgeToken is ERC20Burnable {
     }
 
     // @notice: This is added for dev reasons
-    function mint(address _to, uint _amount) public {
+    function mint(address _to, uint256 _amount) public {
         _mint(_to, _amount);
     }
 }

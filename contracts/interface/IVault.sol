@@ -6,7 +6,10 @@ import "./IAsset.sol";
 import "./IERC20.sol";
 
 interface IVault {
-    enum SwapKind { GIVEN_IN, GIVEN_OUT }
+    enum SwapKind {
+        GIVEN_IN,
+        GIVEN_OUT
+    }
 
     struct SingleSwap {
         bytes32 poolId;

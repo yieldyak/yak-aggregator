@@ -3,7 +3,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts();
 
     const NAME = 'CurveMoreAdapterV0';
-    const GAS_ESTIMATE = 1.23e6
+    const GAS_ESTIMATE = 1.1e6
 
     log(NAME)
     const deployResult = await deploy(NAME, {

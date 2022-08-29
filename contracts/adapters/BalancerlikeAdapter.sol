@@ -78,9 +78,9 @@ contract BalancerlikeAdapter is YakAdapter {
                         address[] memory currentPools = tokensToPools[token][
                             address(tokens[k])
                         ];
-                        for (uint128 l = 0; l < currentPools.length; l++) {
-                            if (currentPools[l] == pool) {
-                                delete currentPools[l];
+                        for (uint128 m = 0; m < currentPools.length; m++) {
+                            if (currentPools[m] == pool) {
+                                delete currentPools[m];
                             }
                         }
                         tokensToPools[token][address(tokens[k])] = currentPools;

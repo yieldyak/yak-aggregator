@@ -50,7 +50,7 @@ module.exports = {
   mocha: {
     timeout: 1e6,
     recursive: true,
-    spec: ['test/**/*.spec.js']
+    spec: ['test/*.spec.js']
   },
   solidity: {
       version: "0.7.6", 

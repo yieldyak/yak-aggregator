@@ -54,10 +54,6 @@ describe("YakAdapter - Platypus", function() {
                 .to.be.equal(platypus.mim)
             expect(await Adapter.getPoolForTkns(assets.MIM, assets.USDC))
                 .to.be.equal(platypus.mim)
-            expect(await Adapter.getPoolForTkns(assets.USDC, assets.UST))
-                .to.be.equal(platypus.ust)
-            expect(await Adapter.getPoolForTkns(assets.UST, assets.USDC))
-                .to.be.equal(platypus.ust)
         })
 
         it('Adapter adding pool for specific tkns', async () => {
@@ -253,44 +249,13 @@ describe("YakAdapter - Platypus", function() {
             it('Querying adapter matches the price from original contract', async () => {
                 const tknFrom = tkns.MIM
                 const tknTo = tkns.USDC
-                const amountIn = parseUnits('10000', await tknFrom.decimals())
+                const amountIn = parseUnits('1', await tknFrom.decimals())
                 await checkAdapterSwapMatchesQuery(tknFrom, tknTo, amountIn)  
             })
         
             it('Swapping matches query', async () => {
                 const tokenFrom = tkns.USDC
                 const tokenTo = tkns.MIM
-                const amountIn = parseUnits('3333', await tokenFrom.decimals())
-                await checkAdapterQueryMatchesOriginal(tokenFrom, tokenTo, amountIn)
-            })
-            
-        })
-
-        describe('ust', async () => {
-
-            before(async () => {
-                Original = await ethers.getContractAt(
-                    'IPlatypus',
-                    platypus.ust
-                )
-                await Adapter.connect(owner).addPools([platypus.ust])
-            })
-            
-            beforeEach(async () => {
-                trader = genNewAccount()
-                Adapter = Adapter.connect(trader)
-            })
-    
-            it('Querying adapter matches the price from original contract', async () => {
-                const tknFrom = tkns.UST
-                const tknTo = tkns.USDC
-                const amountIn = parseUnits('10000', await tknFrom.decimals())
-                await checkAdapterSwapMatchesQuery(tknFrom, tknTo, amountIn)  
-            })
-        
-            it('Swapping matches query', async () => {
-                const tokenFrom = tkns.USDC
-                const tokenTo = tkns.UST
                 const amountIn = parseUnits('3333', await tokenFrom.decimals())
                 await checkAdapterQueryMatchesOriginal(tokenFrom, tokenTo, amountIn)
             })
@@ -315,7 +280,7 @@ describe("YakAdapter - Platypus", function() {
             it('Querying adapter matches the price from original contract', async () => {
                 const tknFrom = tkns.FRAXc
                 const tknTo = tkns.USDC
-                const amountIn = parseUnits('10000', await tknFrom.decimals())
+                const amountIn = parseUnits('1', await tknFrom.decimals())
                 await checkAdapterSwapMatchesQuery(tknFrom, tknTo, amountIn)  
             })
         
@@ -340,12 +305,11 @@ describe("YakAdapter - Platypus", function() {
             const options = [
                 [ tkns.USDC, tkns.FRAXc ],
                 [ tkns.USDC, tkns.DAIe ],
-                [ tkns.USDC, tkns.UST ],
                 [ tkns.USDC, tkns.MIM ],
             ]
             let maxGas = 0
             for (let [ tokenFrom, tokenTo ] of options) {
-                const amountIn = parseUnits('999999', await tokenFrom.decimals())
+                const amountIn = parseUnits('1', await tokenFrom.decimals())
                 // Mint tokens to adapter address
                 await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
                 expect(await tokenFrom.balanceOf(Adapter.address)).to.gte(amountIn) 

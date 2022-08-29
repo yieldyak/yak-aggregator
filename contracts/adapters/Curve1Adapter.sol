@@ -13,7 +13,7 @@
 //                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//                              
+//
 
 // Supports Curve Atricrypto pools and alike
 
@@ -28,23 +28,27 @@ import "../YakAdapter.sol";
 
 contract Curve1Adapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint;
+    using SafeMath for uint256;
 
     bytes32 public constant id = keccak256("Curve1Adapter");
-    mapping (address => bool) public isPoolToken;
-    mapping (address => uint) public tokenIndex;
+    mapping(address => bool) public isPoolToken;
+    mapping(address => uint256) public tokenIndex;
     address public pool;
 
-    constructor (string memory _name, address _pool, uint _swapGasEstimate) {
+    constructor(
+        string memory _name,
+        address _pool,
+        uint256 _swapGasEstimate
+    ) {
         name = _name;
         pool = _pool;
         _setPoolTokens();
         setSwapGasEstimate(_swapGasEstimate);
     }
 
-    // Mapping indicator which tokens are included in the pool 
+    // Mapping indicator which tokens are included in the pool
     function _setPoolTokens() internal {
-        for (uint i=0; true; i++) {
+        for (uint256 i = 0; true; i++) {
             try ICurve1(pool).underlying_coins(i) returns (address token) {
                 isPoolToken[token] = true;
                 tokenIndex[token] = i;
@@ -56,55 +60,61 @@ contract Curve1Adapter is YakAdapter {
 
     function setAllowances() public override onlyOwner {}
 
-    function _approveIfNeeded(address _tokenIn, uint _amount) internal override {
-        uint allowance = IERC20(_tokenIn).allowance(address(this), pool);
+    function _approveIfNeeded(address _tokenIn, uint256 _amount)
+        internal
+        override
+    {
+        uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
         }
     }
 
     function _query(
-        uint _amountIn, 
-        address _tokenIn, 
+        uint256 _amountIn,
+        address _tokenIn,
         address _tokenOut
-    ) internal override view returns (uint) {
+    ) internal view override returns (uint256) {
         if (
-            _amountIn==0 || 
-            _tokenIn==_tokenOut ||
-            !isPoolToken[_tokenIn] || 
+            _amountIn == 0 ||
+            _tokenIn == _tokenOut ||
+            !isPoolToken[_tokenIn] ||
             !isPoolToken[_tokenOut]
-        ) { return 0; }
-        try ICurve1(pool).get_dy_underlying(
-            tokenIndex[_tokenIn], 
-            tokenIndex[_tokenOut], 
-            _amountIn
-        ) returns (uint amountOut) {
+        ) {
+            return 0;
+        }
+        try
+            ICurve1(pool).get_dy_underlying(
+                tokenIndex[_tokenIn],
+                tokenIndex[_tokenOut],
+                _amountIn
+            )
+        returns (uint256 amountOut) {
             // `calc_token_amount` in base_pool is used in part of the query
             // this method does account for deposit fee which causes discrepancy
             // between the query result and the actual swap amount by few bps(0-3.2)
             // Additionally there is a rounding error (swap and query may calc different amounts)
             // Account for that with 4 bps discount
-            return amountOut == 0 ? 0 : amountOut*(1e4-4)/1e4;
+            return amountOut == 0 ? 0 : (amountOut * (1e4 - 4)) / 1e4;
         } catch {
             return 0;
         }
     }
 
     function _swap(
-        uint _amountIn, 
-        uint _amountOut, 
-        address _tokenIn, 
-        address _tokenOut, 
+        uint256 _amountIn,
+        uint256 _amountOut,
+        address _tokenIn,
+        address _tokenOut,
         address _to
     ) internal override {
         ICurve1(pool).exchange_underlying(
-            tokenIndex[_tokenIn], 
+            tokenIndex[_tokenIn],
             tokenIndex[_tokenOut],
-            _amountIn, 
+            _amountIn,
             _amountOut
         );
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }
-
 }
