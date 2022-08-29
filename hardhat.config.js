@@ -5,6 +5,7 @@ require('hardhat-contract-sizer');
 require('hardhat-deploy-ethers');
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
+require('hardhat-log-remover');
 require("hardhat-tracer");
 require('hardhat-deploy');
 
