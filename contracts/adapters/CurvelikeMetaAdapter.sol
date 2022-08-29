@@ -51,9 +51,7 @@ contract CurvelikeMetaAdapter is YakAdapter {
     }
 
     function setPoolFeeCompliment() public onlyOwner {
-        poolFeeCompliment =
-            feeDenominator -
-            ICurvelikeMeta(pool).swapStorage().swapFee;
+        poolFeeCompliment = feeDenominator - ICurvelikeMeta(pool).swapStorage().swapFee;
     }
 
     // Mapping indicator which tokens are included in the pool
@@ -75,10 +73,7 @@ contract CurvelikeMetaAdapter is YakAdapter {
 
     function setAllowances() public override onlyOwner {}
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
         uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
@@ -86,8 +81,7 @@ contract CurvelikeMetaAdapter is YakAdapter {
     }
 
     function _isPaused() internal view returns (bool) {
-        return
-            ICurvelikeMeta(pool).paused() || ICurvelikeMeta(metaPool).paused();
+        return ICurvelikeMeta(pool).paused() || ICurvelikeMeta(metaPool).paused();
     }
 
     function _query(
@@ -96,20 +90,12 @@ contract CurvelikeMetaAdapter is YakAdapter {
         address _tokenOut
     ) internal view override returns (uint256) {
         if (
-            _amountIn == 0 ||
-            _tokenIn == _tokenOut ||
-            !isPoolToken[_tokenIn] ||
-            !isPoolToken[_tokenOut] ||
-            _isPaused()
+            _amountIn == 0 || _tokenIn == _tokenOut || !isPoolToken[_tokenIn] || !isPoolToken[_tokenOut] || _isPaused()
         ) {
             return 0;
         }
         try
-            ICurvelikeMeta(pool).calculateSwapUnderlying(
-                tokenIndex[_tokenIn],
-                tokenIndex[_tokenOut],
-                _amountIn
-            )
+            ICurvelikeMeta(pool).calculateSwapUnderlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn)
         returns (uint256 amountOut) {
             return amountOut.mul(poolFeeCompliment) / feeDenominator;
         } catch {

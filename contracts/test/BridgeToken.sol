@@ -21,13 +21,7 @@ contract BridgeToken is ERC20Burnable {
 
     mapping(uint256 => bool) public chainIds;
 
-    event Mint(
-        address to,
-        uint256 amount,
-        address feeAddress,
-        uint256 feeAmount,
-        bytes32 originTxId
-    );
+    event Mint(address to, uint256 amount, address feeAddress, uint256 feeAmount, bytes32 originTxId);
     event Unwrap(uint256 amount, uint256 chainId);
     event AddSupportedChainId(uint256 chainId);
     event MigrateBridgeRole(address newBridgeRoleAddress);
@@ -35,9 +29,7 @@ contract BridgeToken is ERC20Burnable {
     event RemoveSwapToken(address contractAddress, uint256 supplyDecrement);
     event Swap(address token, uint256 amount);
 
-    constructor(string memory _tokenName, string memory _tokenSymbol)
-        ERC20(_tokenName, _tokenSymbol)
-    {
+    constructor(string memory _tokenName, string memory _tokenSymbol) ERC20(_tokenName, _tokenSymbol) {
         TOKEN_NAME = _tokenName;
         TOKEN_SYMBOL = _tokenSymbol;
         bridgeRoles.add(msg.sender);
@@ -126,23 +118,16 @@ contract BridgeToken is ERC20Burnable {
      * @param contractAddress Token Address to allow swaps.
      * @param supplyIncrement Amount of assets allowed to be swapped (or incremental increase in amount).
      */
-    function addSwapToken(address contractAddress, uint256 supplyIncrement)
-        public
-    {
+    function addSwapToken(address contractAddress, uint256 supplyIncrement) public {
         require(bridgeRoles.has(msg.sender), "Unauthorized.");
         require(isContract(contractAddress), "Address is not contract.");
 
         // If the swap token is not already supported, add it with the total supply of supplyIncrement.
         // Otherwise, increment the current supply.
         if (swapTokens[contractAddress].tokenContract == address(0)) {
-            swapTokens[contractAddress] = SwapToken({
-                tokenContract: contractAddress,
-                supply: supplyIncrement
-            });
+            swapTokens[contractAddress] = SwapToken({ tokenContract: contractAddress, supply: supplyIncrement });
         } else {
-            swapTokens[contractAddress].supply =
-                swapTokens[contractAddress].supply +
-                supplyIncrement;
+            swapTokens[contractAddress].supply = swapTokens[contractAddress].supply + supplyIncrement;
         }
         emit AddSwapToken(contractAddress, supplyIncrement);
     }
@@ -152,22 +137,15 @@ contract BridgeToken is ERC20Burnable {
      * @param contractAddress Token Address to remove swap amount.
      * @param supplyDecrement Amount to remove from the swap supply.
      */
-    function removeSwapToken(address contractAddress, uint256 supplyDecrement)
-        public
-    {
+    function removeSwapToken(address contractAddress, uint256 supplyDecrement) public {
         require(bridgeRoles.has(msg.sender), "Unauthorized");
         require(isContract(contractAddress), "Address is not contract.");
-        require(
-            swapTokens[contractAddress].tokenContract != address(0),
-            "Swap token not supported"
-        );
+        require(swapTokens[contractAddress].tokenContract != address(0), "Swap token not supported");
 
         // If the decrement is less than the current supply, decrement it from the current supply.
         // Otherwise, if the decrement is greater than or equal to the current supply, delete the mapping value.
         if (swapTokens[contractAddress].supply > supplyDecrement) {
-            swapTokens[contractAddress].supply =
-                swapTokens[contractAddress].supply -
-                supplyDecrement;
+            swapTokens[contractAddress].supply = swapTokens[contractAddress].supply - supplyDecrement;
         } else {
             delete swapTokens[contractAddress];
         }
@@ -190,22 +168,14 @@ contract BridgeToken is ERC20Burnable {
      */
     function swap(address token, uint256 amount) public {
         require(isContract(token), "Token is not a contract.");
-        require(
-            swapTokens[token].tokenContract != address(0),
-            "Swap token is not a contract."
-        );
-        require(
-            amount <= swapTokens[token].supply,
-            "Swap amount is more than supply."
-        );
+        require(swapTokens[token].tokenContract != address(0), "Swap token is not a contract.");
+        require(amount <= swapTokens[token].supply, "Swap amount is more than supply.");
 
         // Update the allowed swap amount.
         swapTokens[token].supply = swapTokens[token].supply - amount;
 
         // Burn the old token.
-        ERC20Burnable swapToken = ERC20Burnable(
-            swapTokens[token].tokenContract
-        );
+        ERC20Burnable swapToken = ERC20Burnable(swapTokens[token].tokenContract);
         swapToken.burnFrom(msg.sender, amount);
 
         // Mint the new token.

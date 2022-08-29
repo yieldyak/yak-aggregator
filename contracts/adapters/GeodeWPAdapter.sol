@@ -45,23 +45,15 @@ contract GeodeWPAdapter is YakAdapter {
         pooledTknId = _pooledTknId;
         portal = _portal;
         name = _name;
-        pooledTknInterface = IGeodePortal(_portal).planetCurrentInterface(
-            pooledTknId
-        );
+        pooledTknInterface = IGeodePortal(_portal).planetCurrentInterface(pooledTknId);
         pool = IGeodePortal(_portal).planetWithdrawalPool(pooledTknId);
         gavax = IGeodePortal(_portal).gAVAX();
         setSwapGasEstimate(_swapGasEstimate);
         setAllowances();
     }
 
-    function setInterfaceForPooledTkn(address interfaceAddress)
-        public
-        onlyOwner
-    {
-        require(
-            IgAVAX(gavax).isInterface(interfaceAddress, pooledTknId),
-            "Not valid interface"
-        );
+    function setInterfaceForPooledTkn(address interfaceAddress) public onlyOwner {
+        require(IgAVAX(gavax).isInterface(interfaceAddress, pooledTknId), "Not valid interface");
         pooledTknInterface = interfaceAddress;
     }
 
@@ -83,14 +75,8 @@ contract GeodeWPAdapter is YakAdapter {
         IgAVAX(gavax).setApprovalForAll(pool, false);
     }
 
-    function _supportedTokens(address tknIn, address tknOut)
-        internal
-        view
-        returns (bool)
-    {
-        return
-            (tknOut == WAVAX && tknIn == pooledTknInterface) ||
-            (tknIn == WAVAX && tknOut == pooledTknInterface);
+    function _supportedTokens(address tknIn, address tknOut) internal view returns (bool) {
+        return (tknOut == WAVAX && tknIn == pooledTknInterface) || (tknIn == WAVAX && tknOut == pooledTknInterface);
     }
 
     function _stakingPaused() internal view returns (bool) {
@@ -102,9 +88,7 @@ contract GeodeWPAdapter is YakAdapter {
         uint8 tknOutIndex,
         uint256 amountIn
     ) internal view returns (uint256) {
-        try
-            IGeodeWP(pool).calculateSwap(tknInIndex, tknOutIndex, amountIn)
-        returns (uint256 amountOut) {
+        try IGeodeWP(pool).calculateSwap(tknInIndex, tknOutIndex, amountIn) returns (uint256 amountOut) {
             return amountOut;
         } catch {
             return 0;
@@ -116,11 +100,7 @@ contract GeodeWPAdapter is YakAdapter {
         return (amountIn * gAVAX_DENOMINATOR) / price;
     }
 
-    function _calcSwapAndMint(uint256 amountIn)
-        internal
-        view
-        returns (uint256)
-    {
+    function _calcSwapAndMint(uint256 amountIn) internal view returns (uint256) {
         uint256 debt = IGeodeWP(pool).getDebt();
         if (debt >= amountIn || _stakingPaused()) {
             // If pool is unbalanced and missing avax it's cheaper to swap
@@ -142,12 +122,9 @@ contract GeodeWPAdapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256 amountOut) {
-        if (_amountIn == 0 || _tokenIn == _tokenOut || IGeodeWP(pool).paused())
-            amountOut = 0;
-        else if (_tokenIn == WAVAX && _tokenOut == pooledTknInterface)
-            amountOut = _calcSwapAndMint(_amountIn);
-        else if (_tokenOut == WAVAX && _tokenIn == pooledTknInterface)
-            amountOut = _calcSwap(1, 0, _amountIn);
+        if (_amountIn == 0 || _tokenIn == _tokenOut || IGeodeWP(pool).paused()) amountOut = 0;
+        else if (_tokenIn == WAVAX && _tokenOut == pooledTknInterface) amountOut = _calcSwapAndMint(_amountIn);
+        else if (_tokenOut == WAVAX && _tokenIn == pooledTknInterface) amountOut = _calcSwap(1, 0, _amountIn);
     }
 
     function _swapUnderlying(
@@ -157,21 +134,11 @@ contract GeodeWPAdapter is YakAdapter {
         uint256 _amountOut,
         uint256 _val
     ) internal {
-        IGeodeWP(pool).swap{ value: _val }(
-            _tokenInIndex,
-            _tokenOutIndex,
-            _amountIn,
-            _amountOut,
-            block.timestamp
-        );
+        IGeodeWP(pool).swap{ value: _val }(_tokenInIndex, _tokenOutIndex, _amountIn, _amountOut, block.timestamp);
     }
 
     function _geodeStake(uint256 _amountIn, uint256 _amountOut) internal {
-        IGeodePortal(portal).stake{ value: _amountIn }(
-            pooledTknId,
-            _amountOut,
-            block.timestamp
-        );
+        IGeodePortal(portal).stake{ value: _amountIn }(pooledTknId, _amountOut, block.timestamp);
     }
 
     function _swap(
@@ -183,8 +150,7 @@ contract GeodeWPAdapter is YakAdapter {
     ) internal override {
         if (_tokenIn == WAVAX) {
             IWETH(WAVAX).withdraw(_amountIn);
-            if (_stakingPaused())
-                _swapUnderlying(0, 1, _amountIn, _amountOut, _amountIn);
+            if (_stakingPaused()) _swapUnderlying(0, 1, _amountIn, _amountOut, _amountIn);
             else _geodeStake(_amountIn, _amountOut);
         } else {
             _swapUnderlying(1, 0, _amountIn, _amountOut, 0);

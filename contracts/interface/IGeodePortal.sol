@@ -6,10 +6,7 @@ interface IGeodePortal {
 
     function getNameFromId(uint256 _id) external view returns (bytes memory);
 
-    function planetCurrentInterface(uint256 _id)
-        external
-        view
-        returns (address);
+    function planetCurrentInterface(uint256 _id) external view returns (address);
 
     function planetWithdrawalPool(uint256 _id) external view returns (address);
 

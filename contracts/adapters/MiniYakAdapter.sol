@@ -36,20 +36,14 @@ contract MiniYakAdapter is YakAdapter {
         setAllowances();
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 
     function _query(
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
     ) internal pure override returns (uint256 amountOut) {
-        if (
-            (_tokenIn == mYAK && _tokenOut == YAK) ||
-            (_tokenIn == YAK && _tokenOut == mYAK)
-        ) {
+        if ((_tokenIn == mYAK && _tokenOut == YAK) || (_tokenIn == YAK && _tokenOut == mYAK)) {
             amountOut = _amountIn;
         }
     }

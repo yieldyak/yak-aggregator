@@ -71,10 +71,7 @@ contract KyberAdapter is YakAdapter {
         return TKNS_TO_POOL[tkn0][tkn1];
     }
 
-    function _approveIfNeeded(address tokenIn, uint256 amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address tokenIn, uint256 amount) internal override {}
 
     function _getAmountOut(
         uint256 amountIn,
@@ -83,8 +80,7 @@ contract KyberAdapter is YakAdapter {
         uint256 feeInPrecision
     ) internal pure returns (uint256 amountOut) {
         // Based on https://github.com/dynamic-amm/smart-contracts/blob/master/contracts/libraries/DMMLibrary.sol
-        uint256 amountInWithFee = amountIn.mul(PRECISION.sub(feeInPrecision)) /
-            (PRECISION);
+        uint256 amountInWithFee = amountIn.mul(PRECISION.sub(feeInPrecision)) / (PRECISION);
         uint256 numerator = amountInWithFee.mul(vReserveOut);
         uint256 denominator = vReserveIn.add(amountInWithFee);
         amountOut = numerator / denominator;
@@ -102,26 +98,11 @@ contract KyberAdapter is YakAdapter {
         if (pool == address(0)) {
             return 0;
         }
-        (
-            uint112 r0,
-            uint112 r1,
-            uint112 vr0,
-            uint112 vr1,
-            uint256 feeInPrecision
-        ) = IKyberPool(pool).getTradeInfo();
-        (uint112 reserveIn, uint112 reserveOut) = _tokenIn < _tokenOut
-            ? (r0, r1)
-            : (r1, r0);
-        (uint112 vReserveIn, uint112 vReserveOut) = _tokenIn < _tokenOut
-            ? (vr0, vr1)
-            : (vr1, vr0);
+        (uint112 r0, uint112 r1, uint112 vr0, uint112 vr1, uint256 feeInPrecision) = IKyberPool(pool).getTradeInfo();
+        (uint112 reserveIn, uint112 reserveOut) = _tokenIn < _tokenOut ? (r0, r1) : (r1, r0);
+        (uint112 vReserveIn, uint112 vReserveOut) = _tokenIn < _tokenOut ? (vr0, vr1) : (vr1, vr0);
         if (reserveIn > 0 && reserveOut > 0) {
-            uint256 _amountOut = _getAmountOut(
-                _amountIn,
-                vReserveIn,
-                vReserveOut,
-                feeInPrecision
-            );
+            uint256 _amountOut = _getAmountOut(_amountIn, vReserveIn, vReserveOut, feeInPrecision);
             if (reserveOut > amountOut) amountOut = _amountOut;
         }
     }

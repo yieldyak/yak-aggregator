@@ -26,19 +26,13 @@ import "./lib/Ownable.sol";
 abstract contract YakAdapter is Ownable {
     using SafeERC20 for IERC20;
 
-    event YakAdapterSwap(
-        address indexed _tokenFrom,
-        address indexed _tokenTo,
-        uint256 _amountIn,
-        uint256 _amountOut
-    );
+    event YakAdapterSwap(address indexed _tokenFrom, address indexed _tokenTo, uint256 _amountIn, uint256 _amountOut);
 
     event UpdatedGasEstimate(address indexed _adapter, uint256 _newEstimate);
 
     event Recovered(address indexed _asset, uint256 amount);
 
-    address internal constant WAVAX =
-        0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
+    address internal constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
     address internal constant AVAX = address(0);
     uint256 internal constant UINT_MAX = type(uint256).max;
 
@@ -55,10 +49,7 @@ abstract contract YakAdapter is Ownable {
      * @param _token address
      * @param _spender address
      */
-    function revokeAllowance(address _token, address _spender)
-        external
-        onlyOwner
-    {
+    function revokeAllowance(address _token, address _spender) external onlyOwner {
         IERC20(_token).safeApprove(_spender, 0);
     }
 
@@ -67,10 +58,7 @@ abstract contract YakAdapter is Ownable {
      * @param _tokenAddress token address
      * @param _tokenAmount amount to recover
      */
-    function recoverERC20(address _tokenAddress, uint256 _tokenAmount)
-        external
-        onlyOwner
-    {
+    function recoverERC20(address _tokenAddress, uint256 _tokenAmount) external onlyOwner {
         require(_tokenAmount > 0, "YakAdapter: Nothing to recover");
         IERC20(_tokenAddress).safeTransfer(msg.sender, _tokenAmount);
         emit Recovered(_tokenAddress, _tokenAmount);
@@ -178,9 +166,7 @@ abstract contract YakAdapter is Ownable {
      */
     function setAllowances() public virtual;
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        virtual;
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal virtual;
 
     receive() external payable {}
 }

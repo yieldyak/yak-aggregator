@@ -60,10 +60,7 @@ contract CurvePlainAdapter is YakAdapter {
 
     function setAllowances() public override onlyOwner {}
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
         uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
@@ -75,21 +72,12 @@ contract CurvePlainAdapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256) {
-        if (
-            _amountIn == 0 ||
-            _tokenIn == _tokenOut ||
-            !isPoolToken[_tokenIn] ||
-            !isPoolToken[_tokenOut]
-        ) {
+        if (_amountIn == 0 || _tokenIn == _tokenOut || !isPoolToken[_tokenIn] || !isPoolToken[_tokenOut]) {
             return 0;
         }
-        try
-            ICurvePlain(pool).get_dy(
-                tokenIndex[_tokenIn],
-                tokenIndex[_tokenOut],
-                _amountIn
-            )
-        returns (uint256 amountOut) {
+        try ICurvePlain(pool).get_dy(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+            uint256 amountOut
+        ) {
             // Account for rounding error (swap and query may calc different amounts) by substracting 1 gwei
             return amountOut == 0 ? 0 : amountOut - 1;
         } catch {
@@ -104,12 +92,7 @@ contract CurvePlainAdapter is YakAdapter {
         address _tokenOut,
         address _to
     ) internal override {
-        ICurvePlain(pool).exchange(
-            tokenIndex[_tokenIn],
-            tokenIndex[_tokenOut],
-            _amountIn,
-            _amountOut
-        );
+        ICurvePlain(pool).exchange(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }

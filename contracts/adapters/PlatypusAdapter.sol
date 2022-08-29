@@ -50,11 +50,7 @@ contract PlatypusAdapter is YakAdapter {
 
     function setAllowances() public override onlyOwner {}
 
-    function getPoolForTkns(address tknIn, address tknOut)
-        public
-        view
-        returns (address)
-    {
+    function getPoolForTkns(address tknIn, address tknOut) public view returns (address) {
         return tknToTknToPool[tknIn][tknOut];
     }
 
@@ -66,11 +62,7 @@ contract PlatypusAdapter is YakAdapter {
     }
 
     // @dev Returns false if repeated tkns
-    function _poolSupportsTkns(address pool, address[] memory tkns)
-        internal
-        view
-        returns (bool)
-    {
+    function _poolSupportsTkns(address pool, address[] memory tkns) internal view returns (bool) {
         address[] memory supportedTkns = IPlatypus(pool).getTokenAddresses();
         uint256 supportedCount;
         for (uint256 i = 0; i < supportedTkns.length; i++) {
@@ -101,18 +93,14 @@ contract PlatypusAdapter is YakAdapter {
     function addPools(address[] calldata pools) external onlyOwner {
         for (uint256 i = 0; i < pools.length; i++) {
             address pool = pools[i];
-            address[] memory supportedTkns = IPlatypus(pool)
-                .getTokenAddresses();
+            address[] memory supportedTkns = IPlatypus(pool).getTokenAddresses();
             _setPoolForTkns(supportedTkns, pool);
             emit AddPoolSupport(pool);
         }
     }
 
     // Manually set the pool support for tkns
-    function setPoolForTkns(address pool, address[] memory tkns)
-        external
-        onlyOwner
-    {
+    function setPoolForTkns(address pool, address[] memory tkns) external onlyOwner {
         require(tkns.length > 1, "At least two tkns");
         require(pool != address(0), "Only non-zero pool");
         require(_poolSupportsTkns(pool, tkns), "Pool does not support tkns");
@@ -124,8 +112,7 @@ contract PlatypusAdapter is YakAdapter {
     function rmPools(address[] calldata pools) external onlyOwner {
         for (uint256 i = 0; i < pools.length; i++) {
             address pool = pools[i];
-            address[] memory supportedTkns = IPlatypus(pool)
-                .getTokenAddresses();
+            address[] memory supportedTkns = IPlatypus(pool).getTokenAddresses();
             _setPoolForTkns(supportedTkns, address(0));
             emit RmPoolSupport(pool);
         }
@@ -140,9 +127,7 @@ contract PlatypusAdapter is YakAdapter {
         if (pool == address(0) || _amountIn == 0 || IPlatypus(pool).paused()) {
             return 0;
         }
-        try
-            IPlatypus(pool).quotePotentialSwap(_tokenIn, _tokenOut, _amountIn)
-        returns (uint256 amountOut) {
+        try IPlatypus(pool).quotePotentialSwap(_tokenIn, _tokenOut, _amountIn) returns (uint256 amountOut) {
             return amountOut;
         } catch {
             return 0;
@@ -157,18 +142,8 @@ contract PlatypusAdapter is YakAdapter {
         address _to
     ) internal override {
         address pool = getPoolForTkns(_tokenIn, _tokenOut);
-        IPlatypus(pool).swap(
-            _tokenIn,
-            _tokenOut,
-            _amountIn,
-            _amountOut,
-            _to,
-            block.timestamp
-        );
+        IPlatypus(pool).swap(_tokenIn, _tokenOut, _amountIn, _amountOut, _to, block.timestamp);
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 }

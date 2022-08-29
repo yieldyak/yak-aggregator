@@ -52,10 +52,7 @@ contract UnilikeAdapter is YakAdapter {
         IERC20(WAVAX).safeApprove(WAVAX, UINT_MAX);
     }
 
-    function _approveIfNeeded(address tokenIn, uint256 amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address tokenIn, uint256 amount) internal override {}
 
     function _getAmountOut(
         uint256 _amountIn,
@@ -65,9 +62,7 @@ contract UnilikeAdapter is YakAdapter {
         // Based on https://github.com/Uniswap/uniswap-v2-periphery/blob/master/contracts/UniswapV2Router02.sol
         uint256 amountInWithFee = _amountIn.mul(feeCompliment);
         uint256 numerator = amountInWithFee.mul(_reserveOut);
-        uint256 denominator = _reserveIn.mul(FEE_DENOMINATOR).add(
-            amountInWithFee
-        );
+        uint256 denominator = _reserveIn.mul(FEE_DENOMINATOR).add(amountInWithFee);
         amountOut = numerator / denominator;
     }
 
@@ -84,9 +79,7 @@ contract UnilikeAdapter is YakAdapter {
             return 0;
         }
         (uint256 r0, uint256 r1, ) = IUnilikePair(pair).getReserves();
-        (uint256 reserveIn, uint256 reserveOut) = _tokenIn < _tokenOut
-            ? (r0, r1)
-            : (r1, r0);
+        (uint256 reserveIn, uint256 reserveOut) = _tokenIn < _tokenOut ? (r0, r1) : (r1, r0);
         if (reserveIn > 0 && reserveOut > 0) {
             amountOut = _getAmountOut(_amountIn, reserveIn, reserveOut);
         }

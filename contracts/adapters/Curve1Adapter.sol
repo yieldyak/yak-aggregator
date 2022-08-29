@@ -60,10 +60,7 @@ contract Curve1Adapter is YakAdapter {
 
     function setAllowances() public override onlyOwner {}
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
         uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
@@ -75,21 +72,12 @@ contract Curve1Adapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256) {
-        if (
-            _amountIn == 0 ||
-            _tokenIn == _tokenOut ||
-            !isPoolToken[_tokenIn] ||
-            !isPoolToken[_tokenOut]
-        ) {
+        if (_amountIn == 0 || _tokenIn == _tokenOut || !isPoolToken[_tokenIn] || !isPoolToken[_tokenOut]) {
             return 0;
         }
-        try
-            ICurve1(pool).get_dy_underlying(
-                tokenIndex[_tokenIn],
-                tokenIndex[_tokenOut],
-                _amountIn
-            )
-        returns (uint256 amountOut) {
+        try ICurve1(pool).get_dy_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+            uint256 amountOut
+        ) {
             // `calc_token_amount` in base_pool is used in part of the query
             // this method does account for deposit fee which causes discrepancy
             // between the query result and the actual swap amount by few bps(0-3.2)
@@ -108,12 +96,7 @@ contract Curve1Adapter is YakAdapter {
         address _tokenOut,
         address _to
     ) internal override {
-        ICurve1(pool).exchange_underlying(
-            tokenIndex[_tokenIn],
-            tokenIndex[_tokenOut],
-            _amountIn,
-            _amountOut
-        );
+        ICurve1(pool).exchange_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }

@@ -50,12 +50,7 @@ contract YakRouter is Ownable {
 
     event UpdatedFeeClaimer(address _oldFeeClaimer, address _newFeeClaimer);
 
-    event YakSwap(
-        address indexed _tokenIn,
-        address indexed _tokenOut,
-        uint256 _amountIn,
-        uint256 _amountOut
-    );
+    event YakSwap(address indexed _tokenIn, address indexed _tokenOut, uint256 _amountIn, uint256 _amountOut);
 
     struct Query {
         address adapter;
@@ -102,10 +97,7 @@ contract YakRouter is Ownable {
         IERC20(WAVAX).safeApprove(WAVAX, type(uint256).max);
     }
 
-    function setTrustedTokens(address[] memory _trustedTokens)
-        public
-        onlyOwner
-    {
+    function setTrustedTokens(address[] memory _trustedTokens) public onlyOwner {
         emit UpdatedTrustedTokens(_trustedTokens);
         TRUSTED_TOKENS = _trustedTokens;
     }
@@ -135,10 +127,7 @@ contract YakRouter is Ownable {
         return ADAPTERS.length;
     }
 
-    function recoverERC20(address _tokenAddress, uint256 _tokenAmount)
-        external
-        onlyOwner
-    {
+    function recoverERC20(address _tokenAddress, uint256 _tokenAmount) external onlyOwner {
         require(_tokenAmount > 0, "YakRouter: Nothing to recover");
         IERC20(_tokenAddress).safeTransfer(msg.sender, _tokenAmount);
         emit Recovered(_tokenAddress, _tokenAmount);
@@ -155,11 +144,7 @@ contract YakRouter is Ownable {
 
     // -- HELPERS --
 
-    function _applyFee(uint256 _amountIn, uint256 _fee)
-        internal
-        view
-        returns (uint256)
-    {
+    function _applyFee(uint256 _amountIn, uint256 _fee) internal view returns (uint256) {
         require(_fee >= MIN_FEE, "YakRouter: Insufficient fee");
         return _amountIn.mul(FEE_DENOMINATOR.sub(_fee)) / FEE_DENOMINATOR;
     }
@@ -196,18 +181,8 @@ contract YakRouter is Ownable {
     /**
      * Makes a deep copy of Offer struct
      */
-    function _cloneOffer(Offer memory _queries)
-        internal
-        pure
-        returns (Offer memory)
-    {
-        return
-            Offer(
-                _queries.amounts,
-                _queries.adapters,
-                _queries.path,
-                _queries.gasEstimate
-            );
+    function _cloneOffer(Offer memory _queries) internal pure returns (Offer memory) {
+        return Offer(_queries.amounts, _queries.adapters, _queries.path, _queries.gasEstimate);
     }
 
     /**
@@ -220,37 +195,21 @@ contract YakRouter is Ownable {
         address _tokenOut,
         uint256 _gasEstimate
     ) internal pure {
-        _queries.path = BytesManipulation.mergeBytes(
-            _queries.path,
-            BytesManipulation.toBytes(_tokenOut)
-        );
-        _queries.amounts = BytesManipulation.mergeBytes(
-            _queries.amounts,
-            BytesManipulation.toBytes(_amount)
-        );
-        _queries.adapters = BytesManipulation.mergeBytes(
-            _queries.adapters,
-            BytesManipulation.toBytes(_adapter)
-        );
+        _queries.path = BytesManipulation.mergeBytes(_queries.path, BytesManipulation.toBytes(_tokenOut));
+        _queries.amounts = BytesManipulation.mergeBytes(_queries.amounts, BytesManipulation.toBytes(_amount));
+        _queries.adapters = BytesManipulation.mergeBytes(_queries.adapters, BytesManipulation.toBytes(_adapter));
         _queries.gasEstimate += _gasEstimate;
     }
 
     /**
      * Converts byte-arrays to an array of integers
      */
-    function _formatAmounts(bytes memory _amounts)
-        internal
-        pure
-        returns (uint256[] memory)
-    {
+    function _formatAmounts(bytes memory _amounts) internal pure returns (uint256[] memory) {
         // Format amounts
         uint256 chunks = _amounts.length / 32;
         uint256[] memory amountsFormatted = new uint256[](chunks);
         for (uint256 i = 0; i < chunks; i++) {
-            amountsFormatted[i] = BytesManipulation.bytesToUint256(
-                i * 32 + 32,
-                _amounts
-            );
+            amountsFormatted[i] = BytesManipulation.bytesToUint256(i * 32 + 32, _amounts);
         }
         return amountsFormatted;
     }
@@ -258,18 +217,11 @@ contract YakRouter is Ownable {
     /**
      * Converts byte-array to an array of addresses
      */
-    function _formatAddresses(bytes memory _addresses)
-        internal
-        pure
-        returns (address[] memory)
-    {
+    function _formatAddresses(bytes memory _addresses) internal pure returns (address[] memory) {
         uint256 chunks = _addresses.length / 32;
         address[] memory addressesFormatted = new address[](chunks);
         for (uint256 i = 0; i < chunks; i++) {
-            addressesFormatted[i] = BytesManipulation.bytesToAddress(
-                i * 32 + 32,
-                _addresses
-            );
+            addressesFormatted[i] = BytesManipulation.bytesToAddress(i * 32 + 32, _addresses);
         }
         return addressesFormatted;
     }
@@ -277,11 +229,7 @@ contract YakRouter is Ownable {
     /**
      * Formats elements in the Offer object from byte-arrays to integers and addresses
      */
-    function _formatOffer(Offer memory _queries)
-        internal
-        pure
-        returns (FormattedOffer memory)
-    {
+    function _formatOffer(Offer memory _queries) internal pure returns (FormattedOffer memory) {
         return
             FormattedOffer(
                 _formatAmounts(_queries.amounts),
@@ -319,11 +267,7 @@ contract YakRouter is Ownable {
         Query memory bestQuery;
         for (uint8 i; i < _options.length; i++) {
             address _adapter = ADAPTERS[_options[i]];
-            uint256 amountOut = IAdapter(_adapter).query(
-                _amountIn,
-                _tokenIn,
-                _tokenOut
-            );
+            uint256 amountOut = IAdapter(_adapter).query(_amountIn, _tokenIn, _tokenOut);
             if (i == 0 || amountOut > bestQuery.amountOut) {
                 bestQuery = Query(_adapter, _tokenIn, _tokenOut, amountOut);
             }
@@ -342,11 +286,7 @@ contract YakRouter is Ownable {
         Query memory bestQuery;
         for (uint8 i; i < ADAPTERS.length; i++) {
             address _adapter = ADAPTERS[i];
-            uint256 amountOut = IAdapter(_adapter).query(
-                _amountIn,
-                _tokenIn,
-                _tokenOut
-            );
+            uint256 amountOut = IAdapter(_adapter).query(_amountIn, _tokenIn, _tokenOut);
             if (i == 0 || amountOut > bestQuery.amountOut) {
                 bestQuery = Query(_adapter, _tokenIn, _tokenOut, amountOut);
             }
@@ -370,28 +310,14 @@ contract YakRouter is Ownable {
         queries.amounts = BytesManipulation.toBytes(_amountIn);
         queries.path = BytesManipulation.toBytes(_tokenIn);
         // Find the market price between AVAX and token-out and express gas price in token-out currency
-        FormattedOffer memory gasQuery = findBestPath(
-            1e18,
-            WAVAX,
-            _tokenOut,
-            2
-        ); // Avoid low-liquidity price appreciation
+        FormattedOffer memory gasQuery = findBestPath(1e18, WAVAX, _tokenOut, 2); // Avoid low-liquidity price appreciation
         // Include safety check if no 2-step path between WAVAX and tokenOut is found
         uint256 tknOutPriceNwei = 0;
         if (gasQuery.path.length != 0) {
             // Leave result nWei to preserve digits for assets with low decimal places
-            tknOutPriceNwei = gasQuery.amounts[gasQuery.amounts.length - 1].mul(
-                    _gasPrice / 1e9
-                );
+            tknOutPriceNwei = gasQuery.amounts[gasQuery.amounts.length - 1].mul(_gasPrice / 1e9);
         }
-        queries = _findBestPath(
-            _amountIn,
-            _tokenIn,
-            _tokenOut,
-            _maxSteps,
-            queries,
-            tknOutPriceNwei
-        );
+        queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, tknOutPriceNwei);
         // If no paths are found return empty struct
         if (queries.adapters.length == 0) {
             queries.amounts = "";
@@ -413,14 +339,7 @@ contract YakRouter is Ownable {
         Offer memory queries;
         queries.amounts = BytesManipulation.toBytes(_amountIn);
         queries.path = BytesManipulation.toBytes(_tokenIn);
-        queries = _findBestPath(
-            _amountIn,
-            _tokenIn,
-            _tokenOut,
-            _maxSteps,
-            queries,
-            0
-        );
+        queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, 0);
         // If no paths are found return empty struct
         if (queries.adapters.length == 0) {
             queries.amounts = "";
@@ -449,13 +368,7 @@ contract YakRouter is Ownable {
             if (withGas) {
                 gasEstimate = IAdapter(queryDirect.adapter).swapGasEstimate();
             }
-            _addQuery(
-                bestOption,
-                queryDirect.amountOut,
-                queryDirect.adapter,
-                queryDirect.tokenOut,
-                gasEstimate
-            );
+            _addQuery(bestOption, queryDirect.amountOut, queryDirect.adapter, queryDirect.tokenOut, gasEstimate);
             bestAmountOut = queryDirect.amountOut;
         }
         // Only check the rest if they would go beyond step limit (Need at least 2 more steps)
@@ -466,11 +379,7 @@ contract YakRouter is Ownable {
                     continue;
                 }
                 // Loop through all adapters to find the best one for swapping tokenIn for one of the trusted tokens
-                Query memory bestSwap = queryNoSplit(
-                    _amountIn,
-                    _tokenIn,
-                    TRUSTED_TOKENS[i]
-                );
+                Query memory bestSwap = queryNoSplit(_amountIn, _tokenIn, TRUSTED_TOKENS[i]);
                 if (bestSwap.amountOut == 0) {
                     continue;
                 }
@@ -479,13 +388,7 @@ contract YakRouter is Ownable {
                 if (withGas) {
                     gasEstimate = IAdapter(bestSwap.adapter).swapGasEstimate();
                 }
-                _addQuery(
-                    newOffer,
-                    bestSwap.amountOut,
-                    bestSwap.adapter,
-                    bestSwap.tokenOut,
-                    gasEstimate
-                );
+                _addQuery(newOffer, bestSwap.amountOut, bestSwap.adapter, bestSwap.tokenOut, gasEstimate);
                 newOffer = _findBestPath(
                     bestSwap.amountOut,
                     TRUSTED_TOKENS[i],
@@ -494,20 +397,12 @@ contract YakRouter is Ownable {
                     newOffer,
                     _tknOutPriceNwei
                 ); // Recursive step
-                address tokenOut = BytesManipulation.bytesToAddress(
-                    newOffer.path.length,
-                    newOffer.path
-                );
-                uint256 amountOut = BytesManipulation.bytesToUint256(
-                    newOffer.amounts.length,
-                    newOffer.amounts
-                );
+                address tokenOut = BytesManipulation.bytesToAddress(newOffer.path.length, newOffer.path);
+                uint256 amountOut = BytesManipulation.bytesToUint256(newOffer.amounts.length, newOffer.amounts);
                 // Check that the last token in the path is the tokenOut and update the new best option if neccesary
                 if (_tokenOut == tokenOut && amountOut > bestAmountOut) {
                     if (newOffer.gasEstimate > bestOption.gasEstimate) {
-                        uint256 gasCostDiff = _tknOutPriceNwei.mul(
-                            newOffer.gasEstimate - bestOption.gasEstimate
-                        ) / 1e9;
+                        uint256 gasCostDiff = _tknOutPriceNwei.mul(newOffer.gasEstimate - bestOption.gasEstimate) / 1e9;
                         uint256 priceDiff = amountOut - bestAmountOut;
                         if (gasCostDiff > priceDiff) {
                             continue;
@@ -533,37 +428,20 @@ contract YakRouter is Ownable {
         if (_fee > 0 || MIN_FEE > 0) {
             // Transfer fees to the claimer account and decrease initial amount
             amounts[0] = _applyFee(_trade.amountIn, _fee);
-            IERC20(_trade.path[0]).safeTransferFrom(
-                _from,
-                FEE_CLAIMER,
-                _trade.amountIn.sub(amounts[0])
-            );
+            IERC20(_trade.path[0]).safeTransferFrom(_from, FEE_CLAIMER, _trade.amountIn.sub(amounts[0]));
         } else {
             amounts[0] = _trade.amountIn;
         }
-        IERC20(_trade.path[0]).safeTransferFrom(
-            _from,
-            _trade.adapters[0],
-            amounts[0]
-        );
+        IERC20(_trade.path[0]).safeTransferFrom(_from, _trade.adapters[0], amounts[0]);
         // Get amounts that will be swapped
         for (uint256 i = 0; i < _trade.adapters.length; i++) {
-            amounts[i + 1] = IAdapter(_trade.adapters[i]).query(
-                amounts[i],
-                _trade.path[i],
-                _trade.path[i + 1]
-            );
+            amounts[i + 1] = IAdapter(_trade.adapters[i]).query(amounts[i], _trade.path[i], _trade.path[i + 1]);
         }
-        require(
-            amounts[amounts.length - 1] >= _trade.amountOut,
-            "YakRouter: Insufficient output amount"
-        );
+        require(amounts[amounts.length - 1] >= _trade.amountOut, "YakRouter: Insufficient output amount");
         for (uint256 i = 0; i < _trade.adapters.length; i++) {
             // All adapters should transfer output token to the following target
             // All targets are the adapters, expect for the last swap where tokens are sent out
-            address targetAddress = i < _trade.adapters.length - 1
-                ? _trade.adapters[i + 1]
-                : _to;
+            address targetAddress = i < _trade.adapters.length - 1 ? _trade.adapters[i + 1] : _to;
             IAdapter(_trade.adapters[i]).swap(
                 amounts[i],
                 amounts[i + 1],
@@ -572,12 +450,7 @@ contract YakRouter is Ownable {
                 targetAddress
             );
         }
-        emit YakSwap(
-            _trade.path[0],
-            _trade.path[_trade.path.length - 1],
-            _trade.amountIn,
-            amounts[amounts.length - 1]
-        );
+        emit YakSwap(_trade.path[0], _trade.path[_trade.path.length - 1], _trade.amountIn, amounts[amounts.length - 1]);
         return amounts[amounts.length - 1];
     }
 
@@ -594,10 +467,7 @@ contract YakRouter is Ownable {
         address _to,
         uint256 _fee
     ) external payable {
-        require(
-            _trade.path[0] == WAVAX,
-            "YakRouter: Path needs to begin with WAVAX"
-        );
+        require(_trade.path[0] == WAVAX, "YakRouter: Path needs to begin with WAVAX");
         _wrap(_trade.amountIn);
         _swapNoSplit(_trade, address(this), _to, _fee);
     }
@@ -607,16 +477,8 @@ contract YakRouter is Ownable {
         address _to,
         uint256 _fee
     ) public {
-        require(
-            _trade.path[_trade.path.length - 1] == WAVAX,
-            "YakRouter: Path needs to end with WAVAX"
-        );
-        uint256 returnAmount = _swapNoSplit(
-            _trade,
-            msg.sender,
-            address(this),
-            _fee
-        );
+        require(_trade.path[_trade.path.length - 1] == WAVAX, "YakRouter: Path needs to end with WAVAX");
+        uint256 returnAmount = _swapNoSplit(_trade, msg.sender, address(this), _fee);
         _unwrap(returnAmount);
         _returnTokensTo(AVAX, returnAmount, _to);
     }
@@ -633,15 +495,7 @@ contract YakRouter is Ownable {
         bytes32 _r,
         bytes32 _s
     ) external {
-        IERC20(_trade.path[0]).permit(
-            msg.sender,
-            address(this),
-            _trade.amountIn,
-            _deadline,
-            _v,
-            _r,
-            _s
-        );
+        IERC20(_trade.path[0]).permit(msg.sender, address(this), _trade.amountIn, _deadline, _v, _r, _s);
         swapNoSplit(_trade, _to, _fee);
     }
 
@@ -657,15 +511,7 @@ contract YakRouter is Ownable {
         bytes32 _r,
         bytes32 _s
     ) external {
-        IERC20(_trade.path[0]).permit(
-            msg.sender,
-            address(this),
-            _trade.amountIn,
-            _deadline,
-            _v,
-            _r,
-            _s
-        );
+        IERC20(_trade.path[0]).permit(msg.sender, address(this), _trade.amountIn, _deadline, _v, _r, _s);
         swapNoSplitToAVAX(_trade, _to, _fee);
     }
 }

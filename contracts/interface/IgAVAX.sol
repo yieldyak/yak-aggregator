@@ -7,18 +7,9 @@ interface IgAVAX {
 
     function pricePerShare(uint256 _id) external view returns (uint256);
 
-    function balanceOf(address account, uint256 id)
-        external
-        view
-        returns (uint256);
+    function balanceOf(address account, uint256 id) external view returns (uint256);
 
-    function isInterface(address operator, uint256 id)
-        external
-        view
-        returns (bool);
+    function isInterface(address operator, uint256 id) external view returns (bool);
 
-    function isApprovedForAll(address account, address operator)
-        external
-        view
-        returns (bool);
+    function isApprovedForAll(address account, address operator) external view returns (bool);
 }

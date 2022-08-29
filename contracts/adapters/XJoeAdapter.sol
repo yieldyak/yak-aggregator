@@ -38,10 +38,7 @@ contract XJoeAdapter is YakAdapter {
         setAllowances();
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 
     function queryEnter(uint256 _amountIn) internal view returns (uint256) {
         uint256 totalJoe = IERC20(JOE).balanceOf(XJOE);

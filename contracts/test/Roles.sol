@@ -26,11 +26,7 @@ library Roles {
      * @dev Check if an account has this role.
      * @return bool
      */
-    function has(Role storage role, address account)
-        internal
-        view
-        returns (bool)
-    {
+    function has(Role storage role, address account) internal view returns (bool) {
         require(account != address(0), "Account is the zero address");
         return role.bearer[account];
     }

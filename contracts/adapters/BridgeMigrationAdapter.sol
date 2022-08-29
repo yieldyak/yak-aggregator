@@ -37,16 +37,10 @@ contract BridgeMigrationAdapter is YakAdapter {
         setNewBridgeTokens(_newTokens, _oldTokens);
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 
     function _approveIfNeeded(address _newToken, address _oldToken) internal {
-        uint256 allowance = IERC20(_oldToken).allowance(
-            address(this),
-            _newToken
-        );
+        uint256 allowance = IERC20(_oldToken).allowance(address(this), _newToken);
         if (allowance < UINT_MAX) {
             IERC20(_oldToken).safeApprove(_newToken, UINT_MAX);
         }
@@ -57,10 +51,7 @@ contract BridgeMigrationAdapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256 amountOut) {
-        if (
-            isNewBridgeToken[_tokenOut] &&
-            IERC20(_tokenOut).swapSupply(_tokenIn) >= _amountIn
-        ) {
+        if (isNewBridgeToken[_tokenOut] && IERC20(_tokenOut).swapSupply(_tokenIn) >= _amountIn) {
             amountOut = _amountIn;
         }
     }
@@ -78,19 +69,10 @@ contract BridgeMigrationAdapter is YakAdapter {
 
     function setAllowances() public override {}
 
-    function setNewBridgeTokens(
-        address[] memory _newTokens,
-        address[] memory _oldTokens
-    ) public onlyOwner {
-        require(
-            _newTokens.length == _oldTokens.length,
-            "Needs to be surjective"
-        );
+    function setNewBridgeTokens(address[] memory _newTokens, address[] memory _oldTokens) public onlyOwner {
+        require(_newTokens.length == _oldTokens.length, "Needs to be surjective");
         for (uint256 i; i < _newTokens.length; i++) {
-            require(
-                IERC20(_newTokens[i]).swapSupply(_oldTokens[i]) > 0,
-                "Invalid combination"
-            );
+            require(IERC20(_newTokens[i]).swapSupply(_oldTokens[i]) > 0, "Invalid combination");
             _approveIfNeeded(_newTokens[i], _oldTokens[i]);
             isNewBridgeToken[_newTokens[i]] = true;
         }

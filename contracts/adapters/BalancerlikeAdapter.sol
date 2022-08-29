@@ -75,9 +75,7 @@ contract BalancerlikeAdapter is YakAdapter {
                 address token = address(tokens[j]);
                 for (uint128 k = 0; k < tokens.length; k++) {
                     if (j != k) {
-                        address[] memory currentPools = tokensToPools[token][
-                            address(tokens[k])
-                        ];
+                        address[] memory currentPools = tokensToPools[token][address(tokens[k])];
                         for (uint128 m = 0; m < currentPools.length; m++) {
                             if (currentPools[m] == pool) {
                                 delete currentPools[m];
@@ -90,20 +88,13 @@ contract BalancerlikeAdapter is YakAdapter {
         }
     }
 
-    function getPools(address tokenIn, address tokenOut)
-        public
-        view
-        returns (address[] memory)
-    {
+    function getPools(address tokenIn, address tokenOut) public view returns (address[] memory) {
         return tokensToPools[tokenIn][tokenOut];
     }
 
     function setAllowances() public override onlyOwner {}
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
         uint256 allowance = IERC20(_tokenIn).allowance(address(this), vault);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(vault, _amount);
@@ -124,12 +115,7 @@ contract BalancerlikeAdapter is YakAdapter {
             return 0;
         }
 
-        (, uint256 amountOut) = _getBestPoolForSwap(
-            pools,
-            _tokenIn,
-            _tokenOut,
-            _amountIn
-        );
+        (, uint256 amountOut) = _getBestPoolForSwap(pools, _tokenIn, _tokenOut, _amountIn);
         return amountOut;
     }
 
@@ -144,12 +130,7 @@ contract BalancerlikeAdapter is YakAdapter {
 
         require(pools.length > 0, "No pools for swapping");
 
-        (address pool, ) = _getBestPoolForSwap(
-            pools,
-            _tokenIn,
-            _tokenOut,
-            _amountIn
-        );
+        (address pool, ) = _getBestPoolForSwap(pools, _tokenIn, _tokenOut, _amountIn);
 
         require(pool != address(0), "Undefined pool");
 
@@ -201,26 +182,17 @@ contract BalancerlikeAdapter is YakAdapter {
         }
     }
 
-    function _getAmountOut(
-        IPoolSwapStructs.SwapRequest memory request,
-        address pool
-    ) internal view returns (uint256 amountOut) {
+    function _getAmountOut(IPoolSwapStructs.SwapRequest memory request, address pool)
+        internal
+        view
+        returns (uint256 amountOut)
+    {
         // Based on https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/vault/contracts/Swaps.sol#L275
-        (, uint256[] memory balances, ) = IVault(vault).getPoolTokens(
-            request.poolId
-        );
+        (, uint256[] memory balances, ) = IVault(vault).getPoolTokens(request.poolId);
 
-        uint256 tokenInTotal = balances[
-            poolToTokenIndex[pool][address(request.tokenIn)]
-        ];
-        uint256 tokenOutTotal = balances[
-            poolToTokenIndex[pool][address(request.tokenOut)]
-        ];
+        uint256 tokenInTotal = balances[poolToTokenIndex[pool][address(request.tokenIn)]];
+        uint256 tokenOutTotal = balances[poolToTokenIndex[pool][address(request.tokenOut)]];
 
-        amountOut = IMinimalSwapInfoPool(pool).onSwap(
-            request,
-            tokenInTotal,
-            tokenOutTotal
-        );
+        amountOut = IMinimalSwapInfoPool(pool).onSwap(request, tokenInTotal, tokenOutTotal);
     }
 }

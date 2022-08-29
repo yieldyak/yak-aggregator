@@ -57,10 +57,7 @@ contract CurveLikeAdapter is YakAdapter {
 
     function setAllowances() public override onlyOwner {}
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
         uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
@@ -81,13 +78,9 @@ contract CurveLikeAdapter is YakAdapter {
         ) {
             return 0;
         }
-        try
-            ICurveLikePool(pool).calculateSwap(
-                tokenIndex[_tokenIn],
-                tokenIndex[_tokenOut],
-                _amountIn
-            )
-        returns (uint256 amountOut) {
+        try ICurveLikePool(pool).calculateSwap(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+            uint256 amountOut
+        ) {
             return amountOut;
         } catch {
             return 0;
@@ -102,13 +95,7 @@ contract CurveLikeAdapter is YakAdapter {
         address _to
     ) internal override {
         // Note that unsupported token will return index 0 which is valid
-        ICurveLikePool(pool).swap(
-            tokenIndex[_tokenIn],
-            tokenIndex[_tokenOut],
-            _amountIn,
-            _amountOut,
-            block.timestamp
-        );
+        ICurveLikePool(pool).swap(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut, block.timestamp);
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }

@@ -47,10 +47,7 @@ contract WoofiAdapter is YakAdapter {
         rebateCollector = _rebateCollector;
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
         uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
@@ -78,28 +75,12 @@ contract WoofiAdapter is YakAdapter {
             return 0;
         }
         if (_tokenIn == quoteToken) {
-            amountOut = _safeQuery(
-                IWooPP(pool).querySellQuote,
-                _tokenOut,
-                _amountIn
-            );
+            amountOut = _safeQuery(IWooPP(pool).querySellQuote, _tokenOut, _amountIn);
         } else if (_tokenOut == quoteToken) {
-            amountOut = _safeQuery(
-                IWooPP(pool).querySellBase,
-                _tokenIn,
-                _amountIn
-            );
+            amountOut = _safeQuery(IWooPP(pool).querySellBase, _tokenIn, _amountIn);
         } else {
-            uint256 quoteAmount = _safeQuery(
-                IWooPP(pool).querySellBase,
-                _tokenIn,
-                _amountIn
-            );
-            amountOut = _safeQuery(
-                IWooPP(pool).querySellQuote,
-                _tokenOut,
-                quoteAmount
-            );
+            uint256 quoteAmount = _safeQuery(IWooPP(pool).querySellBase, _tokenIn, _amountIn);
+            amountOut = _safeQuery(IWooPP(pool).querySellQuote, _tokenOut, quoteAmount);
         }
     }
 
@@ -112,37 +93,13 @@ contract WoofiAdapter is YakAdapter {
     ) internal override {
         uint256 realToAmount;
         if (_tokenIn == quoteToken) {
-            realToAmount = IWooPP(pool).sellQuote(
-                _tokenOut,
-                _amountIn,
-                _amountOut,
-                _to,
-                rebateCollector
-            );
+            realToAmount = IWooPP(pool).sellQuote(_tokenOut, _amountIn, _amountOut, _to, rebateCollector);
         } else if (_tokenOut == quoteToken) {
-            realToAmount = IWooPP(pool).sellBase(
-                _tokenIn,
-                _amountIn,
-                _amountOut,
-                _to,
-                rebateCollector
-            );
+            realToAmount = IWooPP(pool).sellBase(_tokenIn, _amountIn, _amountOut, _to, rebateCollector);
         } else {
-            uint256 quoteAmount = IWooPP(pool).sellBase(
-                _tokenIn,
-                _amountIn,
-                0,
-                address(this),
-                rebateCollector
-            );
+            uint256 quoteAmount = IWooPP(pool).sellBase(_tokenIn, _amountIn, 0, address(this), rebateCollector);
             _approveIfNeeded(quoteToken, quoteAmount);
-            realToAmount = IWooPP(pool).sellQuote(
-                _tokenOut,
-                quoteAmount,
-                _amountOut,
-                _to,
-                rebateCollector
-            );
+            realToAmount = IWooPP(pool).sellQuote(_tokenOut, quoteAmount, _amountOut, _to, rebateCollector);
         }
     }
 

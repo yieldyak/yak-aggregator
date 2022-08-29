@@ -29,10 +29,7 @@ contract WAvaxAdapter is YakAdapter {
         setSwapGasEstimate(_swapGasEstimate);
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 
     function setAllowances() public override {}
 

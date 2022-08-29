@@ -44,10 +44,7 @@ contract SAvaxAdapter is YakAdapter {
         setAllowances();
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 
     function _exceedsCap(uint256 _amountIn) internal view returns (bool) {
         uint256 newBal = ISAVAX(SAVAX).totalPooledAvax().add(_amountIn); // Assume U256::max won't be reached
@@ -59,12 +56,7 @@ contract SAvaxAdapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256 amountOut) {
-        if (
-            _tokenIn == WAVAX &&
-            _tokenOut == SAVAX &&
-            !ISAVAX(SAVAX).mintingPaused() &&
-            !_exceedsCap(_amountIn)
-        ) {
+        if (_tokenIn == WAVAX && _tokenOut == SAVAX && !ISAVAX(SAVAX).mintingPaused() && !_exceedsCap(_amountIn)) {
             amountOut = ISAVAX(SAVAX).getSharesByPooledAvax(_amountIn);
         }
     }

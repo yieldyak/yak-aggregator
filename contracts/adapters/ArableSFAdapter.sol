@@ -44,14 +44,10 @@ contract ArableSFAdapter is YakAdapter {
         setPoolTokens();
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {}
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 
     function setPoolTokens() public {
-        uint256 whitelistedTknsLen = IStabilityFund(vault)
-            .getStableTokensCount();
+        uint256 whitelistedTknsLen = IStabilityFund(vault).getStableTokensCount();
         for (uint256 i = 0; i < whitelistedTknsLen; i++) {
             address token = IStabilityFund(vault).getStableTokens()[i];
             tokenDecimals[token] = IERC20(token).decimals();
@@ -72,11 +68,7 @@ contract ArableSFAdapter is YakAdapter {
         return _amount.mul(10**decimalsMul) / 10**decimalsDiv;
     }
 
-    function hasVaultEnoughBal(address _token, uint256 _amount)
-        private
-        view
-        returns (bool)
-    {
+    function hasVaultEnoughBal(address _token, uint256 _amount) private view returns (bool) {
         return IERC20(_token).balanceOf(vault) >= _amount;
     }
 

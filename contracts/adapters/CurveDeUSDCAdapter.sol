@@ -31,10 +31,8 @@ contract CurveDeUSDCAdapter is YakAdapter {
     using SafeMath for uint256;
 
     address public constant deUSDC = 0x28690ec942671aC8d9Bc442B667EC338eDE6dFd3;
-    address public constant BASE_POOL =
-        0x7f90122BF0700F9E7e1F688fe926940E8839F353;
-    address public constant SWAPPER =
-        0x001E3BA199B4FF4B5B6e97aCD96daFC0E2e4156e;
+    address public constant BASE_POOL = 0x7f90122BF0700F9E7e1F688fe926940E8839F353;
+    address public constant SWAPPER = 0x001E3BA199B4FF4B5B6e97aCD96daFC0E2e4156e;
     address public constant POOL = 0xd39016475200ab8957e9C772C949Ef54bDA69111;
     bytes32 public constant id = keccak256("CurveDeUSDCAdapter");
     mapping(address => int128) public tokenIndex;
@@ -50,9 +48,7 @@ contract CurveDeUSDCAdapter is YakAdapter {
         // deUSDC index is set to 0 by default
         isUnderlyingToken[deUSDC] = true;
         for (uint256 i = 0; true; i++) {
-            try ICurveMim(BASE_POOL).underlying_coins(i) returns (
-                address token
-            ) {
+            try ICurveMim(BASE_POOL).underlying_coins(i) returns (address token) {
                 isUnderlyingToken[token] = true;
                 tokenIndex[token] = int128(int256(i)) + 1;
             } catch {
@@ -63,10 +59,7 @@ contract CurveDeUSDCAdapter is YakAdapter {
 
     function setAllowances() public override onlyOwner {}
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount)
-        internal
-        override
-    {
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
         uint256 allowance = IERC20(_tokenIn).allowance(address(this), SWAPPER);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(SWAPPER, UINT_MAX);
@@ -86,13 +79,9 @@ contract CurveDeUSDCAdapter is YakAdapter {
         ) {
             return 0;
         }
-        try
-            ICurveMim(POOL).get_dy_underlying(
-                tokenIndex[_tokenIn],
-                tokenIndex[_tokenOut],
-                _amountIn
-            )
-        returns (uint256 amountOut) {
+        try ICurveMim(POOL).get_dy_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+            uint256 amountOut
+        ) {
             // `calc_token_amount` in base_pool is used in part of the query
             // this method does account for deposit fee which causes discrepancy
             // between the query result and the actual swap amount by few bps(0-3.2)
