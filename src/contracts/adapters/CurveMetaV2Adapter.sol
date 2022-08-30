@@ -17,17 +17,39 @@
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
+pragma abicoder v2;
 
-import "../interface/ICurvePlain128.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
-contract CurvePlain128Adapter is YakAdapter {
+interface IMetaPool {
+    function get_dy_underlying(
+        int128,
+        int128,
+        uint256
+    ) external view returns (uint256);
+
+    function exchange_underlying(
+        int128,
+        int128,
+        uint256,
+        uint256
+    ) external;
+
+    function coins(uint256) external view returns (address);
+}
+
+interface IBasePool {
+    function coins(uint256) external view returns (address);
+}
+
+contract CurveMetaV2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
+    address public immutable META_COIN;
     address public immutable POOL;
     mapping(address => int128) public tokenIndex;
     mapping(address => bool) public isPoolToken;
@@ -37,22 +59,38 @@ contract CurvePlain128Adapter is YakAdapter {
         address _pool,
         uint256 _swapGasEstimate
     ) YakAdapter(_name, _swapGasEstimate) {
+        address metaCoin = getMetaCoin(_pool);
+        approveAndAddTokenToAdapter(_pool, metaCoin, 0);
+        addUnderlyingTkns(_pool);
+        META_COIN = metaCoin;
         POOL = _pool;
-        _setPoolTokens(_pool);
     }
 
-    // Mapping indicator which tokens are included in the pool
-    function _setPoolTokens(address _pool) internal {
-        for (uint256 i = 0; true; i++) {
-            try CurvePlain128(_pool).coins(i) returns (address token) {
-                _approveToken(_pool, token, int128(int256(i)));
-            } catch {
-                break;
-            }
+    function getMetaCoin(address _pool) internal view returns (address) {
+        return IMetaPool(_pool).coins(0);
+    }
+
+    function initPoolAndReturnMetaTkn(address _pool) internal returns (address coin0) {
+        coin0 = IMetaPool(_pool).coins(0);
+        approveAndAddTokenToAdapter(_pool, coin0, 0);
+    }
+
+    function addUnderlyingTkns(address metaPool) internal {
+        address basePool = IMetaPool(metaPool).coins(1);
+        for (uint256 i; true; ++i) {
+            address token = getUnderlyingToken(basePool, i);
+            if (token == address(0)) break;
+            approveAndAddTokenToAdapter(metaPool, token, int128(int256(i)) + 1);
         }
     }
 
-    function _approveToken(
+    function getUnderlyingToken(address basePool, uint256 i) internal view returns (address) {
+        try IBasePool(basePool).coins(i) returns (address token) {
+            return token;
+        } catch {}
+    }
+
+    function approveAndAddTokenToAdapter(
         address _pool,
         address _token,
         int128 _index
@@ -67,32 +105,40 @@ contract CurvePlain128Adapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256) {
-        if (!_validArgs(_amountIn, _tokenIn, _tokenOut)) return 0;
-        uint256 amountOut = _getDySafe(_amountIn, _tokenIn, _tokenOut);
-        // Account for possible rounding error
-        return amountOut > 0 ? amountOut - 1 : 0;
+        if (!validInputParams(_amountIn, _tokenIn, _tokenOut)) return 0;
+        // `calc_token_amount` in base_pool is used in part of the query
+        // this method does account for deposit fee which causes discrepancy
+        // between the query result and the actual swap amount by few bps(0-3.2)
+        // Additionally there is a rounding error (swap and query may calc different amounts)
+        // Account for that with 1 bps discount
+        uint256 amountOut = safeQuery(_amountIn, _tokenIn, _tokenOut);
+        return (amountOut * (1e4 - 1)) / 1e4;
     }
 
-    function _validArgs(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (bool) {
-        return _amountIn != 0 && _tokenIn != _tokenOut && isPoolToken[_tokenIn] && isPoolToken[_tokenOut];
-    }
-
-    function _getDySafe(
+    function safeQuery(
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
     ) internal view returns (uint256) {
-        try CurvePlain128(POOL).get_dy(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+        try IMetaPool(POOL).get_dy_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
             uint256 amountOut
         ) {
             return amountOut;
         } catch {
             return 0;
         }
+    }
+
+    function validInputParams(
+        uint256 _amountIn,
+        address _tokenIn,
+        address _tokenOut
+    ) internal view returns (bool) {
+        return _amountIn != 0 && _tokenIn != _tokenOut && validPath(_tokenIn, _tokenOut);
+    }
+
+    function validPath(address tkn0, address tkn1) internal view returns (bool) {
+        return (tkn0 == META_COIN && isPoolToken[tkn1]) || (tkn1 == META_COIN && isPoolToken[tkn0]);
     }
 
     function _swap(
@@ -102,8 +148,8 @@ contract CurvePlain128Adapter is YakAdapter {
         address _tokenOut,
         address _to
     ) internal override {
-        CurvePlain128(POOL).exchange(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
-        // Confidently transfer amount-out
-        _returnTo(_tokenOut, _amountOut, _to);
+        IMetaPool(POOL).exchange_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
+        uint256 balThis = IERC20(_tokenOut).balanceOf(address(this));
+        _returnTo(_tokenOut, balThis, _to);
     }
 }

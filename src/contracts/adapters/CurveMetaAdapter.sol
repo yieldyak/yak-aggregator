@@ -17,65 +17,51 @@
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
-pragma abicoder v2;
 
-import "../interface/ICurvelikeMeta.sol";
+import "../interface/ICurveMeta.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
-contract CurvelikeMetaAdapter is YakAdapter {
+contract CurveMetaAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    uint256 public constant feeDenominator = 1e10;
-    address public metaPool;
-    address public pool;
+    address public immutable POOL;
+    address public immutable COIN;
+    mapping(address => int128) public tokenIndex;
     mapping(address => bool) public isPoolToken;
-    mapping(address => uint8) public tokenIndex;
-    uint256 public poolFeeCompliment;
 
     constructor(
         string memory _name,
         address _pool,
         uint256 _swapGasEstimate
     ) YakAdapter(_name, _swapGasEstimate) {
-        pool = _pool;
-        metaPool = ICurvelikeMeta(pool).metaSwapStorage(); // Pool that holds USDCe, USDTe, DAIe
-        setPoolFeeCompliment();
-        _setPoolTokens();
+        POOL = _pool;
+        COIN = _setPoolTokens(_pool);
     }
 
-    function setPoolFeeCompliment() public onlyOwner {
-        poolFeeCompliment = feeDenominator - ICurvelikeMeta(pool).swapStorage().swapFee;
-    }
-
-    // Mapping indicator which tokens are included in the pool
-    function _setPoolTokens() internal {
-        // Get nUSD from this pool
-        address baseTkn = ICurvelikeMeta(pool).getToken(0);
-        _setPoolTokenAllowance(baseTkn);
-        isPoolToken[baseTkn] = true;
-        tokenIndex[baseTkn] = 0;
-        // Get stables from meta pool
-        for (uint8 i = 0; true; i++) {
-            try ICurvelikeMeta(metaPool).getToken(i) returns (address token) {
-                _setPoolTokenAllowance(token);
-                isPoolToken[token] = true;
-                tokenIndex[token] = i + 1;
+    function _setPoolTokens(address _pool) internal returns (address coin0) {
+        coin0 = ICurveMeta(_pool).coins(0);
+        _approveToken(_pool, coin0, 0);
+        for (uint256 i = 0; true; i++) {
+            try ICurveMeta(_pool).base_coins(i) returns (address token) {
+                _approveToken(_pool, token, int128(int256(i)) + 1);
             } catch {
                 break;
             }
         }
     }
 
-    function _setPoolTokenAllowance(address _token) internal {
-        IERC20(_token).approve(pool, UINT_MAX);
-    }
-
-    function _isPaused() internal view returns (bool) {
-        return ICurvelikeMeta(pool).paused() || ICurvelikeMeta(metaPool).paused();
+    function _approveToken(
+        address _pool,
+        address _token,
+        int128 _index
+    ) internal {
+        IERC20(_token).safeApprove(_pool, UINT_MAX);
+        tokenIndex[_token] = _index;
+        isPoolToken[_token] = true;
     }
 
     function _query(
@@ -84,14 +70,21 @@ contract CurvelikeMetaAdapter is YakAdapter {
         address _tokenOut
     ) internal view override returns (uint256) {
         if (
-            _amountIn == 0 || _tokenIn == _tokenOut || !isPoolToken[_tokenIn] || !isPoolToken[_tokenOut] || _isPaused()
+            _amountIn == 0 ||
+            _tokenIn == _tokenOut ||
+            !((_tokenIn == COIN && isPoolToken[_tokenOut]) || (_tokenOut == COIN && isPoolToken[_tokenIn]))
         ) {
             return 0;
         }
-        try
-            ICurvelikeMeta(pool).calculateSwapUnderlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn)
-        returns (uint256 amountOut) {
-            return amountOut.mul(poolFeeCompliment) / feeDenominator;
+        try ICurveMeta(POOL).get_dy_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+            uint256 amountOut
+        ) {
+            // `calc_token_amount` in base_pool is used in part of the query
+            // this method does account for deposit fee which causes discrepancy
+            // between the query result and the actual swap amount by few bps(0-3.2)
+            // Additionally there is a rounding error (swap and query may calc different amounts)
+            // Account for that with 1 bps discount
+            return amountOut == 0 ? 0 : (amountOut * (1e4 - 1)) / 1e4;
         } catch {
             return 0;
         }
@@ -104,14 +97,7 @@ contract CurvelikeMetaAdapter is YakAdapter {
         address _tokenOut,
         address _to
     ) internal override {
-        ICurvelikeMeta(pool).swapUnderlying(
-            tokenIndex[_tokenIn],
-            tokenIndex[_tokenOut],
-            _amountIn,
-            _amountOut,
-            block.timestamp
-        );
-        // Confidently transfer amount-out
-        _returnTo(_tokenOut, _amountOut, _to);
+        ICurveMeta(POOL).exchange_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
+        _returnTo(_tokenOut, IERC20(_tokenOut).balanceOf(address(this)), _to);
     }
 }

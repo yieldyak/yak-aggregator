@@ -18,13 +18,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
 
-import "../interface/ICurveLikePool.sol";
+import "../interface/ISaddle.sol";
 import "../interface/IERC20.sol";
 import "../interface/IWETH.sol";
 import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
-contract CurveLikeAdapter is YakAdapter {
+contract SaddleAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
     mapping(address => bool) public isPoolToken;
@@ -40,11 +40,10 @@ contract CurveLikeAdapter is YakAdapter {
         _setPoolTokens();
     }
 
-    // Mapping indicator which tokens are included in the pool
     function _setPoolTokens() internal {
         for (uint8 i = 0; true; i++) {
-            try ICurveLikePool(pool).getToken(i) returns (address token) {
-                _setPoolTokenAllowance(token);
+            try ISaddle(pool).getToken(i) returns (address token) {
+                approveToPool(token, UINT_MAX);
                 isPoolToken[token] = true;
                 tokenIndex[token] = i;
             } catch {
@@ -53,8 +52,11 @@ contract CurveLikeAdapter is YakAdapter {
         }
     }
 
-    function _setPoolTokenAllowance(address _token) internal {
-        IERC20(_token).approve(pool, UINT_MAX);
+    function approveToPool(address _tokenIn, uint256 _amount) internal {
+        uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
+        if (allowance < _amount) {
+            IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
+        }
     }
 
     function _query(
@@ -67,11 +69,11 @@ contract CurveLikeAdapter is YakAdapter {
             !isPoolToken[_tokenOut] ||
             _tokenIn == _tokenOut ||
             _amountIn == 0 ||
-            ICurveLikePool(pool).paused()
+            ISaddle(pool).paused()
         ) {
             return 0;
         }
-        try ICurveLikePool(pool).calculateSwap(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+        try ISaddle(pool).calculateSwap(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
             uint256 amountOut
         ) {
             return amountOut;
@@ -88,7 +90,7 @@ contract CurveLikeAdapter is YakAdapter {
         address _to
     ) internal override {
         // Note that unsupported token will return index 0 which is valid
-        ICurveLikePool(pool).swap(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut, block.timestamp);
+        ISaddle(pool).swap(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut, block.timestamp);
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }

@@ -167,7 +167,7 @@ const _kyberAdapter = async () => {
 const _curveAdapter = async () => {
     const Curve1AdaptorFactory = ethers.getContractFactory('Curve1Adapter')
     const Curve2AdaptorFactory = ethers.getContractFactory('Curve2Adapter')
-    const CurvePlainAdapterFactory = ethers.getContractFactory('CurvePlainAdapter')
+    const CurvePlain128AdapterFactory = ethers.getContractFactory('CurvePlain128Adapter')
     const CurveMimAdapterFactory = ethers.getContractFactory('CurveMimAdapter')
     const CurveMoreAdapterFactory = ethers.getContractFactory('CurveMoreAdapter')
     const CurveDeUSDCAdapterFactory = ethers.getContractFactory('CurveDeUSDCAdapter')
@@ -196,20 +196,20 @@ const _curveAdapter = async () => {
         ethers.getContractAt('ICurve2', curvelikePools.CurveAave),
         ethers.getContractAt('ICurve1', curvelikePools.CurveAtricrypto),
         ethers.getContractAt('ICurve2', curvelikePools.CurveRen),
-        ethers.getContractAt('ICurvePlain', curvelikePools.Curve3poolV2),
-        ethers.getContractAt('ICurvePlain', curvelikePools.CurveUSDC),
-        ethers.getContractAt('ICurvePlain', curvelikePools.Curve3poolf),
-        ethers.getContractAt('ICurvePlain', curvelikePools.CurveYUSD),
+        ethers.getContractAt('CurvePlain128', curvelikePools.Curve3poolV2),
+        ethers.getContractAt('CurvePlain128', curvelikePools.CurveUSDC),
+        ethers.getContractAt('CurvePlain128', curvelikePools.Curve3poolf),
+        ethers.getContractAt('CurvePlain128', curvelikePools.CurveYUSD),
         ethers.getContractAt('ICurveMim', curvelikePools.CurveMim),
         ethers.getContractAt('ICurve2', curvelikePools.CurveMore),
         ethers.getContractAt('ICurveMim', curvelikePools.CurveDeUSDC),
         Curve2AdaptorFactory.then(f => f.deploy('CurveAaveAdapter', curvelikePools.CurveAave, 7.7e5)),
         Curve1AdaptorFactory.then(f => f.deploy('CurveAtricryptoAdapter', curvelikePools.CurveAtricrypto, 9.5e5)),
         Curve2AdaptorFactory.then(f => f.deploy('CurveRenAdapter', curvelikePools.CurveRen, 5.3e5)),
-        CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.5e5)),
-        CurvePlainAdapterFactory.then(f => f.deploy('CurveUSDCAdapter', curvelikePools.CurveUSDC, 2.5e5)),
-        CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolfAdapter', curvelikePools.Curve3poolf, 2.9e5)),
-        CurvePlainAdapterFactory.then(f => f.deploy('CurveYUSDAdapter', curvelikePools.CurveYUSD, 3e5)),
+        CurvePlain128AdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.5e5)),
+        CurvePlain128AdapterFactory.then(f => f.deploy('CurveUSDCAdapter', curvelikePools.CurveUSDC, 2.5e5)),
+        CurvePlain128AdapterFactory.then(f => f.deploy('Curve3poolfAdapter', curvelikePools.Curve3poolf, 2.9e5)),
+        CurvePlain128AdapterFactory.then(f => f.deploy('CurveYUSDAdapter', curvelikePools.CurveYUSD, 3e5)),
         CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.1e6)),
         CurveMoreAdapterFactory.then(f => f.deploy('CurveMoreAdapter', 1.1e6)),
         CurveDeUSDCAdapterFactory.then(f => f.deploy('CurveDeUSDCAdapter', 1.1e6))

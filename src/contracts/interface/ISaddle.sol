@@ -3,7 +3,7 @@ pragma solidity >=0.7.0;
 
 import "./IERC20.sol";
 
-interface ICurveLikePool {
+interface ISaddle {
     function getTokenIndex(address tokenAddress) external view returns (uint8);
 
     function getTokenBalance(uint8 index) external view returns (uint256);

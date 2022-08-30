@@ -18,99 +18,86 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
 
+import "../interface/ICurvePlain256.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
-interface IPairFactory {
-    function isPair(address) external view returns (bool);
-
-    function pairCodeHash() external view returns (bytes32);
-}
-
-interface IPair {
-    function getAmountOut(uint256, address) external view returns (uint256);
-
-    function swap(
-        uint256,
-        uint256,
-        address,
-        bytes calldata
-    ) external;
-}
-
-contract VelodromeAdapter is YakAdapter {
+contract CurvePlainV2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 immutable PAIR_CODE_HASH;
-    address immutable FACTORY;
+    address public immutable POOL;
+    mapping(address => uint256) public tokenIndex;
+    mapping(address => bool) public isPoolToken;
 
     constructor(
         string memory _name,
-        address _factory,
+        address _pool,
         uint256 _swapGasEstimate
     ) YakAdapter(_name, _swapGasEstimate) {
-        FACTORY = _factory;
-        PAIR_CODE_HASH = getPairCodeHash(_factory);
+        name = _name;
+        POOL = _pool;
+        _setPoolTokens(_pool);
+        setSwapGasEstimate(_swapGasEstimate);
     }
 
-    function getPairCodeHash(address _factory) internal view returns (bytes32) {
-        return IPairFactory(_factory).pairCodeHash();
-    }
-
-    function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
-        (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-    }
-
-    // calculates the CREATE2 address for a pair without making any external calls
-    function pairFor(
-        address tokenA,
-        address tokenB,
-        bool stable
-    ) internal view returns (address pair) {
-        (address token0, address token1) = sortTokens(tokenA, tokenB);
-        pair = address(
-            uint160(
-                uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            hex"ff",
-                            FACTORY,
-                            keccak256(abi.encodePacked(token0, token1, stable)),
-                            PAIR_CODE_HASH
-                        )
-                    )
-                )
-            )
-        );
-    }
-
-    function getQuoteAndPair(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (uint256 amountOut, address pair) {
-        address pairStable = pairFor(_tokenIn, _tokenOut, true);
-        uint256 amountStable;
-        uint256 amountVolatile;
-        if (IPairFactory(FACTORY).isPair(pairStable)) {
-            amountStable = IPair(pairStable).getAmountOut(_amountIn, _tokenIn);
+    function _setPoolTokens(address _pool) internal {
+        for (uint256 i = 0; true; i++) {
+            address token = _getCoinByIndexSafe(_pool, i);
+            if (token == address(0)) break;
+            _addToken(_pool, token, i);
         }
-        address pairVolatile = pairFor(_tokenIn, _tokenOut, false);
-        if (IPairFactory(FACTORY).isPair(pairVolatile)) {
-            amountVolatile = IPair(pairVolatile).getAmountOut(_amountIn, _tokenIn);
-        }
-        (amountOut, pair) = amountStable > amountVolatile ? (amountStable, pairStable) : (amountVolatile, pairVolatile);
+    }
+
+    function _getCoinByIndexSafe(address _pool, uint256 _index) internal view returns (address token) {
+        try ICurvePlain256(_pool).coins(_index) returns (address _token) {
+            token = _token;
+        } catch {}
+    }
+
+    function _addToken(
+        address _pool,
+        address _token,
+        uint256 _index
+    ) internal {
+        IERC20(_token).safeApprove(_pool, UINT_MAX);
+        tokenIndex[_token] = _index;
+        isPoolToken[_token] = true;
     }
 
     function _query(
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
-    ) internal view override returns (uint256 amountOut) {
-        if (_tokenIn != _tokenOut && _amountIn != 0) (amountOut, ) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
+    ) internal view override returns (uint256) {
+        if (!_validArgs(_amountIn, _tokenIn, _tokenOut)) return 0;
+        uint256 amountOut = _getDySafe(_amountIn, _tokenIn, _tokenOut);
+        // Account for possible rounding error
+        return amountOut > 0 ? amountOut - 1 : 0;
+    }
+
+    function _validArgs(
+        uint256 _amountIn,
+        address _tokenIn,
+        address _tokenOut
+    ) internal view returns (bool) {
+        return _amountIn != 0 && _tokenIn != _tokenOut && isPoolToken[_tokenIn] && isPoolToken[_tokenOut];
+    }
+
+    function _getDySafe(
+        uint256 _amountIn,
+        address _tokenIn,
+        address _tokenOut
+    ) internal view returns (uint256) {
+        try ICurvePlain256(POOL).get_dy(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+            uint256 amountOut
+        ) {
+            return amountOut;
+        } catch {
+            return 0;
+        }
     }
 
     function _swap(
@@ -118,14 +105,10 @@ contract VelodromeAdapter is YakAdapter {
         uint256 _amountOut,
         address _tokenIn,
         address _tokenOut,
-        address to
+        address _to
     ) internal override {
-        (uint256 amountOut, address pair) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
-        require(amountOut >= _amountOut, "Insufficent amount out");
-        (uint256 amount0Out, uint256 amount1Out) = (_tokenIn < _tokenOut)
-            ? (uint256(0), amountOut)
-            : (amountOut, uint256(0));
-        IERC20(_tokenIn).safeTransfer(pair, _amountIn);
-        IPair(pair).swap(amount0Out, amount1Out, to, new bytes(0));
+        ICurvePlain256(POOL).exchange(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
+        // Confidently transfer amount-out
+        _returnTo(_tokenOut, _amountOut, _to);
     }
 }

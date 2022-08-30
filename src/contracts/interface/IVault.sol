@@ -2,7 +2,6 @@
 pragma solidity >=0.7.0;
 pragma abicoder v2;
 
-import "./IAsset.sol";
 import "./IERC20.sol";
 
 interface IVault {
@@ -14,8 +13,8 @@ interface IVault {
     struct SingleSwap {
         bytes32 poolId;
         SwapKind kind;
-        IAsset assetIn;
-        IAsset assetOut;
+        address assetIn;
+        address assetOut;
         uint256 amount;
         bytes userData;
     }
@@ -54,7 +53,7 @@ interface IVault {
     function queryBatchSwap(
         SwapKind kind,
         BatchSwapStep[] memory swaps,
-        IAsset[] memory assets,
+        address[] memory assets,
         FundManagement memory funds
     ) external returns (int256[] memory assetDeltas);
 }

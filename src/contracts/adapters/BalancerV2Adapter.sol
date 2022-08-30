@@ -28,7 +28,7 @@ import "../interface/IVault.sol";
 import "../interface/IBasePool.sol";
 import "../interface/IMinimalSwapInfoPool.sol";
 
-contract BalancerlikeAdapter is YakAdapter {
+contract BalancerV2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
@@ -58,6 +58,7 @@ contract BalancerlikeAdapter is YakAdapter {
                 for (uint128 k = 0; k < tokens.length; k++) {
                     if (j != k) {
                         tokensToPools[token][address(tokens[k])].push(pool);
+                        _approveIfNeeded(token, UINT_MAX);
                     }
                 }
             }
@@ -74,9 +75,9 @@ contract BalancerlikeAdapter is YakAdapter {
                 for (uint128 k = 0; k < tokens.length; k++) {
                     if (j != k) {
                         address[] memory currentPools = tokensToPools[token][address(tokens[k])];
-                        for (uint128 m = 0; m < currentPools.length; m++) {
-                            if (currentPools[m] == pool) {
-                                delete currentPools[m];
+                        for (uint128 l = 0; l < currentPools.length; l++) {
+                            if (currentPools[l] == pool) {
+                                delete currentPools[l];
                             }
                         }
                         tokensToPools[token][address(tokens[k])] = currentPools;
@@ -123,16 +124,18 @@ contract BalancerlikeAdapter is YakAdapter {
         address to
     ) internal override {
         address[] memory pools = getPools(_tokenIn, _tokenOut);
+
         require(pools.length > 0, "No pools for swapping");
+
         (address pool, ) = _getBestPoolForSwap(pools, _tokenIn, _tokenOut, _amountIn);
+
         require(pool != address(0), "Undefined pool");
-        _approveIfNeeded(_tokenIn, _amountIn);
 
         IVault.SingleSwap memory swap;
         swap.poolId = IBasePool(pool).getPoolId();
         swap.kind = IVault.SwapKind.GIVEN_IN;
-        swap.assetIn = IAsset(_tokenIn);
-        swap.assetOut = IAsset(_tokenOut);
+        swap.assetIn = _tokenIn;
+        swap.assetOut = _tokenOut;
         swap.amount = _amountIn;
         swap.userData = "0x";
 
@@ -155,11 +158,9 @@ contract BalancerlikeAdapter is YakAdapter {
         bestPool = address(0);
         for (uint128 i; i < pools.length; i++) {
             address pool = pools[i];
-
             if (pool == address(0)) {
                 continue;
             }
-
             IPoolSwapStructs.SwapRequest memory request;
             request.poolId = IBasePool(pool).getPoolId();
             request.kind = IVault.SwapKind.GIVEN_IN;
@@ -167,7 +168,6 @@ contract BalancerlikeAdapter is YakAdapter {
             request.tokenOut = IERC20(_tokenOut);
             request.amount = _amountIn;
             request.userData = "0x";
-
             uint256 newAmountOut = _getAmountOut(request, pool);
             if (newAmountOut > amountOut) {
                 amountOut = newAmountOut;
@@ -183,10 +183,19 @@ contract BalancerlikeAdapter is YakAdapter {
     {
         // Based on https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/vault/contracts/Swaps.sol#L275
         (, uint256[] memory balances, ) = IVault(vault).getPoolTokens(request.poolId);
-
         uint256 tokenInTotal = balances[poolToTokenIndex[pool][address(request.tokenIn)]];
         uint256 tokenOutTotal = balances[poolToTokenIndex[pool][address(request.tokenOut)]];
+        amountOut = _getAmountOutSafe(request, tokenInTotal, tokenOutTotal, pool);
+    }
 
-        amountOut = IMinimalSwapInfoPool(pool).onSwap(request, tokenInTotal, tokenOutTotal);
+    function _getAmountOutSafe(
+        IPoolSwapStructs.SwapRequest memory request,
+        uint256 tokenInTotal,
+        uint256 tokenOutTotal,
+        address pool
+    ) internal view returns (uint256) {
+        try IMinimalSwapInfoPool(pool).onSwap(request, tokenInTotal, tokenOutTotal) returns (uint256 amountOut) {
+            return amountOut;
+        } catch {}
     }
 }

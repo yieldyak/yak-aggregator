@@ -14,7 +14,7 @@ struct SwapStorage {
     address lpToken;
 }
 
-interface ICurvelikeMeta {
+interface ISaddleMeta {
     function getToken(uint8 index) external view returns (address);
 
     function getVirtualPrice() external view returns (uint256);

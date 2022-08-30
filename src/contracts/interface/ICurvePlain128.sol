@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0;
 
-interface ICurvePlain {
+interface CurvePlain128 {
     function coins(uint256 index) external view returns (address);
 
     function exchange(
