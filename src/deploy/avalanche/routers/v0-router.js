@@ -51,10 +51,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   }
   
   async function afterDeployment({deployResult, adapters, hopTokens}) {
+      const { deployer } = await getNamedAccounts();
       let yakRouter = await ethers.getContractAt('YakRouter', deployResult.address)
-      let deployerSigner = new ethers.Wallet(process.env.PK_DEPLOYER, ethers.provider)
-      await addAdapters(yakRouter, deployerSigner, adapters)
-      await addHopTokens(yakRouter, deployerSigner, hopTokens)
+      await addAdapters(yakRouter, deployer, adapters)
+      await addHopTokens(yakRouter, deployer, hopTokens)
   
   }
   

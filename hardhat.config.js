@@ -12,19 +12,6 @@ require('hardhat-deploy');
 const verifyContract = require("./src/scripts/verify-contract");
 const { task } = require("hardhat/config");
 
-if (!process.env.AVALANCHE_FORK_RPC) {
-  throw new Error('Fork RPC provider not defined')
-}
-const AVALANCHE_FORK_RPC = process.env.AVALANCHE_FORK_RPC
-if (!process.env.PK_DEPLOYER) {
-  console.log('WARNING: Missing private-key for deployer - cant deploy')
-}
-if (!process.env.AVALANCHE_DEPLOY_RPC) {
-  console.log('WARNING: Missing RPC provider for deployer')
-}
-const PK_DEPLOYER = process.env.PK_DEPLOYER || "1111111111111111111111111111111111111111111111111111111111"
-const AVALANCHE_DEPLOY_RPC = process.env.AVALANCHE_DEPLOY_RPC || process.env.AVALANCHE_FORK_RPC
-
 // to verify all contracts use
 // find ./deployments/mainnet -maxdepth 1 -type f -not -path '*/\.*' -path "*.json" | xargs -L1 npx hardhat verifyContract --deployment-file-path --network mainnet
 task("verifyContract", "Verifies the contract in the snowtrace")
@@ -47,6 +34,18 @@ task("list-adapters", "Lists all adapters for the current YakRouter", async (_, 
   console.table(liveAdapters)
 })
 
+function getEnvValSafe(key, required=true) {
+  const endpoint = process.env[key];
+  if (endpoint === null && required)
+      throw(`Missing env var ${key}`);
+  return endpoint
+}
+
+const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')
+const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
+const ETHERSCAN_API_KEY = getEnvValSafe('ETHERSCAN_API_KEY', false)
+
+
 module.exports = {
   mocha: {
     timeout: 1e6,
@@ -68,14 +67,14 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: process.env.SNOWTRACE_API_KEY
+    apiKey: ETHERSCAN_API_KEY
   },
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
       chainId: 43114,
       forking: {
-        url: AVALANCHE_FORK_RPC, 
+        url: AVALANCHE_RPC, 
         blockNumber: 18154644
       },
       accounts: {
@@ -86,8 +85,8 @@ module.exports = {
     avalanche: {
       chainId: 43114,
       gasPrice: 225000000000,
-      url: AVALANCHE_DEPLOY_RPC,
-      accounts: [ PK_DEPLOYER ]
+      url: AVALANCHE_RPC,
+      accounts: [ AVALANCHE_PK_DEPLOYER ]
     }
   },
   paths: {
