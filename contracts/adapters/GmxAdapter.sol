@@ -22,7 +22,6 @@ pragma solidity ^0.8.0;
 import "../interface/IGmxVault.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-
 import "../YakAdapter.sol";
 
 contract GmxAdapter is YakAdapter {
@@ -71,7 +70,7 @@ contract GmxAdapter is YakAdapter {
     ) internal view returns (uint256) {
         uint256 decimalsDiv = _tokenDiv == USDG ? USDG_DECIMALS : tokenDecimals[_tokenDiv];
         uint256 decimalsMul = _tokenMul == USDG ? USDG_DECIMALS : tokenDecimals[_tokenMul];
-        return (_amount * 10**decimalsMul) / 10**decimalsDiv;
+        return (_amount * (10**decimalsMul)) / 10**decimalsDiv;
     }
 
     function getPrices(address _tokenIn, address _tokenOut) internal view returns (uint256 priceIn, uint256 priceOut) {
@@ -132,7 +131,7 @@ contract GmxAdapter is YakAdapter {
         uint256 usdgAmount = (_amountIn * priceIn) / PRICE_PRECISION;
         usdgAmount = adjustForDecimals(usdgAmount, _tokenIn, USDG);
         uint256 feeBasisPoints = IGmxVault(vault).vaultUtils().getSwapFeeBasisPoints(_tokenIn, _tokenOut, usdgAmount);
-        uint256 amountOutAfterFees = (_amountOut * BASIS_POINTS_DIVISOR - feeBasisPoints) / BASIS_POINTS_DIVISOR;
+        uint256 amountOutAfterFees = (_amountOut * (BASIS_POINTS_DIVISOR - feeBasisPoints)) / BASIS_POINTS_DIVISOR;
         bool withinVaultLimits = isWithinVaultLimits(_tokenIn, _tokenOut, usdgAmount, amountOutAfterFees);
         if (withinVaultLimits) {
             amountOut = amountOutAfterFees;
