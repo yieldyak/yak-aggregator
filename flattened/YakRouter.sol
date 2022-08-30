@@ -373,23 +373,10 @@ contract YakRouter is Ownable {
         uint256 amountOut;
     }
 
-    struct OfferWithGas {
-        bytes amounts;
-        bytes adapters;
-        bytes path;
-        uint256 gasEstimate;
-    }
-
     struct Offer {
         bytes amounts;
         bytes adapters;
         bytes path;
-    }
-
-    struct FormattedOfferWithGas {
-        uint256[] amounts;
-        address[] adapters;
-        address[] path;
         uint256 gasEstimate;
     }
 
@@ -397,6 +384,7 @@ contract YakRouter is Ownable {
         uint256[] amounts;
         address[] adapters;
         address[] path;
+        uint256 gasEstimate;
     }
 
     struct Trade {
@@ -472,7 +460,7 @@ contract YakRouter is Ownable {
 
     function _applyFee(uint256 _amountIn, uint256 _fee) internal view returns (uint256) {
         require(_fee >= MIN_FEE, "YakRouter: Insufficient fee");
-        return (_amountIn * FEE_DENOMINATOR - _fee) / FEE_DENOMINATOR;
+        return (_amountIn * (FEE_DENOMINATOR - _fee)) / FEE_DENOMINATOR;
     }
 
     function _wrap(uint256 _amount) internal {
@@ -508,14 +496,7 @@ contract YakRouter is Ownable {
      * Makes a deep copy of Offer struct
      */
     function _cloneOffer(Offer memory _queries) internal pure returns (Offer memory) {
-        return Offer(_queries.amounts, _queries.adapters, _queries.path);
-    }
-
-    /**
-     * Makes a deep copy of OfferWithGas struct
-     */
-    function _cloneOfferWithGas(OfferWithGas memory _queries) internal pure returns (OfferWithGas memory) {
-        return OfferWithGas(_queries.amounts, _queries.adapters, _queries.path, _queries.gasEstimate);
+        return Offer(_queries.amounts, _queries.adapters, _queries.path, _queries.gasEstimate);
     }
 
     /**
@@ -523,20 +504,6 @@ contract YakRouter is Ownable {
      */
     function _addQuery(
         Offer memory _queries,
-        uint256 _amount,
-        address _adapter,
-        address _tokenOut
-    ) internal pure {
-        _queries.path = BytesManipulation.mergeBytes(_queries.path, BytesManipulation.toBytes(_tokenOut));
-        _queries.amounts = BytesManipulation.mergeBytes(_queries.amounts, BytesManipulation.toBytes(_amount));
-        _queries.adapters = BytesManipulation.mergeBytes(_queries.adapters, BytesManipulation.toBytes(_adapter));
-    }
-
-    /**
-     * Appends Query elements to Offer struct
-     */
-    function _addQueryWithGas(
-        OfferWithGas memory _queries,
         uint256 _amount,
         address _adapter,
         address _tokenOut,
@@ -579,18 +546,6 @@ contract YakRouter is Ownable {
     function _formatOffer(Offer memory _queries) internal pure returns (FormattedOffer memory) {
         return
             FormattedOffer(
-                _formatAmounts(_queries.amounts),
-                _formatAddresses(_queries.adapters),
-                _formatAddresses(_queries.path)
-            );
-    }
-
-    /**
-     * Formats elements in the Offer object from byte-arrays to integers and addresses
-     */
-    function _formatOfferWithGas(OfferWithGas memory _queries) internal pure returns (FormattedOfferWithGas memory) {
-        return
-            FormattedOfferWithGas(
                 _formatAmounts(_queries.amounts),
                 _formatAddresses(_queries.adapters),
                 _formatAddresses(_queries.path),
@@ -663,80 +618,26 @@ contract YakRouter is Ownable {
         address _tokenOut,
         uint256 _maxSteps,
         uint256 _gasPrice
-    ) external view returns (FormattedOfferWithGas memory) {
+    ) external view returns (FormattedOffer memory) {
         require(_maxSteps > 0 && _maxSteps < 5, "YakRouter: Invalid max-steps");
-        OfferWithGas memory queries;
+        Offer memory queries;
         queries.amounts = BytesManipulation.toBytes(_amountIn);
         queries.path = BytesManipulation.toBytes(_tokenIn);
-        FormattedOffer memory gasQuery = findBestPath(_gasPrice, WAVAX, _tokenOut, 2);
-        uint256 tknOutPrice = gasQuery.amounts[gasQuery.amounts.length - 1];
-        queries = _findBestPathWithGas(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, tknOutPrice);
+        // Find the market price between AVAX and token-out and express gas price in token-out currency
+        FormattedOffer memory gasQuery = findBestPath(1e18, WAVAX, _tokenOut, 2); // Avoid low-liquidity price appreciation
+        // Include safety check if no 2-step path between WAVAX and tokenOut is found
+        uint256 tknOutPriceNwei = 0;
+        if (gasQuery.path.length != 0) {
+            // Leave result nWei to preserve digits for assets with low decimal places
+            tknOutPriceNwei = gasQuery.amounts[gasQuery.amounts.length - 1] * (_gasPrice / 1e9);
+        }
+        queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, tknOutPriceNwei);
         // If no paths are found return empty struct
         if (queries.adapters.length == 0) {
             queries.amounts = "";
             queries.path = "";
         }
-        return _formatOfferWithGas(queries);
-    }
-
-    function _findBestPathWithGas(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut,
-        uint256 _maxSteps,
-        OfferWithGas memory _queries,
-        uint256 _tknOutPrice
-    ) internal view returns (OfferWithGas memory) {
-        OfferWithGas memory bestOption = _cloneOfferWithGas(_queries);
-        uint256 bestAmountOut;
-        // First check if there is a path directly from tokenIn to tokenOut
-        Query memory queryDirect = queryNoSplit(_amountIn, _tokenIn, _tokenOut);
-        if (queryDirect.amountOut != 0) {
-            uint256 gasEstimate = IAdapter(queryDirect.adapter).swapGasEstimate();
-            _addQueryWithGas(bestOption, queryDirect.amountOut, queryDirect.adapter, queryDirect.tokenOut, gasEstimate);
-            bestAmountOut = queryDirect.amountOut;
-        }
-        // Only check the rest if they would go beyond step limit (Need at least 2 more steps)
-        if (_maxSteps > 1 && _queries.adapters.length / 32 <= _maxSteps - 2) {
-            // Check for paths that pass through trusted tokens
-            for (uint256 i = 0; i < TRUSTED_TOKENS.length; i++) {
-                if (_tokenIn == TRUSTED_TOKENS[i]) {
-                    continue;
-                }
-                // Loop through all adapters to find the best one for swapping tokenIn for one of the trusted tokens
-                Query memory bestSwap = queryNoSplit(_amountIn, _tokenIn, TRUSTED_TOKENS[i]);
-                if (bestSwap.amountOut == 0) {
-                    continue;
-                }
-                // Explore options that connect the current path to the tokenOut
-                OfferWithGas memory newOffer = _cloneOfferWithGas(_queries);
-                uint256 gasEstimate = IAdapter(bestSwap.adapter).swapGasEstimate();
-                _addQueryWithGas(newOffer, bestSwap.amountOut, bestSwap.adapter, bestSwap.tokenOut, gasEstimate);
-                newOffer = _findBestPathWithGas(
-                    bestSwap.amountOut,
-                    TRUSTED_TOKENS[i],
-                    _tokenOut,
-                    _maxSteps,
-                    newOffer,
-                    _tknOutPrice
-                );
-                address tokenOut = BytesManipulation.bytesToAddress(newOffer.path.length, newOffer.path);
-                uint256 amountOut = BytesManipulation.bytesToUint256(newOffer.amounts.length, newOffer.amounts);
-                // Check that the last token in the path is the tokenOut and update the new best option if neccesary
-                if (_tokenOut == tokenOut && amountOut > bestAmountOut) {
-                    if (newOffer.gasEstimate > bestOption.gasEstimate) {
-                        uint256 gasCostDiff = _tknOutPrice * newOffer.gasEstimate - bestOption.gasEstimate;
-                        uint256 priceDiff = amountOut - bestAmountOut;
-                        if (gasCostDiff > priceDiff) {
-                            continue;
-                        }
-                    }
-                    bestAmountOut = amountOut;
-                    bestOption = newOffer;
-                }
-            }
-        }
-        return bestOption;
+        return _formatOffer(queries);
     }
 
     /**
@@ -752,7 +653,7 @@ contract YakRouter is Ownable {
         Offer memory queries;
         queries.amounts = BytesManipulation.toBytes(_amountIn);
         queries.path = BytesManipulation.toBytes(_tokenIn);
-        queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries);
+        queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, 0);
         // If no paths are found return empty struct
         if (queries.adapters.length == 0) {
             queries.amounts = "";
@@ -766,14 +667,22 @@ contract YakRouter is Ownable {
         address _tokenIn,
         address _tokenOut,
         uint256 _maxSteps,
-        Offer memory _queries
+        Offer memory _queries,
+        uint256 _tknOutPriceNwei
     ) internal view returns (Offer memory) {
         Offer memory bestOption = _cloneOffer(_queries);
         uint256 bestAmountOut;
+        uint256 gasEstimate;
+        bool withGas = _tknOutPriceNwei != 0;
+
         // First check if there is a path directly from tokenIn to tokenOut
         Query memory queryDirect = queryNoSplit(_amountIn, _tokenIn, _tokenOut);
+
         if (queryDirect.amountOut != 0) {
-            _addQuery(bestOption, queryDirect.amountOut, queryDirect.adapter, queryDirect.tokenOut);
+            if (withGas) {
+                gasEstimate = IAdapter(queryDirect.adapter).swapGasEstimate();
+            }
+            _addQuery(bestOption, queryDirect.amountOut, queryDirect.adapter, queryDirect.tokenOut, gasEstimate);
             bestAmountOut = queryDirect.amountOut;
         }
         // Only check the rest if they would go beyond step limit (Need at least 2 more steps)
@@ -790,12 +699,30 @@ contract YakRouter is Ownable {
                 }
                 // Explore options that connect the current path to the tokenOut
                 Offer memory newOffer = _cloneOffer(_queries);
-                _addQuery(newOffer, bestSwap.amountOut, bestSwap.adapter, bestSwap.tokenOut);
-                newOffer = _findBestPath(bestSwap.amountOut, TRUSTED_TOKENS[i], _tokenOut, _maxSteps, newOffer); // Recursive step
+                if (withGas) {
+                    gasEstimate = IAdapter(bestSwap.adapter).swapGasEstimate();
+                }
+                _addQuery(newOffer, bestSwap.amountOut, bestSwap.adapter, bestSwap.tokenOut, gasEstimate);
+                newOffer = _findBestPath(
+                    bestSwap.amountOut,
+                    TRUSTED_TOKENS[i],
+                    _tokenOut,
+                    _maxSteps,
+                    newOffer,
+                    _tknOutPriceNwei
+                ); // Recursive step
                 address tokenOut = BytesManipulation.bytesToAddress(newOffer.path.length, newOffer.path);
                 uint256 amountOut = BytesManipulation.bytesToUint256(newOffer.amounts.length, newOffer.amounts);
                 // Check that the last token in the path is the tokenOut and update the new best option if neccesary
                 if (_tokenOut == tokenOut && amountOut > bestAmountOut) {
+                    if (newOffer.gasEstimate > bestOption.gasEstimate) {
+                        uint256 gasCostDiff = (_tknOutPriceNwei * (newOffer.gasEstimate - bestOption.gasEstimate)) /
+                            1e9;
+                        uint256 priceDiff = amountOut - bestAmountOut;
+                        if (gasCostDiff > priceDiff) {
+                            continue;
+                        }
+                    }
                     bestAmountOut = amountOut;
                     bestOption = newOffer;
                 }
