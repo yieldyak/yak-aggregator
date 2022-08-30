@@ -1,4 +1,4 @@
-const { ArableSF } = require("../../../../test/addresses.json").other
+const { ArableSF } = require("../../../../misc/addresses.json").other
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments

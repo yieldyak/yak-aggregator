@@ -1,4 +1,4 @@
-const { balancerlikePools, balancerlikeVaults } = require("../../../../test/addresses.json")
+const { balancerlikePools, balancerlikeVaults } = require("../../../../misc/addresses.json")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments

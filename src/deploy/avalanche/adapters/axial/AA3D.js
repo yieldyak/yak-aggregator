@@ -1,7 +1,7 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
-    const { curvelikePools } = require('../../../../test/addresses.json')
+    const { curvelikePools } = require("../../../../misc/addresses.json")
 
     const NAME = 'AxialAA3DYakAdapterV0'
     const POOL = curvelikePools.AxialAA3D

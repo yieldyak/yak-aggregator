@@ -1,4 +1,4 @@
-const { other } = require("../../../../test/addresses.json")
+const { other } = require("../../../../misc/addresses.json")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments

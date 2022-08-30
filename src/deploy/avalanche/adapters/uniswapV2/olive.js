@@ -1,7 +1,7 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments
   const { deployer } = await getNamedAccounts()
-  const { unilikeFactories } = require('../../../test/addresses.json')
+  const { unilikeFactories } = require("../../../../misc/addresses.json")
 
   const NAME = 'OliveYakAdapterV0'
   const FACTORY = unilikeFactories.olive

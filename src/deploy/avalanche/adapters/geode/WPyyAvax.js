@@ -1,8 +1,8 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
-    const { other, assets } = require('../../../../test/addresses.json')
-    const { geode } = require('../../../../test/constants.json')
+    const { other, assets } = require("../../../../misc/addresses.json")
+    const { geode } = require('../../../../misc/constants.json')
 
     // GeodeWithdrawalPoolyyAvaxAdapter
     const NAME = 'GWPyyAvaxAdapter'
