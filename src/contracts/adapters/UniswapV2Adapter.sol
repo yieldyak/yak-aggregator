@@ -18,14 +18,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.7.0;
 
-import "../interface/IUnilikeFactory.sol";
-import "../interface/IUnilikePair.sol";
+import "../interface/IUniswapFactory.sol";
+import "../interface/IUniswapPair.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
-contract UnilikeAdapter is YakAdapter {
+contract UnilswapV2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
@@ -64,11 +64,11 @@ contract UnilikeAdapter is YakAdapter {
         if (_tokenIn == _tokenOut || _amountIn == 0) {
             return 0;
         }
-        address pair = IUnilikeFactory(factory).getPair(_tokenIn, _tokenOut);
+        address pair = IUniswapFactory(factory).getPair(_tokenIn, _tokenOut);
         if (pair == address(0)) {
             return 0;
         }
-        (uint256 r0, uint256 r1, ) = IUnilikePair(pair).getReserves();
+        (uint256 r0, uint256 r1, ) = IUniswapPair(pair).getReserves();
         (uint256 reserveIn, uint256 reserveOut) = _tokenIn < _tokenOut ? (r0, r1) : (r1, r0);
         if (reserveIn > 0 && reserveOut > 0) {
             amountOut = _getAmountOut(_amountIn, reserveIn, reserveOut);
@@ -82,11 +82,11 @@ contract UnilikeAdapter is YakAdapter {
         address _tokenOut,
         address to
     ) internal override {
-        address pair = IUnilikeFactory(factory).getPair(_tokenIn, _tokenOut);
+        address pair = IUniswapFactory(factory).getPair(_tokenIn, _tokenOut);
         (uint256 amount0Out, uint256 amount1Out) = (_tokenIn < _tokenOut)
             ? (uint256(0), _amountOut)
             : (_amountOut, uint256(0));
         IERC20(_tokenIn).safeTransfer(pair, _amountIn);
-        IUnilikePair(pair).swap(amount0Out, amount1Out, to, new bytes(0));
+        IUniswapPair(pair).swap(amount0Out, amount1Out, to, new bytes(0));
     }
 }

@@ -11,7 +11,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log(NAME)
     const deployResult = await deploy(NAME, {
       from: deployer,
-      contract: "UnilikeAdapter",
+      contract: "UnilswapV2Adapter",
       gas: 4000000,
       args: [
           NAME,
