@@ -9,7 +9,7 @@ require('hardhat-log-remover');
 require("hardhat-tracer");
 require('hardhat-deploy');
 
-const verifyContract = require("./scripts/verify-contract");
+const verifyContract = require("./src/scripts/verify-contract");
 const { task } = require("hardhat/config");
 
 if (!process.env.AVALANCHE_FORK_RPC) {
@@ -83,18 +83,20 @@ module.exports = {
         count: 200
       }
     }, 
-    mainnet: {
+    avalanche: {
       chainId: 43114,
       gasPrice: 225000000000,
       url: AVALANCHE_DEPLOY_RPC,
-      accounts: [
-        PK_DEPLOYER
-      ]
+      accounts: [ PK_DEPLOYER ]
     }
   },
   paths: {
-    deploy: 'deploy',
-    deployments: 'deployments'
+    deployments: './src/deployments',
+    artifacts: "./src/artifacts",
+    sources: "./src/contracts",
+    deploy: './src/deploy',
+    cache: "./src/cache",
+    tests: "./src/test"
   },
   abiExporter: {
     path: './abis',
@@ -102,13 +104,13 @@ module.exports = {
     flat: true
   },
   contractSizer: {
-    alphaSort: false,
-    runOnCompile: false,
     disambiguatePaths: false,
+    runOnCompile: false,
+    alphaSort: false,
   },
   gasReporter: {
-    enabled: false,
     showTimeSpent: true, 
+    enabled: false,
     gasPrice: 225
   }
 };
