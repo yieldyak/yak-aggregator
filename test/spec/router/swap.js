@@ -184,7 +184,6 @@ describe('Yak Router - swap', () => {
         )
         // Approve for input token
         await helpers.approveERC20(trader, tokenIn, YakRouter.address, ethers.constants.MaxUint256)
-        let balBefore = await ethers.provider.getBalance(trader.address)
         // Do the swap
         const swap = YakRouter.connect(trader).swapNoSplitToAVAX(
             [

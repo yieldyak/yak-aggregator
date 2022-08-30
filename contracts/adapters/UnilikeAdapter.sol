@@ -29,7 +29,6 @@ contract UnilikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 public constant ID = keccak256("UnilikeAdapter");
     uint256 internal constant FEE_DENOMINATOR = 1e3;
     uint256 public immutable feeCompliment;
     address public immutable factory;
@@ -39,20 +38,11 @@ contract UnilikeAdapter is YakAdapter {
         address _factory,
         uint256 _fee,
         uint256 _swapGasEstimate
-    ) {
+    ) YakAdapter(_name, _swapGasEstimate) {
         require(FEE_DENOMINATOR > _fee, "Fee greater than the denominator");
-        factory = _factory;
-        name = _name;
         feeCompliment = FEE_DENOMINATOR.sub(_fee);
-        setSwapGasEstimate(_swapGasEstimate);
-        setAllowances();
+        factory = _factory;
     }
-
-    function setAllowances() public override onlyOwner {
-        IERC20(WAVAX).safeApprove(WAVAX, UINT_MAX);
-    }
-
-    function _approveIfNeeded(address tokenIn, uint256 amount) internal override {}
 
     function _getAmountOut(
         uint256 _amountIn,

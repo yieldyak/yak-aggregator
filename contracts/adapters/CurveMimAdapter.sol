@@ -33,23 +33,22 @@ contract CurveMimAdapter is YakAdapter {
     address public constant basePool = 0x7f90122BF0700F9E7e1F688fe926940E8839F353;
     address public constant swapper = 0x001E3BA199B4FF4B5B6e97aCD96daFC0E2e4156e;
     address public constant pool = 0x30dF229cefa463e991e29D42DB0bae2e122B2AC7;
-    bytes32 public constant id = keccak256("CurveMimAdapter");
     mapping(address => int128) public tokenIndex;
     mapping(address => bool) public isPoolToken;
 
-    constructor(string memory _name, uint256 _swapGasEstimate) {
-        name = _name;
+    constructor(string memory _name, uint256 _swapGasEstimate) YakAdapter(_name, _swapGasEstimate) {
         _setPoolTokens();
-        setSwapGasEstimate(_swapGasEstimate);
     }
 
     // Mapping indicator which tokens are included in the pool
     function _setPoolTokens() internal {
         address metaTkn = ICurveMim(pool).coins(0);
+        _setPoolTokenAllowance(metaTkn);
         isPoolToken[metaTkn] = true;
         tokenIndex[metaTkn] = 0;
         for (uint256 i = 0; true; i++) {
             try ICurveMim(basePool).underlying_coins(i) returns (address token) {
+                _setPoolTokenAllowance(token);
                 isPoolToken[token] = true;
                 tokenIndex[token] = int128(int256(i)) + 1;
             } catch {
@@ -58,13 +57,8 @@ contract CurveMimAdapter is YakAdapter {
         }
     }
 
-    function setAllowances() public override onlyOwner {}
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
-        uint256 allowance = IERC20(_tokenIn).allowance(address(this), swapper);
-        if (allowance < _amount) {
-            IERC20(_tokenIn).safeApprove(swapper, UINT_MAX);
-        }
+    function _setPoolTokenAllowance(address _token) internal {
+        IERC20(_token).approve(swapper, UINT_MAX);
     }
 
     function _query(

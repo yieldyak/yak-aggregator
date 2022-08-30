@@ -29,31 +29,21 @@ contract GmxAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 public constant id = keccak256("GmxAdapter");
     address public constant USDG = 0xc0253c3cC6aa5Ab407b5795a04c28fB063273894;
     uint256 public constant BASIS_POINTS_DIVISOR = 1e4;
     uint256 public constant PRICE_PRECISION = 1e30;
     uint256 public constant USDG_DECIMALS = 18;
-    address public vault;
     mapping(address => uint256) public tokenDecimals;
     mapping(address => bool) public isPoolToken;
+    address public vault;
 
     constructor(
         string memory _name,
         address _vault,
         uint256 _swapGasEstimate
-    ) {
-        name = _name;
+    ) YakAdapter(_name, _swapGasEstimate) {
         vault = _vault;
-        setSwapGasEstimate(_swapGasEstimate);
         setPoolTokens();
-    }
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
-        uint256 allowance = IERC20(_tokenIn).allowance(address(this), vault);
-        if (allowance < _amount) {
-            IERC20(_tokenIn).safeApprove(vault, UINT_MAX);
-        }
     }
 
     function setPoolTokens() public {
@@ -156,6 +146,4 @@ contract GmxAdapter is YakAdapter {
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }
-
-    function setAllowances() public override onlyOwner {}
 }

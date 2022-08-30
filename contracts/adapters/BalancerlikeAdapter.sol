@@ -42,11 +42,9 @@ contract BalancerlikeAdapter is YakAdapter {
         address _vault,
         address[] memory _pools,
         uint256 _swapGasEstimate
-    ) {
-        name = _name;
+    ) YakAdapter(_name, _swapGasEstimate) {
         vault = _vault;
         addPools(_pools);
-        setSwapGasEstimate(_swapGasEstimate);
     }
 
     function addPools(address[] memory _pools) public onlyOwner {
@@ -92,9 +90,7 @@ contract BalancerlikeAdapter is YakAdapter {
         return tokensToPools[tokenIn][tokenOut];
     }
 
-    function setAllowances() public override onlyOwner {}
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
+    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal {
         uint256 allowance = IERC20(_tokenIn).allowance(address(this), vault);
         if (allowance < _amount) {
             IERC20(_tokenIn).safeApprove(vault, _amount);
@@ -127,12 +123,10 @@ contract BalancerlikeAdapter is YakAdapter {
         address to
     ) internal override {
         address[] memory pools = getPools(_tokenIn, _tokenOut);
-
         require(pools.length > 0, "No pools for swapping");
-
         (address pool, ) = _getBestPoolForSwap(pools, _tokenIn, _tokenOut, _amountIn);
-
         require(pool != address(0), "Undefined pool");
+        _approveIfNeeded(_tokenIn, _amountIn);
 
         IVault.SingleSwap memory swap;
         swap.poolId = IBasePool(pool).getPoolId();

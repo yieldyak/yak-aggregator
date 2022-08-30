@@ -2,6 +2,7 @@ const { expect } = require("chai")
 const { ethers } = require("hardhat")
 const fixtures = require('../../fixtures')
 const { parseUnits } = ethers.utils
+const { assets } = require('../../addresses.json')
 
 describe('Yak Router - general', () => {
 
@@ -33,7 +34,7 @@ describe('Yak Router - general', () => {
             "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15", 
             "0x1C20E891Bab6b1727d14Da358FAe2984Ed9B59EB", 
         ]
-        let _YakRouter = await YakRouterFactory.connect(owner).deploy([], [], owner.address)
+        let _YakRouter = await YakRouterFactory.connect(owner).deploy([], [], owner.address, assets.WAVAX)
 
         // Not trusted tokens at the beginning
         expect(await _YakRouter.trustedTokensCount()).to.equal('0')

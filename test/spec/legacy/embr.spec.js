@@ -6,7 +6,7 @@ const { assets, balancerlikePools } = require('../../addresses.json')
 const { BigNumber } = require("ethers")
 const { setERC20Bal } = require('../../helpers')
 
-describe("BalancerlikeAdapter - Embr Finance", function () {
+describe.skip("BalancerlikeAdapter - Embr Finance", function () {
     let Adapter
     let Pool
     let Vault

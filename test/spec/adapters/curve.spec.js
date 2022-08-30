@@ -197,7 +197,10 @@ describe("YakAdapter - Curve", function() {
                 trader.address
             )
             // Check that swap matches the query
-            await expect(swap).to.changeTokenBalance(tokenTo, trader, amountOutQuery)
+            const traderBal0 = await tokenTo.balanceOf(trader.address)
+            await swap()
+            const traderBal1 = await tokenTo.balanceOf(trader.address)
+            expect(traderBal1.sub(traderBal0)).to.gte(amountOutQuery)
         })
 
         it('Check gas cost', async () => {

@@ -28,7 +28,6 @@ contract KyberAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 public constant ID = keccak256("KyberAdapter");
     uint256 public constant PRECISION = 1e18;
     mapping(address => mapping(address => address)) internal TKNS_TO_POOL;
 
@@ -36,15 +35,8 @@ contract KyberAdapter is YakAdapter {
         string memory _name,
         address[] memory _pools,
         uint256 _swapGasEstimate
-    ) {
-        name = _name;
-        setSwapGasEstimate(_swapGasEstimate);
+    ) YakAdapter(_name, _swapGasEstimate) {
         addPools(_pools);
-        setAllowances();
-    }
-
-    function setAllowances() public override onlyOwner {
-        IERC20(WAVAX).safeApprove(WAVAX, UINT_MAX);
     }
 
     function addPools(address[] memory _pools) public onlyOwner {
@@ -70,8 +62,6 @@ contract KyberAdapter is YakAdapter {
     function getPool(address tkn0, address tkn1) public view returns (address) {
         return TKNS_TO_POOL[tkn0][tkn1];
     }
-
-    function _approveIfNeeded(address tokenIn, uint256 amount) internal override {}
 
     function _getAmountOut(
         uint256 amountIn,

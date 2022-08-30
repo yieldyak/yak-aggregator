@@ -29,7 +29,6 @@ contract ArableSFAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 public constant id = keccak256("ArableSFAdapter");
     address public vault;
     mapping(address => uint256) public tokenDecimals;
 
@@ -37,14 +36,10 @@ contract ArableSFAdapter is YakAdapter {
         string memory _name,
         address _vault,
         uint256 _swapGasEstimate
-    ) {
-        name = _name;
+    ) YakAdapter(_name, _swapGasEstimate) {
         vault = _vault;
-        setSwapGasEstimate(_swapGasEstimate);
         setPoolTokens();
     }
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 
     function setPoolTokens() public {
         uint256 whitelistedTknsLen = IStabilityFund(vault).getStableTokensCount();
@@ -112,6 +107,4 @@ contract ArableSFAdapter is YakAdapter {
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }
-
-    function setAllowances() public override onlyOwner {}
 }

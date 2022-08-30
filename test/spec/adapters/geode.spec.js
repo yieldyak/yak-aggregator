@@ -63,18 +63,18 @@ describe("YakAdapter - Geode", function() {
                     Original.address
                 )
                 if (!approved) {
-                    await Adapter.setAllowances()      
+                    await Adapter.setGAvaxAllowance()      
                 }
 
                 // Revoke allowance and check allowance is revoked
-                await Adapter['revokeAllowance()']()
+                await Adapter['revokeGAvaxAllowance()']()
                 expect(await gAVAX.isApprovedForAll(
                     Adapter.address, 
                     Original.address
                 )).to.be.false
 
                 // Set allowance and check allowance is set
-                await Adapter.setAllowances()
+                await Adapter.setGAvaxAllowance()
                 expect(await gAVAX.isApprovedForAll(
                     Adapter.address, 
                     Original.address

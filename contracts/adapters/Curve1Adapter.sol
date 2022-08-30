@@ -30,26 +30,24 @@ contract Curve1Adapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 public constant id = keccak256("Curve1Adapter");
-    mapping(address => bool) public isPoolToken;
     mapping(address => uint256) public tokenIndex;
+    mapping(address => bool) public isPoolToken;
     address public pool;
 
     constructor(
         string memory _name,
         address _pool,
         uint256 _swapGasEstimate
-    ) {
-        name = _name;
+    ) YakAdapter(_name, _swapGasEstimate) {
         pool = _pool;
         _setPoolTokens();
-        setSwapGasEstimate(_swapGasEstimate);
     }
 
     // Mapping indicator which tokens are included in the pool
     function _setPoolTokens() internal {
-        for (uint256 i = 0; true; i++) {
+        for (uint256 i = 0; true; ++i) {
             try ICurve1(pool).underlying_coins(i) returns (address token) {
+                _setPoolTokenAllowance(token);
                 isPoolToken[token] = true;
                 tokenIndex[token] = i;
             } catch {
@@ -58,13 +56,8 @@ contract Curve1Adapter is YakAdapter {
         }
     }
 
-    function setAllowances() public override onlyOwner {}
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
-        uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
-        if (allowance < _amount) {
-            IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
-        }
+    function _setPoolTokenAllowance(address _token) internal {
+        IERC20(_token).approve(pool, UINT_MAX);
     }
 
     function _query(
@@ -78,15 +71,19 @@ contract Curve1Adapter is YakAdapter {
         try ICurve1(pool).get_dy_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
             uint256 amountOut
         ) {
-            // `calc_token_amount` in base_pool is used in part of the query
-            // this method does account for deposit fee which causes discrepancy
-            // between the query result and the actual swap amount by few bps(0-3.2)
-            // Additionally there is a rounding error (swap and query may calc different amounts)
-            // Account for that with 4 bps discount
-            return amountOut == 0 ? 0 : (amountOut * (1e4 - 4)) / 1e4;
+            return _applyError(amountOut);
         } catch {
             return 0;
         }
+    }
+
+    function _applyError(uint256 _amount) internal pure returns (uint256) {
+        // `calc_token_amount` in base_pool is used in part of the query
+        // this method does account for deposit fee which causes discrepancy
+        // between the query result and the actual swap amount by few bps(0-3.2)
+        // Additionally there is a rounding error (swap and query may calc different amounts)
+        // Account for above with 4 bps discount
+        return _amount == 0 ? 0 : (_amount * (1e4 - 4)) / 1e4;
     }
 
     function _swap(
@@ -97,7 +94,7 @@ contract Curve1Adapter is YakAdapter {
         address _to
     ) internal override {
         ICurve1(pool).exchange_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
-        // Confidently transfer amount-out
-        _returnTo(_tokenOut, _amountOut, _to);
+        uint256 balThis = IERC20(_tokenOut).balanceOf(address(this));
+        _returnTo(_tokenOut, balThis, _to);
     }
 }

@@ -5,7 +5,7 @@ const helpers = require('../../helpers')
 const { parseUnits } = ethers.utils
 
 
-describe("YakAdapter BridgeMigration", function() {
+describe.skip("YakAdapter BridgeMigration", function() {
 
     let BMAdapterFactory
     let genNewAccount

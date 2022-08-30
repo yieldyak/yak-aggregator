@@ -29,7 +29,7 @@ const _geodeWPAdapter = async () => {
             'GWPyyAvaxAdapter',
             addresses.other.GeodePortal,
             constants.geode.yyPlanet,
-            4.5e5
+            4.3e5
         ))
     ])
     return {
@@ -203,12 +203,12 @@ const _curveAdapter = async () => {
         ethers.getContractAt('ICurveMim', curvelikePools.CurveMim),
         ethers.getContractAt('ICurve2', curvelikePools.CurveMore),
         ethers.getContractAt('ICurveMim', curvelikePools.CurveDeUSDC),
-        Curve2AdaptorFactory.then(f => f.deploy('CurveAaveAdapter', curvelikePools.CurveAave, 8e5)),
+        Curve2AdaptorFactory.then(f => f.deploy('CurveAaveAdapter', curvelikePools.CurveAave, 7.7e5)),
         Curve1AdaptorFactory.then(f => f.deploy('CurveAtricryptoAdapter', curvelikePools.CurveAtricrypto, 9.5e5)),
         Curve2AdaptorFactory.then(f => f.deploy('CurveRenAdapter', curvelikePools.CurveRen, 5.3e5)),
-        CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.9e5)),
-        CurvePlainAdapterFactory.then(f => f.deploy('CurveUSDCAdapter', curvelikePools.CurveUSDC, 2.9e5)),
-        CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolfAdapter', curvelikePools.Curve3poolf, 3.3e5)),
+        CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.5e5)),
+        CurvePlainAdapterFactory.then(f => f.deploy('CurveUSDCAdapter', curvelikePools.CurveUSDC, 2.5e5)),
+        CurvePlainAdapterFactory.then(f => f.deploy('Curve3poolfAdapter', curvelikePools.Curve3poolf, 2.9e5)),
         CurvePlainAdapterFactory.then(f => f.deploy('CurveYUSDAdapter', curvelikePools.CurveYUSD, 3e5)),
         CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.1e6)),
         CurveMoreAdapterFactory.then(f => f.deploy('CurveMoreAdapter', 1.1e6)),
@@ -308,7 +308,7 @@ const _synapseAdapter = async () => {
         CurvelikeAdapterFactory.then(f => f.deploy(
             'Synapse YakAdapter',
             curvelikePools.SynapseDAIeUSDCeUSDTeNUSD, 
-            3.6e5
+            3.2e5
         ))
     ])
     return {
@@ -679,7 +679,8 @@ const router = deployments.createFixture(async ({ }) => {
     const YakRouter = await YakRouterFactory.connect(deployer).deploy(
         Object.values(adapters).map(a=>a.address), 
         trustedTokens, 
-        deployer.address
+        deployer.address, 
+        assets.WAVAX
     )
     // Set tags
     if (TRACER_ENABLED) {

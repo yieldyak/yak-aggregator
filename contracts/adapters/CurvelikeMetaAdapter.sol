@@ -29,7 +29,6 @@ contract CurvelikeMetaAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 public constant id = keccak256("CurvelikeMetaAdapter");
     uint256 public constant feeDenominator = 1e10;
     address public metaPool;
     address public pool;
@@ -41,11 +40,9 @@ contract CurvelikeMetaAdapter is YakAdapter {
         string memory _name,
         address _pool,
         uint256 _swapGasEstimate
-    ) {
+    ) YakAdapter(_name, _swapGasEstimate) {
         pool = _pool;
-        name = _name;
         metaPool = ICurvelikeMeta(pool).metaSwapStorage(); // Pool that holds USDCe, USDTe, DAIe
-        setSwapGasEstimate(_swapGasEstimate);
         setPoolFeeCompliment();
         _setPoolTokens();
     }
@@ -58,11 +55,13 @@ contract CurvelikeMetaAdapter is YakAdapter {
     function _setPoolTokens() internal {
         // Get nUSD from this pool
         address baseTkn = ICurvelikeMeta(pool).getToken(0);
+        _setPoolTokenAllowance(baseTkn);
         isPoolToken[baseTkn] = true;
         tokenIndex[baseTkn] = 0;
         // Get stables from meta pool
         for (uint8 i = 0; true; i++) {
             try ICurvelikeMeta(metaPool).getToken(i) returns (address token) {
+                _setPoolTokenAllowance(token);
                 isPoolToken[token] = true;
                 tokenIndex[token] = i + 1;
             } catch {
@@ -71,13 +70,8 @@ contract CurvelikeMetaAdapter is YakAdapter {
         }
     }
 
-    function setAllowances() public override onlyOwner {}
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
-        uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
-        if (allowance < _amount) {
-            IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
-        }
+    function _setPoolTokenAllowance(address _token) internal {
+        IERC20(_token).approve(pool, UINT_MAX);
     }
 
     function _isPaused() internal view returns (bool) {

@@ -22,16 +22,11 @@ pragma solidity >=0.7.0;
 import "../YakAdapter.sol";
 
 contract WAvaxAdapter is YakAdapter {
-    bytes32 public constant ID = keccak256("WAvaxAdapter");
+    address internal constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
 
-    constructor(uint256 _swapGasEstimate) {
-        name = "WAvaxAdapter";
+    constructor(uint256 _swapGasEstimate) YakAdapter("WAvaxAdapter", _swapGasEstimate) {
         setSwapGasEstimate(_swapGasEstimate);
     }
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
-
-    function setAllowances() public override {}
 
     function _query(
         uint256 _amountIn,

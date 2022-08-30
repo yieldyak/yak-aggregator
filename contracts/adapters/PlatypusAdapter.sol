@@ -34,21 +34,13 @@ import "../YakAdapter.sol";
 contract PlatypusAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
-    event AddPoolSupport(address pool);
-
     event PartialPoolSupport(address pool, address[] tkns);
-
+    event AddPoolSupport(address pool);
     event RmPoolSupport(address pool);
 
-    bytes32 public constant indentifier = keccak256("PlatypusAdapter");
     mapping(address => mapping(address => address)) private tknToTknToPool;
 
-    constructor(string memory _name, uint256 _swapGasEstimate) {
-        name = _name;
-        setSwapGasEstimate(_swapGasEstimate);
-    }
-
-    function setAllowances() public override onlyOwner {}
+    constructor(string memory _name, uint256 _swapGasEstimate) YakAdapter(_name, _swapGasEstimate) {}
 
     function getPoolForTkns(address tknIn, address tknOut) public view returns (address) {
         return tknToTknToPool[tknIn][tknOut];
@@ -144,6 +136,4 @@ contract PlatypusAdapter is YakAdapter {
         address pool = getPoolForTkns(_tokenIn, _tokenOut);
         IPlatypus(pool).swap(_tokenIn, _tokenOut, _amountIn, _amountOut, _to, block.timestamp);
     }
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 }

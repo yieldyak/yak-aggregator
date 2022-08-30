@@ -25,25 +25,14 @@ import "../YakAdapter.sol";
 contract BridgeMigrationAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
-    bytes32 public constant ID = keccak256("BridgeMigrationAdapter");
     mapping(address => bool) public isNewBridgeToken;
 
     constructor(
         address[] memory _newTokens,
         address[] memory _oldTokens,
         uint256 _swapGasEstimate
-    ) {
-        setSwapGasEstimate(_swapGasEstimate);
+    ) YakAdapter("BridgeMigrationAdapter", _swapGasEstimate) {
         setNewBridgeTokens(_newTokens, _oldTokens);
-    }
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
-
-    function _approveIfNeeded(address _newToken, address _oldToken) internal {
-        uint256 allowance = IERC20(_oldToken).allowance(address(this), _newToken);
-        if (allowance < UINT_MAX) {
-            IERC20(_oldToken).safeApprove(_newToken, UINT_MAX);
-        }
     }
 
     function _query(
@@ -51,9 +40,7 @@ contract BridgeMigrationAdapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256 amountOut) {
-        if (isNewBridgeToken[_tokenOut] && IERC20(_tokenOut).swapSupply(_tokenIn) >= _amountIn) {
-            amountOut = _amountIn;
-        }
+        if (isNewBridgeToken[_tokenOut] && IERC20(_tokenOut).swapSupply(_tokenIn) >= _amountIn) amountOut = _amountIn;
     }
 
     function _swap(
@@ -67,8 +54,6 @@ contract BridgeMigrationAdapter is YakAdapter {
         _returnTo(_tokenOut, _amountOut, _to);
     }
 
-    function setAllowances() public override {}
-
     function setNewBridgeTokens(address[] memory _newTokens, address[] memory _oldTokens) public onlyOwner {
         require(_newTokens.length == _oldTokens.length, "Needs to be surjective");
         for (uint256 i; i < _newTokens.length; i++) {
@@ -76,5 +61,10 @@ contract BridgeMigrationAdapter is YakAdapter {
             _approveIfNeeded(_newTokens[i], _oldTokens[i]);
             isNewBridgeToken[_newTokens[i]] = true;
         }
+    }
+
+    function _approveIfNeeded(address _newToken, address _oldToken) internal {
+        uint256 allowance = IERC20(_oldToken).allowance(address(this), _newToken);
+        if (allowance < UINT_MAX) IERC20(_oldToken).safeApprove(_newToken, UINT_MAX);
     }
 }

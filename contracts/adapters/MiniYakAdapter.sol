@@ -27,16 +27,17 @@ contract MiniYakAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 public constant ID = keccak256("MiniYakAdapter");
     address public constant YAK = 0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7;
     address public constant mYAK = 0xdDAaAD7366B455AfF8E7c82940C43CEB5829B604;
 
-    constructor(uint256 _swapGasEstimate) {
-        setSwapGasEstimate(_swapGasEstimate);
+    constructor(uint256 _swapGasEstimate) YakAdapter("MiniYakAdapter", _swapGasEstimate) {
         setAllowances();
     }
 
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
+    function setAllowances() internal {
+        IERC20(mYAK).safeApprove(mYAK, UINT_MAX);
+        IERC20(YAK).safeApprove(mYAK, UINT_MAX);
+    }
 
     function _query(
         uint256 _amountIn,
@@ -62,11 +63,5 @@ contract MiniYakAdapter is YakAdapter {
         } else {
             revert("Unsupported token");
         }
-    }
-
-    function setAllowances() public override {
-        // Approve max for mYak and Yak
-        IERC20(mYAK).safeApprove(mYAK, UINT_MAX);
-        IERC20(YAK).safeApprove(mYAK, UINT_MAX);
     }
 }

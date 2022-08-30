@@ -26,7 +26,7 @@ describe("YakAdapter - wAVAX", function() {
         YakRouter = await ethers.getContractFactory(
             'YakRouter', 
             { libraries: { 'BytesManipulation': BytesManipulationV0.address } }
-        ).then(f => f.deploy([ WAvaxAdapter.address ], [], ethers.constants.AddressZero))
+        ).then(f => f.deploy([ WAvaxAdapter.address ], [], ethers.constants.AddressZero, assets.WAVAX))
     })
 
     beforeEach(async () => {

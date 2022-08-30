@@ -27,7 +27,6 @@ import "../YakAdapter.sol";
 contract CurveLikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
-    bytes32 public constant indentifier = keccak256("CurvelikeAdapter");
     mapping(address => bool) public isPoolToken;
     mapping(address => uint8) public tokenIndex;
     address public pool;
@@ -36,10 +35,8 @@ contract CurveLikeAdapter is YakAdapter {
         string memory _name,
         address _pool,
         uint256 _swapGasEstimate
-    ) {
+    ) YakAdapter(_name, _swapGasEstimate) {
         pool = _pool;
-        name = _name;
-        setSwapGasEstimate(_swapGasEstimate);
         _setPoolTokens();
     }
 
@@ -47,6 +44,7 @@ contract CurveLikeAdapter is YakAdapter {
     function _setPoolTokens() internal {
         for (uint8 i = 0; true; i++) {
             try ICurveLikePool(pool).getToken(i) returns (address token) {
+                _setPoolTokenAllowance(token);
                 isPoolToken[token] = true;
                 tokenIndex[token] = i;
             } catch {
@@ -55,13 +53,8 @@ contract CurveLikeAdapter is YakAdapter {
         }
     }
 
-    function setAllowances() public override onlyOwner {}
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {
-        uint256 allowance = IERC20(_tokenIn).allowance(address(this), pool);
-        if (allowance < _amount) {
-            IERC20(_tokenIn).safeApprove(pool, UINT_MAX);
-        }
+    function _setPoolTokenAllowance(address _token) internal {
+        IERC20(_token).approve(pool, UINT_MAX);
     }
 
     function _query(

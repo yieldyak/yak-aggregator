@@ -31,8 +31,8 @@ contract YakRouter is Ownable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    address public constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
-    address public constant AVAX = address(0);
+    address public immutable WNATIVE;
+    address public constant NATIVE = address(0);
     string public constant NAME = "YakRouter";
     uint256 public constant FEE_DENOMINATOR = 1e4;
     uint256 public MIN_FEE = 0;
@@ -41,15 +41,10 @@ contract YakRouter is Ownable {
     address[] public ADAPTERS;
 
     event Recovered(address indexed _asset, uint256 amount);
-
     event UpdatedTrustedTokens(address[] _newTrustedTokens);
-
     event UpdatedAdapters(address[] _newAdapters);
-
     event UpdatedMinFee(uint256 _oldMinFee, uint256 _newMinFee);
-
     event UpdatedFeeClaimer(address _oldFeeClaimer, address _newFeeClaimer);
-
     event YakSwap(address indexed _tokenIn, address indexed _tokenOut, uint256 _amountIn, uint256 _amountOut);
 
     struct Query {
@@ -83,18 +78,20 @@ contract YakRouter is Ownable {
     constructor(
         address[] memory _adapters,
         address[] memory _trustedTokens,
-        address _feeClaimer
+        address _feeClaimer,
+        address _wrapped_native
     ) {
+        _setAllowanceForWrapping(_wrapped_native);
         setTrustedTokens(_trustedTokens);
         setFeeClaimer(_feeClaimer);
         setAdapters(_adapters);
-        _setAllowances();
+        WNATIVE = _wrapped_native;
     }
 
     // -- SETTERS --
 
-    function _setAllowances() internal {
-        IERC20(WAVAX).safeApprove(WAVAX, type(uint256).max);
+    function _setAllowanceForWrapping(address _wnative) internal {
+        IERC20(_wnative).safeApprove(_wnative, type(uint256).max);
     }
 
     function setTrustedTokens(address[] memory _trustedTokens) public onlyOwner {
@@ -150,11 +147,11 @@ contract YakRouter is Ownable {
     }
 
     function _wrap(uint256 _amount) internal {
-        IWETH(WAVAX).deposit{ value: _amount }();
+        IWETH(WNATIVE).deposit{ value: _amount }();
     }
 
     function _unwrap(uint256 _amount) internal {
-        IWETH(WAVAX).withdraw(_amount);
+        IWETH(WNATIVE).withdraw(_amount);
     }
 
     /**
@@ -170,7 +167,7 @@ contract YakRouter is Ownable {
         address _to
     ) internal {
         if (address(this) != _to) {
-            if (_token == AVAX) {
+            if (_token == NATIVE) {
                 payable(_to).transfer(_amount);
             } else {
                 IERC20(_token).safeTransfer(_to, _amount);
@@ -309,21 +306,23 @@ contract YakRouter is Ownable {
         Offer memory queries;
         queries.amounts = BytesManipulation.toBytes(_amountIn);
         queries.path = BytesManipulation.toBytes(_tokenIn);
-        // Find the market price between AVAX and token-out and express gas price in token-out currency
-        FormattedOffer memory gasQuery = findBestPath(1e18, WAVAX, _tokenOut, 2); // Avoid low-liquidity price appreciation
-        // Include safety check if no 2-step path between WAVAX and tokenOut is found
-        uint256 tknOutPriceNwei = 0;
-        if (gasQuery.path.length != 0) {
-            // Leave result nWei to preserve digits for assets with low decimal places
-            tknOutPriceNwei = gasQuery.amounts[gasQuery.amounts.length - 1].mul(_gasPrice / 1e9);
-        }
-        queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, tknOutPriceNwei);
-        // If no paths are found return empty struct
+        uint256 gasPriceInExitTkn = _gasPrice > 0 ? getGasPriceInExitTkn(_gasPrice, _tokenOut) : 0;
+        queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, gasPriceInExitTkn);
         if (queries.adapters.length == 0) {
             queries.amounts = "";
             queries.path = "";
         }
         return _formatOffer(queries);
+    }
+
+    // Find the market price between gas-asset(native) and token-out and express gas price in token-out
+    function getGasPriceInExitTkn(uint256 _gasPrice, address _tokenOut) internal view returns (uint256 price) {
+        // Avoid low-liquidity price appreciation (https://github.com/yieldyak/yak-aggregator/issues/20)
+        FormattedOffer memory gasQuery = findBestPath(1e18, WNATIVE, _tokenOut, 2);
+        if (gasQuery.path.length != 0) {
+            // Leave result in nWei to preserve precision for assets with low decimal places
+            price = gasQuery.amounts[gasQuery.amounts.length - 1].mul(_gasPrice / 1e9);
+        }
     }
 
     /**
@@ -467,7 +466,7 @@ contract YakRouter is Ownable {
         address _to,
         uint256 _fee
     ) external payable {
-        require(_trade.path[0] == WAVAX, "YakRouter: Path needs to begin with WAVAX");
+        require(_trade.path[0] == WNATIVE, "YakRouter: Path needs to begin with WAVAX");
         _wrap(_trade.amountIn);
         _swapNoSplit(_trade, address(this), _to, _fee);
     }
@@ -477,10 +476,10 @@ contract YakRouter is Ownable {
         address _to,
         uint256 _fee
     ) public {
-        require(_trade.path[_trade.path.length - 1] == WAVAX, "YakRouter: Path needs to end with WAVAX");
+        require(_trade.path[_trade.path.length - 1] == WNATIVE, "YakRouter: Path needs to end with WAVAX");
         uint256 returnAmount = _swapNoSplit(_trade, msg.sender, address(this), _fee);
         _unwrap(returnAmount);
-        _returnTokensTo(AVAX, returnAmount, _to);
+        _returnTokensTo(NATIVE, returnAmount, _to);
     }
 
     /**

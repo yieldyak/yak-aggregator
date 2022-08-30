@@ -3,7 +3,7 @@ const { ethers } = require("hardhat")
 const fixtures = require('../../fixtures')
 const { parseUnits, formatUnits } = ethers.utils
 
-describe("YakAdapter - Gondola", function() {
+describe.skip("YakAdapter - Gondola", function() {
 
     let CurveLikeAdapterFactory
     let adapters

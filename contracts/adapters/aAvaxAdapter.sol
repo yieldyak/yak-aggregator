@@ -29,26 +29,17 @@ interface IwAVAX {
 }
 
 /**
- * @notice wAVAX -> SAVAX
+ * @notice wAVAX -> sAVAX
  **/
 contract SAvaxAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    bytes32 public constant ID = keccak256("SAvaxAdapter");
     address public constant SAVAX = 0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE;
+    address public constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
 
-    constructor(uint256 _swapGasEstimate) {
-        name = "SAvaxAdapter";
-        setSwapGasEstimate(_swapGasEstimate);
-        setAllowances();
-    }
-
-    function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
-
-    function _exceedsCap(uint256 _amountIn) internal view returns (bool) {
-        uint256 newBal = ISAVAX(SAVAX).totalPooledAvax().add(_amountIn); // Assume U256::max won't be reached
-        return newBal > ISAVAX(SAVAX).totalPooledAvaxCap();
+    constructor(uint256 _swapGasEstimate) YakAdapter("SAvaxAdapter", _swapGasEstimate) {
+        _setAllowances();
     }
 
     function _query(
@@ -74,7 +65,12 @@ contract SAvaxAdapter is YakAdapter {
         _returnTo(_tokenOut, shares, _to);
     }
 
-    function setAllowances() public override {
+    function _exceedsCap(uint256 _amountIn) internal view returns (bool) {
+        uint256 newBal = ISAVAX(SAVAX).totalPooledAvax().add(_amountIn); // Assume U256::max won't be reached
+        return newBal > ISAVAX(SAVAX).totalPooledAvaxCap();
+    }
+
+    function _setAllowances() internal {
         IERC20(WAVAX).safeApprove(WAVAX, UINT_MAX);
     }
 }
