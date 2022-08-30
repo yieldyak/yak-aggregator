@@ -21,7 +21,6 @@ pragma solidity ^0.8.0;
 
 import "../interface/ISAVAX.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 interface IwAVAX {
@@ -33,7 +32,6 @@ interface IwAVAX {
  **/
 contract SAvaxAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant ID = keccak256("SAvaxAdapter");
     address public constant SAVAX = 0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE;
@@ -47,7 +45,7 @@ contract SAvaxAdapter is YakAdapter {
     function _approveIfNeeded(address _tokenIn, uint256 _amount) internal override {}
 
     function _exceedsCap(uint256 _amountIn) internal view returns (bool) {
-        uint256 newBal = ISAVAX(SAVAX).totalPooledAvax().add(_amountIn); // Assume U256::max won't be reached
+        uint256 newBal = ISAVAX(SAVAX).totalPooledAvax() + _amountIn; // Assume U256::max won't be reached
         return newBal > ISAVAX(SAVAX).totalPooledAvaxCap();
     }
 

@@ -23,12 +23,11 @@ pragma solidity ^0.8.0;
 import "../interface/ICurve2.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
+
 import "../YakAdapter.sol";
 
 contract Curve2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant id = keccak256("Curve2Adapter");
     mapping(address => bool) public isPoolToken;

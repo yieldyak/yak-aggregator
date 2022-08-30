@@ -22,12 +22,11 @@ import "../interface/IUnilikeFactory.sol";
 import "../interface/IUnilikePair.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
+
 import "../YakAdapter.sol";
 
 contract UnilikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant ID = keccak256("UnilikeAdapter");
     uint256 internal constant FEE_DENOMINATOR = 1e3;
@@ -43,7 +42,7 @@ contract UnilikeAdapter is YakAdapter {
         require(FEE_DENOMINATOR > _fee, "Fee greater than the denominator");
         factory = _factory;
         name = _name;
-        feeCompliment = FEE_DENOMINATOR.sub(_fee);
+        feeCompliment = FEE_DENOMINATOR - _fee;
         setSwapGasEstimate(_swapGasEstimate);
         setAllowances();
     }
@@ -60,9 +59,9 @@ contract UnilikeAdapter is YakAdapter {
         uint256 _reserveOut
     ) internal view returns (uint256 amountOut) {
         // Based on https://github.com/Uniswap/uniswap-v2-periphery/blob/master/contracts/UniswapV2Router02.sol
-        uint256 amountInWithFee = _amountIn.mul(feeCompliment);
-        uint256 numerator = amountInWithFee.mul(_reserveOut);
-        uint256 denominator = _reserveIn.mul(FEE_DENOMINATOR).add(amountInWithFee);
+        uint256 amountInWithFee = _amountIn * feeCompliment;
+        uint256 numerator = amountInWithFee * _reserveOut;
+        uint256 denominator = _reserveIn * FEE_DENOMINATOR + amountInWithFee;
         amountOut = numerator / denominator;
     }
 

@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "../interface/IERC20.sol";
-import "./SafeMath.sol";
 
 /**
  * @title SafeERC20
@@ -16,8 +15,6 @@ import "./SafeMath.sol";
  * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
  */
 library SafeERC20 {
-    using SafeMath for uint256;
-
     function safeTransfer(
         IERC20 token,
         address to,

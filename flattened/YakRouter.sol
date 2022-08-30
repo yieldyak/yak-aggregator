@@ -168,26 +168,6 @@ interface IWETH is IERC20 {
     function deposit() external payable;
 }
 
-// File contracts/lib/SafeMath.sol
-
-pragma solidity ^0.8.0;
-
-// a library for performing overflow-safe math, courtesy of DappHub (https://github.com/dapphub/ds-math)
-
-library SafeMath {
-    function add(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require((z = x + y) >= x, "SafeMath: ds-math-add-overflow");
-    }
-
-    function sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require((z = x - y) <= x, "SafeMath: ds-math-sub-underflow");
-    }
-
-    function mul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require(y == 0 || (z = x * y) / y == x, "SafeMath: ds-math-mul-overflow");
-    }
-}
-
 // File contracts/lib/SafeERC20.sol
 
 // This is a simplified version of OpenZepplin's SafeERC20 library
@@ -204,8 +184,6 @@ pragma experimental ABIEncoderV2;
  * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
  */
 library SafeERC20 {
-    using SafeMath for uint256;
-
     function safeTransfer(
         IERC20 token,
         address to,
@@ -366,7 +344,6 @@ pragma solidity ^0.8.0;
 
 contract YakRouter is Ownable {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     address public constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
     address public constant AVAX = address(0);
@@ -495,7 +472,7 @@ contract YakRouter is Ownable {
 
     function _applyFee(uint256 _amountIn, uint256 _fee) internal view returns (uint256) {
         require(_fee >= MIN_FEE, "YakRouter: Insufficient fee");
-        return _amountIn.mul(FEE_DENOMINATOR.sub(_fee)) / FEE_DENOMINATOR;
+        return (_amountIn * FEE_DENOMINATOR - _fee) / FEE_DENOMINATOR;
     }
 
     function _wrap(uint256 _amount) internal {
@@ -748,7 +725,7 @@ contract YakRouter is Ownable {
                 // Check that the last token in the path is the tokenOut and update the new best option if neccesary
                 if (_tokenOut == tokenOut && amountOut > bestAmountOut) {
                     if (newOffer.gasEstimate > bestOption.gasEstimate) {
-                        uint256 gasCostDiff = _tknOutPrice.mul(newOffer.gasEstimate - bestOption.gasEstimate);
+                        uint256 gasCostDiff = _tknOutPrice * newOffer.gasEstimate - bestOption.gasEstimate;
                         uint256 priceDiff = amountOut - bestAmountOut;
                         if (gasCostDiff > priceDiff) {
                             continue;
@@ -839,7 +816,7 @@ contract YakRouter is Ownable {
         if (_fee > 0 || MIN_FEE > 0) {
             // Transfer fees to the claimer account and decrease initial amount
             amounts[0] = _applyFee(_trade.amountIn, _fee);
-            IERC20(_trade.path[0]).safeTransferFrom(_from, FEE_CLAIMER, _trade.amountIn.sub(amounts[0]));
+            IERC20(_trade.path[0]).safeTransferFrom(_from, FEE_CLAIMER, _trade.amountIn - amounts[0]);
         } else {
             amounts[0] = _trade.amountIn;
         }

@@ -99,23 +99,6 @@ interface IERC20 {
     function balanceOf(address owner) external view returns (uint256);
 }
 
-// File contracts/lib/SafeMath.sol
-
-// a library for performing overflow-safe math, courtesy of DappHub (https://github.com/dapphub/ds-math)
-library SafeMath {
-    function add(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require((z = x + y) >= x, "SafeMath: ds-math-add-overflow");
-    }
-
-    function sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require((z = x - y) <= x, "SafeMath: ds-math-sub-underflow");
-    }
-
-    function mul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require(y == 0 || (z = x * y) / y == x, "SafeMath: ds-math-mul-overflow");
-    }
-}
-
 // File contracts/lib/SafeERC20.sol
 
 // This is a simplified version of OpenZepplin's SafeERC20 library
@@ -129,8 +112,6 @@ library SafeMath {
  * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
  */
 library SafeERC20 {
-    using SafeMath for uint256;
-
     function safeTransfer(
         IERC20 token,
         address to,
@@ -443,7 +424,6 @@ abstract contract YakAdapter is Ownable {
 
 contract UnilikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant ID = "0x556e696c696b65"; // hex('Unilike')
     uint256 internal constant FEE_DENOMINATOR = 1e3;
@@ -459,7 +439,7 @@ contract UnilikeAdapter is YakAdapter {
         require(FEE_DENOMINATOR > _fee, "YakUnilikeAdapter: Fee greater than the denominator");
         factory = _factory;
         name = _name;
-        feeCompliment = FEE_DENOMINATOR.sub(_fee);
+        feeCompliment = FEE_DENOMINATOR - _fee;
         setSwapGasEstimate(_swapGasEstimate);
         setAllowances();
     }
@@ -477,9 +457,9 @@ contract UnilikeAdapter is YakAdapter {
     ) internal view returns (uint256 amountOut) {
         // Based on https://github.com/Uniswap/uniswap-v2-periphery/blob/master/contracts/UniswapV2Router02.sol
         require(_reserveIn > 0 && _reserveOut > 0, "UnilikeAdapter: Insufficient pool liquidity");
-        uint256 amountInWithFee = _amountIn.mul(feeCompliment);
-        uint256 numerator = amountInWithFee.mul(_reserveOut);
-        uint256 denominator = _reserveIn.mul(FEE_DENOMINATOR).add(amountInWithFee);
+        uint256 amountInWithFee = _amountIn * feeCompliment;
+        uint256 numerator = amountInWithFee * _reserveOut;
+        uint256 denominator = _reserveIn * FEE_DENOMINATOR + amountInWithFee;
         amountOut = numerator / denominator;
     }
 

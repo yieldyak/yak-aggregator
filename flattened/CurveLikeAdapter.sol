@@ -100,23 +100,6 @@ interface IWETH is IERC20 {
     function deposit() external payable;
 }
 
-// File contracts/lib/SafeMath.sol
-
-// a library for performing overflow-safe math, courtesy of DappHub (https://github.com/dapphub/ds-math)
-library SafeMath {
-    function add(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require((z = x + y) >= x, "SafeMath: ds-math-add-overflow");
-    }
-
-    function sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require((z = x - y) <= x, "SafeMath: ds-math-sub-underflow");
-    }
-
-    function mul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require(y == 0 || (z = x * y) / y == x, "SafeMath: ds-math-mul-overflow");
-    }
-}
-
 // File contracts/lib/SafeERC20.sol
 
 // This is a simplified version of OpenZepplin's SafeERC20 library
@@ -130,8 +113,6 @@ library SafeMath {
  * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
  */
 library SafeERC20 {
-    using SafeMath for uint256;
-
     function safeTransfer(
         IERC20 token,
         address to,

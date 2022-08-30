@@ -22,7 +22,7 @@ pragma solidity ^0.8.0;
 pragma abicoder v2;
 
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
+
 import "../YakAdapter.sol";
 import "../interface/IVault.sol";
 import "../interface/IBasePool.sol";
@@ -30,7 +30,6 @@ import "../interface/IMinimalSwapInfoPool.sol";
 
 contract BalancerlikeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     address public vault;
 

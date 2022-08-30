@@ -20,12 +20,11 @@ pragma solidity ^0.8.0;
 
 import "../interface/ImYAK.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
+
 import "../YakAdapter.sol";
 
 contract MiniYakAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant ID = keccak256("MiniYakAdapter");
     address public constant YAK = 0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7;

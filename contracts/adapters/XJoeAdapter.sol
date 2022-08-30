@@ -21,12 +21,11 @@ pragma solidity ^0.8.0;
 
 import "../interface/IxJOE.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
+
 import "../YakAdapter.sol";
 
 contract XJoeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant ID = keccak256("XJoeAdapter");
     address public constant JOE = 0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd;
@@ -46,12 +45,12 @@ contract XJoeAdapter is YakAdapter {
         if (totalShares == 0 || totalJoe == 0) {
             return _amountIn;
         }
-        return _amountIn.mul(totalShares) / totalJoe;
+        return (_amountIn * totalShares) / totalJoe;
     }
 
     function queryLeave(uint256 _amountIn) internal view returns (uint256) {
         uint256 totalShares = IxJOE(XJOE).totalSupply();
-        return _amountIn.mul(IERC20(JOE).balanceOf(XJOE)) / totalShares;
+        return (_amountIn * IERC20(JOE).balanceOf(XJOE)) / totalShares;
     }
 
     function _query(
