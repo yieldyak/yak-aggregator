@@ -144,7 +144,7 @@ contract YakRouter is Ownable {
 
     function _applyFee(uint256 _amountIn, uint256 _fee) internal view returns (uint256) {
         require(_fee >= MIN_FEE, "YakRouter: Insufficient fee");
-        return (_amountIn * FEE_DENOMINATOR - _fee) / FEE_DENOMINATOR;
+        return (_amountIn * (FEE_DENOMINATOR - _fee)) / FEE_DENOMINATOR;
     }
 
     function _wrap(uint256 _amount) internal {
@@ -313,7 +313,7 @@ contract YakRouter is Ownable {
         uint256 tknOutPriceNwei = 0;
         if (gasQuery.path.length != 0) {
             // Leave result nWei to preserve digits for assets with low decimal places
-            tknOutPriceNwei = (gasQuery.amounts[gasQuery.amounts.length - 1] * _gasPrice) / 1e9;
+            tknOutPriceNwei = gasQuery.amounts[gasQuery.amounts.length - 1] * (_gasPrice / 1e9);
         }
         queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, tknOutPriceNwei);
         // If no paths are found return empty struct
@@ -400,7 +400,8 @@ contract YakRouter is Ownable {
                 // Check that the last token in the path is the tokenOut and update the new best option if neccesary
                 if (_tokenOut == tokenOut && amountOut > bestAmountOut) {
                     if (newOffer.gasEstimate > bestOption.gasEstimate) {
-                        uint256 gasCostDiff = _tknOutPriceNwei * newOffer.gasEstimate - bestOption.gasEstimate / 1e9;
+                        uint256 gasCostDiff = (_tknOutPriceNwei * (newOffer.gasEstimate - bestOption.gasEstimate)) /
+                            1e9;
                         uint256 priceDiff = amountOut - bestAmountOut;
                         if (gasCostDiff > priceDiff) {
                             continue;
