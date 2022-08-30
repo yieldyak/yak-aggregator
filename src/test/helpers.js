@@ -103,7 +103,7 @@ module.exports.topUpAccountWithToken = async (topper, recieverAddress, tokenAddr
 }
 
 module.exports.getTokenContract = tokenAddress => ethers.getContractAt(
-    'contracts/interface/IWETH.sol:IWETH', 
+    'src/contracts/interface/IWETH.sol:IWETH', 
     tokenAddress
 )
 

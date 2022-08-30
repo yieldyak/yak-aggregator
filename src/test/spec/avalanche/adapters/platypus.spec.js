@@ -2,9 +2,9 @@ const { expect } = require("chai")
 const { ethers } = require("hardhat")
 const { parseUnits } = ethers.utils
 
-const { setERC20Bal, getTokenContract } = require('../../helpers')
-const { assets, platypus } = require('../../addresses.json')
-const fix = require('../../fixtures')
+const { fixtures: fix, helpers, addresses } = require('../../../fixtures')
+const { assets, platypus } = addresses
+const { setERC20Bal } = helpers
 
 describe("YakAdapter - Platypus", function() {
 

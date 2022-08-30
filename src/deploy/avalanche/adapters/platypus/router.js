@@ -1,7 +1,7 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
-  const { platypus } = require('../../../test/addresses.json')
+  const { platypus } = require('../../../../test/addresses.json')
 
   const NAME = 'PlatypusYakAdapterV2'
   const GAS_ESTIMATE = 5e5
@@ -42,4 +42,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   }
 };
 
-module.exports.tags = ['adapter', 'platypus', 'pv2'];
+module.exports.tags = ['adapter', 'platypus', 'pv2', 'avalanche'];

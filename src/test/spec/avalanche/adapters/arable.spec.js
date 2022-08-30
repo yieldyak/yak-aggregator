@@ -1,10 +1,11 @@
 const { expect } = require("chai")
 const { ethers } = require("hardhat")
-const { parseUnits, formatUnits } = ethers.utils
+const { parseUnits } = ethers.utils
 
-const { setERC20Bal, impersonateAccount, injectFunds } = require('../../helpers')
-const { assets } = require('../../addresses.json')
-const fix = require('../../fixtures')
+const { fixtures: fix, helpers, addresses } = require('../../../fixtures')
+const { setERC20Bal } = helpers
+const { assets } = addresses
+
 
 // swapping is paused
 describe.skip("YakAdapter - ArableSF", function() {

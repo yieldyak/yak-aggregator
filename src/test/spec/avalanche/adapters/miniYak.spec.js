@@ -1,8 +1,9 @@
 const { expect } = require("chai")
 const { ethers } = require("hardhat")
-const fixtures = require('../../fixtures')
-const { setERC20Bal, makeAccountGen } = require('../../helpers')
 const { parseUnits } = ethers.utils
+
+const { fixtures, helpers } = require('../../../fixtures')
+const { setERC20Bal, makeAccountGen } = helpers
 
 describe("YakAdapter - MiniYak", function() {
 

@@ -1,10 +1,9 @@
 const { ecsign } = require('ethereumjs-util')
 const { ethers } = require("hardhat")
 const { expect } = require("chai")
+const { parseUnits } = ethers.utils
 
-const fixtures = require('../../fixtures')
-const helpers = require('../../helpers')
-const { parseUnits, formatUnits } = ethers.utils
+const { fixtures, helpers } = require('../../fixtures')
 
 describe('Yak Router - swap', () => {
 
@@ -40,7 +39,7 @@ describe('Yak Router - swap', () => {
             steps
         )
         // Top up trader with starting tokens
-        WAVAX = await ethers.getContractAt('contracts/interface/IWETH.sol:IWETH', assets.WAVAX)
+        WAVAX = await ethers.getContractAt('src/contracts/interface/IWETH.sol:IWETH', assets.WAVAX)
         await WAVAX.connect(trader).deposit({ value: amountIn })
         // Approve for input token
         await helpers.approveERC20(trader, result.path[0], YakRouter.address, ethers.constants.MaxUint256)
@@ -166,7 +165,7 @@ describe('Yak Router - swap', () => {
         let amountIn = ethers.utils.parseUnits('10')
 
         // Top up trader with starting tokens
-        WAVAX = await ethers.getContractAt('contracts/interface/IWETH.sol:IWETH', assets.WAVAX)
+        WAVAX = await ethers.getContractAt('src/contracts/interface/IWETH.sol:IWETH', assets.WAVAX)
         await WAVAX.connect(trader).deposit({ value: amountIn })
         await helpers.topUpAccountWithToken(
             trader, 

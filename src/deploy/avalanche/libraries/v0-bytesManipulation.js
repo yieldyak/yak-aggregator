@@ -18,4 +18,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
   };
 
-  module.exports.tags = ['V0', 'library', 'bytesManipulation', 'router'];
+  module.exports.tags = ['V0', 'library', 'bytesManipulation', 'router', 'avalanche'];

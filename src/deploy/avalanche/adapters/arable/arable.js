@@ -1,4 +1,4 @@
-const { ArableSF } = require("../../../test/addresses.json").other
+const { ArableSF } = require("../../../../test/addresses.json").other
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
@@ -27,4 +27,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
 }
 
-module.exports.tags = ['V0', 'adapter', 'arable'];
+module.exports.tags = ['V0', 'adapter', 'arable', 'avalanche'];

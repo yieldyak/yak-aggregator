@@ -2,8 +2,8 @@ const { expect } = require("chai")
 const { ethers } = require("hardhat")
 const { parseUnits } = ethers.utils
 
-const { setERC20Bal, getTokenContract, approveERC20 } = require('../../helpers')
-const fix = require('../../fixtures')
+const { fixtures: fix, helpers } = require('../../../fixtures')
+const { setERC20Bal, getTokenContract, approveERC20 } = helpers
 
 describe("YakAdapter - WooFi", function() {
 

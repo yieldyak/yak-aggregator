@@ -1,8 +1,7 @@
 const { expect } = require("chai")
-const { ethers } = require("hardhat")
-const fixtures = require('../../fixtures')
-const { parseUnits } = ethers.utils
-const { assets } = require('../../addresses.json')
+
+const { fixtures, addresses } = require('../../fixtures')
+const { assets } = addresses
 
 describe('Yak Router - general', () => {
 

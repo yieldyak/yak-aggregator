@@ -2,10 +2,10 @@ const { expect } = require("chai")
 const { ethers } = require("hardhat")
 const { parseUnits } = ethers.utils
 
-const { setERC20Bal } = require('../../helpers')
-const fix = require('../../fixtures')
+const { fixtures: fix, helpers } = require('../../../fixtures')
+const { setERC20Bal } = helpers
 
-describe("YakAdapter - Curve", function() {
+describe("YakAdapter - savax", function() {
 
     let Adapter
     let Original

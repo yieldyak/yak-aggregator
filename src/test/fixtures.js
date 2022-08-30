@@ -1,7 +1,7 @@
 const { deployments, ethers } = require("hardhat")
 const helpers = require('./helpers')
-const addresses = require('./addresses.json')
-const constants = require('./constants.json')
+const addresses = require('../misc/addresses.json')
+const constants = require('../misc/constants.json')
 
 TRACER_ENABLED = process.argv.includes('--logs')
 const { 
@@ -696,23 +696,28 @@ const router = deployments.createFixture(async ({ }) => {
 })
 
 module.exports = {
-    curvelikeAdapters, 
-    balancerlikeAdapters,
-    platypusAdapter,
-    unilikeAdapters,
-    bridgeMigration,
-    synapseAdapter,
-    miniYakAdapter,
-    geodeWPAdapter,
-    savaxAdapter,
-    curveAdapter,
-    axialAdapter,
-    kyberAdapter,
-    woofiAdapter,
-    xjoeAdapter,
-    gmxAdapter,
-    arableAdapter,
-    general, 
-    simple,
-    router
+    helpers,
+    constants,
+    addresses,
+    fixtures: {
+        curvelikeAdapters, 
+        balancerlikeAdapters,
+        platypusAdapter,
+        unilikeAdapters,
+        bridgeMigration,
+        synapseAdapter,
+        miniYakAdapter,
+        geodeWPAdapter,
+        savaxAdapter,
+        curveAdapter,
+        axialAdapter,
+        kyberAdapter,
+        woofiAdapter,
+        xjoeAdapter,
+        gmxAdapter,
+        arableAdapter,
+        general, 
+        simple,
+        router
+    }
 }

@@ -1,4 +1,4 @@
-const { other } = require("../../../test/addresses.json")
+const { other } = require("../../../../test/addresses.json")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
@@ -28,4 +28,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
 }
 
-module.exports.tags = ['V0', 'adapter', 'woofiUSDC'];
+module.exports.tags = ['V0', 'adapter', 'woofiUSDC', 'avalanche'];

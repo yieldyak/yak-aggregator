@@ -24,4 +24,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
   };
 
-  module.exports.tags = ['V0', 'adapter', 'curve', 'more'];
+  module.exports.tags = ['V0', 'adapter', 'curve', 'more', 'avalanche'];

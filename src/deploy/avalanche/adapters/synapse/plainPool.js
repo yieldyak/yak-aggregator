@@ -1,7 +1,7 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
-    const { curvelikePools } = require('../../../test/addresses.json')
+    const { curvelikePools } = require('../../../../test/addresses.json')
 
     const NAME = 'SynapsePlainYakAdapterV0'
     const POOL = curvelikePools.SynapseDAIeUSDCeUSDTeNUSD
@@ -27,4 +27,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
   };
 
-  module.exports.tags = ['V0', 'adapter', 'plain', 'synapse'];
+  module.exports.tags = ['V0', 'adapter', 'plain', 'synapse', 'avalanche'];

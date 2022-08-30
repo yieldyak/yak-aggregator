@@ -1,8 +1,8 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
-    const { other, assets } = require('../../../test/addresses.json')
-    const { geode } = require('../../../test/constants.json')
+    const { other, assets } = require('../../../../test/addresses.json')
+    const { geode } = require('../../../../test/constants.json')
 
     // GeodeWithdrawalPoolyyAvaxAdapter
     const NAME = 'GWPyyAvaxAdapter'
@@ -31,4 +31,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
   };
 
-  module.exports.tags = ['V0', 'adapter', 'geode', 'yyAvax'];
+  module.exports.tags = ['V0', 'adapter', 'geode', 'yyAvax', 'avalanche'];

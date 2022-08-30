@@ -1,15 +1,11 @@
 const { ethers } = require("hardhat")
 const { expect } = require("chai")
-const { parseUnits, formatUnits } = ethers.utils
+const { parseUnits } = ethers.utils
 
-const { assets, other } = require('../../addresses.json')
-const { yyPlanet } = require('../../constants.json').geode
-const { 
-    impersonateAccount, 
-    forkGlobalNetwork,
-    setERC20Bal, 
-} = require('../../helpers')
-const fix = require('../../fixtures')
+const { fixtures: fix, helpers, addresses, constants } = require('../../../fixtures')
+const { impersonateAccount, forkGlobalNetwork, setERC20Bal } = helpers
+const { yyPlanet } = constants.geode
+const { assets, other } = addresses
 
 describe("YakAdapter - Geode", function() {
 

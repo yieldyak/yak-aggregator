@@ -1,7 +1,9 @@
 const { expect } = require("chai")
 const { ethers } = require("hardhat")
-const fixtures = require('../../fixtures')
-const { parseUnits, formatUnits } = ethers.utils
+const { parseUnits } = ethers.utils
+
+const { fixtures, addresses } = require('../../fixtures')
+const { assets } = addresses
 
 describe('Yak Router - query', () => {
 
@@ -13,7 +15,6 @@ describe('Yak Router - query', () => {
         adapters = fixRouter.adapters
         LydiaRouter = fix.LydiaRouter
         PangolinRouter = fix.PangolinRouter
-        assets = fix.assets
         tkns = fix.tokenContracts
         owner = fix.deployer
     })
