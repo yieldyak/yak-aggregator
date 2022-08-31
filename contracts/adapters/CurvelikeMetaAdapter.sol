@@ -16,18 +16,17 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 pragma abicoder v2;
 
 import "../interface/ICurvelikeMeta.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
+
 import "../YakAdapter.sol";
 
 contract CurvelikeMetaAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant id = keccak256("CurvelikeMetaAdapter");
     uint256 public constant feeDenominator = 1e10;
@@ -97,7 +96,7 @@ contract CurvelikeMetaAdapter is YakAdapter {
         try
             ICurvelikeMeta(pool).calculateSwapUnderlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn)
         returns (uint256 amountOut) {
-            return amountOut.mul(poolFeeCompliment) / feeDenominator;
+            return (amountOut * poolFeeCompliment) / feeDenominator;
         } catch {
             return 0;
         }

@@ -16,17 +16,16 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IKyberPool.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
+
 import "../YakAdapter.sol";
 
 contract KyberAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant ID = keccak256("KyberAdapter");
     uint256 public constant PRECISION = 1e18;
@@ -80,9 +79,9 @@ contract KyberAdapter is YakAdapter {
         uint256 feeInPrecision
     ) internal pure returns (uint256 amountOut) {
         // Based on https://github.com/dynamic-amm/smart-contracts/blob/master/contracts/libraries/DMMLibrary.sol
-        uint256 amountInWithFee = amountIn.mul(PRECISION.sub(feeInPrecision)) / (PRECISION);
-        uint256 numerator = amountInWithFee.mul(vReserveOut);
-        uint256 denominator = vReserveIn.add(amountInWithFee);
+        uint256 amountInWithFee = (amountIn * (PRECISION - feeInPrecision)) / PRECISION;
+        uint256 numerator = amountInWithFee * vReserveOut;
+        uint256 denominator = vReserveIn + amountInWithFee;
         amountOut = numerator / denominator;
     }
 

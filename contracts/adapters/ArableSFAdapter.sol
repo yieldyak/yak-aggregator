@@ -17,17 +17,15 @@
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IStabilityFund.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 contract ArableSFAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant id = keccak256("ArableSFAdapter");
     address public vault;
@@ -65,7 +63,7 @@ contract ArableSFAdapter is YakAdapter {
     ) internal view returns (uint256) {
         uint256 decimalsDiv = tokenDecimals[_tokenDiv];
         uint256 decimalsMul = tokenDecimals[_tokenMul];
-        return _amount.mul(10**decimalsMul) / 10**decimalsDiv;
+        return (_amount * 10**decimalsMul) / 10**decimalsDiv;
     }
 
     function hasVaultEnoughBal(address _token, uint256 _amount) private view returns (bool) {
@@ -92,8 +90,8 @@ contract ArableSFAdapter is YakAdapter {
         uint256 amountOut = adjustForDecimals(_amountIn, _tokenIn, _tokenOut);
         uint256 swapFee = IStabilityFund(vault).swapFee();
         uint256 swapFeeDivisor = 1 ether;
-        uint256 feeAmount = amountOut.mul(swapFee) / swapFeeDivisor;
-        uint256 amountOutAfterFees = amountOut.sub(feeAmount);
+        uint256 feeAmount = (amountOut * swapFee) / swapFeeDivisor;
+        uint256 amountOutAfterFees = amountOut - feeAmount;
         if (!hasVaultEnoughBal(_tokenOut, amountOutAfterFees)) {
             return 0;
         }

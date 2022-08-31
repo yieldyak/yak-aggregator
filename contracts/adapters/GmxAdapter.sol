@@ -17,17 +17,15 @@
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IGmxVault.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 contract GmxAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 public constant id = keccak256("GmxAdapter");
     address public constant USDG = 0xc0253c3cC6aa5Ab407b5795a04c28fB063273894;
@@ -72,7 +70,7 @@ contract GmxAdapter is YakAdapter {
     ) internal view returns (uint256) {
         uint256 decimalsDiv = _tokenDiv == USDG ? USDG_DECIMALS : tokenDecimals[_tokenDiv];
         uint256 decimalsMul = _tokenMul == USDG ? USDG_DECIMALS : tokenDecimals[_tokenMul];
-        return _amount.mul(10**decimalsMul) / 10**decimalsDiv;
+        return (_amount * (10**decimalsMul)) / 10**decimalsDiv;
     }
 
     function getPrices(address _tokenIn, address _tokenOut) internal view returns (uint256 priceIn, uint256 priceOut) {
@@ -95,14 +93,14 @@ contract GmxAdapter is YakAdapter {
         uint256 poolBalTknOut = IGmxVault(vault).poolAmounts(_tokenOut);
         if (poolBalTknOut < _amountOut) return false;
         // Check if amountOut exceeds reserved amount
-        uint256 newPoolBalTknOut = poolBalTknOut.sub(_amountOut);
+        uint256 newPoolBalTknOut = poolBalTknOut - _amountOut;
         uint256 reservedAmount = IGmxVault(vault).reservedAmounts(_tokenOut);
         bool reservedAmountNotExceeded = newPoolBalTknOut >= reservedAmount;
         // Check if amountOut exceeds buffer amount
         uint256 bufferAmount = IGmxVault(vault).bufferAmounts(_tokenOut);
         bool bufferAmountNotExceeded = newPoolBalTknOut >= bufferAmount;
         // Check if amountIn(usdg) exceeds max debt
-        uint256 newUsdgAmount = IGmxVault(vault).usdgAmounts(_tokenIn).add(_amountInUsdg);
+        uint256 newUsdgAmount = IGmxVault(vault).usdgAmounts(_tokenIn) + _amountInUsdg;
         uint256 maxUsdgAmount = IGmxVault(vault).maxUsdgAmounts(_tokenIn);
         bool maxDebtNotExceeded = newUsdgAmount <= maxUsdgAmount;
 
@@ -128,12 +126,12 @@ contract GmxAdapter is YakAdapter {
         }
 
         (uint256 priceIn, uint256 priceOut) = getPrices(_tokenIn, _tokenOut);
-        uint256 _amountOut = _amountIn.mul(priceIn) / priceOut;
+        uint256 _amountOut = (_amountIn * priceIn) / priceOut;
         _amountOut = adjustForDecimals(_amountOut, _tokenIn, _tokenOut);
-        uint256 usdgAmount = _amountIn.mul(priceIn) / PRICE_PRECISION;
+        uint256 usdgAmount = (_amountIn * priceIn) / PRICE_PRECISION;
         usdgAmount = adjustForDecimals(usdgAmount, _tokenIn, USDG);
         uint256 feeBasisPoints = IGmxVault(vault).vaultUtils().getSwapFeeBasisPoints(_tokenIn, _tokenOut, usdgAmount);
-        uint256 amountOutAfterFees = _amountOut.mul(BASIS_POINTS_DIVISOR.sub(feeBasisPoints)) / BASIS_POINTS_DIVISOR;
+        uint256 amountOutAfterFees = (_amountOut * (BASIS_POINTS_DIVISOR - feeBasisPoints)) / BASIS_POINTS_DIVISOR;
         bool withinVaultLimits = isWithinVaultLimits(_tokenIn, _tokenOut, usdgAmount, amountOutAfterFees);
         if (withinVaultLimits) {
             amountOut = amountOutAfterFees;
