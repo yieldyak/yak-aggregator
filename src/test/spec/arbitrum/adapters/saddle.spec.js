@@ -132,7 +132,7 @@ describe('YakAdapter - Saddle', function() {
     describe('arbusd', async () => {
 
         before(async () => {
-            const adapterArgs = [ 'SaddleArbusd', saddle.arbusd, 330_000 ]
+            const adapterArgs = [ 'SaddleArbusd', saddle.arbusd, 310_000 ]
             Adapter = await deployContract(
                 'SaddleAdapter', 
                 { deployer: adapterOwner, args: adapterArgs }
@@ -258,7 +258,7 @@ describe('YakAdapter - Saddle', function() {
     describe('meta_arbusdV2', async () => {
 
         before(async () => {
-            const adapterArgs = [ 'SaddleMetaArbV2', saddle.meta_arbusdV2, 310_000 ]
+            const adapterArgs = [ 'SaddleMetaArbV2', saddle.meta_arbusdV2, 400_000 ]
             Adapter = await deployContract(
                 'SaddleMetaAdapter', 
                 { deployer: adapterOwner, args: adapterArgs }
@@ -280,16 +280,22 @@ describe('YakAdapter - Saddle', function() {
         describe('Swapping matches query', async () => {
 
             it('USDs -> USDC', async () => {
-                await checkAdapterSwapMatchesQuery(tkns.USDs, tkns.USDC, '3000')
+                await checkAdapterSwapMatchesQuery(tkns.USDs, tkns.USDC, '3000', '3')
             })
             it('USDs -> USDT', async () => {
-                await checkAdapterSwapMatchesQuery(tkns.USDs, tkns.USDT, '100000')
+                await checkAdapterSwapMatchesQuery(tkns.USDs, tkns.USDT, '100000', '3')
             })
             it('USDs -> FRAX', async () => {
-                await checkAdapterSwapMatchesQuery(tkns.USDs, tkns.FRAX, '1')
+                await checkAdapterSwapMatchesQuery(tkns.USDs, tkns.FRAX, '1', '3')
             })
             it('USDC -> USDs', async () => {
-                await checkAdapterSwapMatchesQuery(tkns.USDC, tkns.USDs, '2133')
+                await checkAdapterSwapMatchesQuery(tkns.USDC, tkns.USDs, '2133', '3')
+            })
+            it('USDT -> USDs', async () => {
+                await checkAdapterSwapMatchesQuery(tkns.USDC, tkns.USDs, '2133', '3')
+            })
+            it('FRAX -> USDs', async () => {
+                await checkAdapterSwapMatchesQuery(tkns.USDC, tkns.USDs, '2133', '3')
             })
     
         })

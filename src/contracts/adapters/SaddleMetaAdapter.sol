@@ -44,12 +44,7 @@ contract SaddleMetaAdapter is YakAdapter {
     ) YakAdapter(_name, _swapGasEstimate) {
         pool = _pool;
         metaPool = ISaddleMeta(pool).metaSwapStorage(); // Pool that holds USDCe, USDTe, DAIe
-        setPoolFeeCompliment();
         _setPoolTokens();
-    }
-
-    function setPoolFeeCompliment() public onlyOwner {
-        poolFeeCompliment = feeDenominator - ISaddleMeta(pool).swapStorage().swapFee;
     }
 
     // Mapping indicator which tokens are included in the pool
@@ -85,7 +80,7 @@ contract SaddleMetaAdapter is YakAdapter {
         address _tokenOut
     ) internal view override returns (uint256 amountOut) {
         if (validInput(_amountIn, _tokenIn, _tokenOut) && !_isPaused())
-            amountOut = _getNetAmountOut(_amountIn, _tokenIn, _tokenOut);
+            amountOut = _getAmountOutSafe(_amountIn, _tokenIn, _tokenOut);
     }
 
     function validInput(
@@ -100,15 +95,6 @@ contract SaddleMetaAdapter is YakAdapter {
         return (tokenIn == metaTkn && isPoolToken[tokenOut]) || (tokenOut == metaTkn && isPoolToken[tokenIn]);
     }
 
-    function _getNetAmountOut(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (uint256) {
-        uint256 amountOut = _getAmountOutSafe(_amountIn, _tokenIn, _tokenOut);
-        return amountOut.mul(poolFeeCompliment) / feeDenominator;
-    }
-
     function _getAmountOutSafe(
         uint256 _amountIn,
         address _tokenIn,
@@ -117,8 +103,12 @@ contract SaddleMetaAdapter is YakAdapter {
         try ISaddleMeta(pool).calculateSwapUnderlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
             uint256 _amountOut
         ) {
-            amountOut = _amountOut;
+            amountOut = _applyError(_amountOut);
         } catch {}
+    }
+
+    function _applyError(uint256 _amount) internal pure returns (uint256) {
+        return _amount.mul(9998) / 10000;
     }
 
     function _swap(
@@ -136,7 +126,6 @@ contract SaddleMetaAdapter is YakAdapter {
             block.timestamp
         );
         uint256 balThis = IERC20(_tokenOut).balanceOf(address(this));
-        // Confidently transfer amount-out
         _returnTo(_tokenOut, balThis, _to);
     }
 }
