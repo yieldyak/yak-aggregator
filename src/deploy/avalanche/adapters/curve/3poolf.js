@@ -1,4 +1,4 @@
-const { curvelikePools } = require("../../../../misc/addresses.json")  
+const { curvelikePools } = require("../../../../misc/addresses.json").avalanche  
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;

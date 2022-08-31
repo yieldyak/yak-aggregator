@@ -1,7 +1,7 @@
 const { expect } = require("chai")
 
 const { fixtures, addresses } = require('../../fixtures')
-const { assets } = addresses
+const { assets } = addresses.avalanche
 
 describe('Yak Router - general', () => {
 

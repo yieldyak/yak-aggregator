@@ -4,7 +4,7 @@ const { parseUnits } = ethers.utils
 
 const { fixtures: fix, helpers, addresses } = require('../../../fixtures')
 const { setERC20Bal } = helpers
-const { assets } = addresses
+const { assets } = addresses.avalanche
 
 describe("YakAdapter - wAVAX", function() {
 

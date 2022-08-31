@@ -1,4 +1,4 @@
-const { ArableSF } = require("../../../../misc/addresses.json").other
+const { ArableSF } = require("../../../../misc/addresses.json").avalanche.other
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments

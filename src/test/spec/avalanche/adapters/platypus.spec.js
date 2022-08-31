@@ -3,7 +3,7 @@ const { ethers } = require("hardhat")
 const { parseUnits } = ethers.utils
 
 const { fixtures: fix, helpers, addresses } = require('../../../fixtures')
-const { assets, platypus } = addresses
+const { assets, platypus } = addresses.avalanche
 const { setERC20Bal } = helpers
 
 describe("YakAdapter - Platypus", function() {

@@ -1,7 +1,7 @@
 require('dotenv').config()
 const { ethers } = require('ethers')
 
-const { assets } = require('../../test/addresses.json')
+const { assets } = require('../../test/addresses.json').avalanche
 
 const YAK_ROUTER_MAINNET = '0xC4729E56b831d74bBc18797e0e17A295fA77488c'
 const PROVIDER = new ethers.providers.JsonRpcProvider(

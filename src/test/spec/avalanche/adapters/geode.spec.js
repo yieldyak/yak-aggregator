@@ -5,7 +5,7 @@ const { parseUnits } = ethers.utils
 const { fixtures: fix, helpers, addresses, constants } = require('../../../fixtures')
 const { impersonateAccount, forkGlobalNetwork, setERC20Bal } = helpers
 const { yyPlanet } = constants.geode
-const { assets, other } = addresses
+const { assets, other } = addresses.avalanche
 
 describe("YakAdapter - Geode", function() {
 

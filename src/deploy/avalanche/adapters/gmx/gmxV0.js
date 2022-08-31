@@ -1,7 +1,7 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
-    const { other } = require("../../../../misc/addresses.json")
+    const { other } = require("../../../../misc/addresses.json").avalanche
 
     const NAME = 'GmxAdapterV0'
     const VAULT = other.GmxVault

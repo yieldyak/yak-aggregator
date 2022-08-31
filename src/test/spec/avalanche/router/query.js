@@ -3,7 +3,7 @@ const { ethers } = require("hardhat")
 const { parseUnits } = ethers.utils
 
 const { fixtures, addresses } = require('../../fixtures')
-const { assets } = addresses
+const { assets } = addresses.avalanche
 
 describe('Yak Router - query', () => {
 

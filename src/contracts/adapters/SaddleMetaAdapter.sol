@@ -135,7 +135,8 @@ contract SaddleMetaAdapter is YakAdapter {
             _amountOut,
             block.timestamp
         );
+        uint256 balThis = IERC20(_tokenOut).balanceOf(address(this));
         // Confidently transfer amount-out
-        _returnTo(_tokenOut, _amountOut, _to);
+        _returnTo(_tokenOut, balThis, _to);
     }
 }

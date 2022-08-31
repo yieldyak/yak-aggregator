@@ -1,4 +1,4 @@
-const { balancerlikePools, balancerlikeVaults } = require("../../../../misc/addresses.json")
+const { balancerlikePools, balancerlikeVaults } = require("../../../../misc/addresses.json").avalanche
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments

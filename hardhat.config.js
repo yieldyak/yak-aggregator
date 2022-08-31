@@ -36,13 +36,15 @@ task("list-adapters", "Lists all adapters for the current YakRouter", async (_, 
 
 function getEnvValSafe(key, required=true) {
   const endpoint = process.env[key];
-  if (endpoint === null && required)
+  if (!endpoint && required)
       throw(`Missing env var ${key}`);
   return endpoint
 }
 
 const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')
+const ARBITRUM_RPC = getEnvValSafe('ARBITRUM_RPC')
 const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
+const ARBITRUM_PK_DEPLOYER = getEnvValSafe('ARBITRUM_PK_DEPLOYER')
 const ETHERSCAN_API_KEY = getEnvValSafe('ETHERSCAN_API_KEY', false)
 
 
@@ -87,7 +89,12 @@ module.exports = {
       gasPrice: 225000000000,
       url: AVALANCHE_RPC,
       accounts: [ AVALANCHE_PK_DEPLOYER ]
-    }
+    },
+    arbitrum: {
+      chainId: 42161,
+      url: ARBITRUM_RPC,
+      accounts: [ ARBITRUM_PK_DEPLOYER ],
+    },
   },
   paths: {
     deployments: './src/deployments',

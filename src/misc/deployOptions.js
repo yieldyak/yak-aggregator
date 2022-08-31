@@ -1,4 +1,4 @@
-const { assets } = require('./addresses.json')
+const { assets } = require('./addresses.json').avalanche
 
 module.exports = {
     "avalanche": {

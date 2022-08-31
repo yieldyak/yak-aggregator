@@ -1,4 +1,4 @@
-const { ethers, network } = require("hardhat")
+const { ethers, config } = require("hardhat")
 const fs = require('fs')
 
 const bigNumToBytes32 = (bn) => {
@@ -102,10 +102,12 @@ module.exports.topUpAccountWithToken = async (topper, recieverAddress, tokenAddr
     ).then(response => response.wait())
 }
 
-module.exports.getTokenContract = tokenAddress => ethers.getContractAt(
-    'src/contracts/interface/IWETH.sol:IWETH', 
+const _getTokenContract = tokenAddress => ethers.getContractAt(
+    'src/contracts/interface/IERC20.sol:IERC20', 
     tokenAddress
 )
+
+module.exports.getTokenContract = _getTokenContract
 
 module.exports.setERC20Bal = async (_token, _holder, _amount) => {
     const storageSlot = await getERC20Slot(_token)
@@ -145,10 +147,20 @@ const _setHardhatNetwork = async ({forkBlockNumber, chainId, rpcUrl}) => {
 
 module.exports.setHardhatNetwork = _setHardhatNetwork
 
-module.exports.forkGlobalNetwork = async (_blockNumber) => {
+module.exports.forkGlobalNetwork = async (_blockNumber, _networkId) => {
+    const networkConfig = config.networks[_networkId]
+    if (!networkConfig)
+        throw new Error(`Network-ID "${_networkId}" not recognized`)
     _setHardhatNetwork({
         forkBlockNumber: _blockNumber, 
-        rpcUrl: network.config.forking.url,
-        chainId: network.config.chainId
+        rpcUrl: networkConfig.url,
+        chainId: networkConfig.chainId
     })
+}
+
+module.exports.getSupportedERC20Tokens = async (networkName) => {
+    const { assets } = require('../misc/addresses.json')[networkName]
+    return Promise.all(Object.keys(assets).map(tknSymbol => {
+        return _getTokenContract(assets[tknSymbol]).then(tc => [tknSymbol, tc])
+    })).then(Object.fromEntries)
 }

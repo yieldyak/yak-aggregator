@@ -1,7 +1,7 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
-    const { curvelikePools } = require("../../../../misc/addresses.json")
+    const { curvelikePools } = require("../../../../misc/addresses.json").avalanche
 
     const NAME = 'AxialAM3DYakAdapterV0'
     const POOL = curvelikePools.AxialAM3D
