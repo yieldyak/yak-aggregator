@@ -43,10 +43,15 @@ function getEnvValSafe(key, required=true) {
 
 const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')
 const ARBITRUM_RPC = getEnvValSafe('ARBITRUM_RPC')
+const OPTIMISM_RPC = getEnvValSafe('OPTIMISM_RPC')
+const AURORA_RPC = getEnvValSafe('AURORA_RPC')
+const DOGECHAIN_RPC = getEnvValSafe('DOGECHAIN_RPC')
 const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
 const ARBITRUM_PK_DEPLOYER = getEnvValSafe('ARBITRUM_PK_DEPLOYER')
+const OPTIMISM_PK_DEPLOYER = getEnvValSafe('OPTIMISM_PK_DEPLOYER')
+const AURORA_PK_DEPLOYER = getEnvValSafe('AURORA_PK_DEPLOYER')
+const DOGECHAIN_PK_DEPLOYER = getEnvValSafe('DOGECHAIN_PK_DEPLOYER')
 const ETHERSCAN_API_KEY = getEnvValSafe('ETHERSCAN_API_KEY', false)
-
 
 module.exports = {
   mocha: {
@@ -94,6 +99,21 @@ module.exports = {
       chainId: 42161,
       url: ARBITRUM_RPC,
       accounts: [ ARBITRUM_PK_DEPLOYER ],
+    },
+    optimism: {
+      chainId: 10,
+      url: OPTIMISM_RPC,
+      accounts: [ OPTIMISM_PK_DEPLOYER ],
+    },
+    aurora: {
+      chainId: 1313161554,
+      url: AURORA_RPC,
+      accounts: [ AURORA_PK_DEPLOYER ],
+    },
+    dogechain: {
+      chainId: 2000,
+      url: DOGECHAIN_RPC,
+      accounts: [ DOGECHAIN_PK_DEPLOYER ],
     },
   },
   paths: {
