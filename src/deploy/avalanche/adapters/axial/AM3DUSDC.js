@@ -10,7 +10,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log(NAME)
     const deployResult = await deploy(NAME, {
       from: deployer,
-      contract: "CurvelikeMetaAdapter",
+      contract: "SaddleMetaAdapter",
       gas: 4000000,
       args: [
           NAME,

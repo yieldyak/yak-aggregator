@@ -102,7 +102,7 @@ describe("YakAdapter - Synapse", function() {
             ]
             let maxGas = 0
             for (let [ tokenFrom, tokenTo ] of options) {
-                const amountIn = parseUnits('999999', await tokenFrom.decimals())
+                const amountIn = parseUnits('1', await tokenFrom.decimals())
                 // Mint tokens to adapter address
                 await setERC20Bal(tokenFrom.address, Adapter.address, amountIn)
                 expect(await tokenFrom.balanceOf(Adapter.address)).to.gte(amountIn) 

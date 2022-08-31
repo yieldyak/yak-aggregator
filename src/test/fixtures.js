@@ -209,7 +209,7 @@ const _curveAdapter = async () => {
         CurvePlain128AdapterFactory.then(f => f.deploy('Curve3poolV2Adapter', curvelikePools.Curve3poolV2, 2.5e5)),
         CurvePlain128AdapterFactory.then(f => f.deploy('CurveUSDCAdapter', curvelikePools.CurveUSDC, 2.5e5)),
         CurvePlain128AdapterFactory.then(f => f.deploy('Curve3poolfAdapter', curvelikePools.Curve3poolf, 2.9e5)),
-        CurvePlain128AdapterFactory.then(f => f.deploy('CurveYUSDAdapter', curvelikePools.CurveYUSD, 3e5)),
+        CurvePlain128AdapterFactory.then(f => f.deploy('CurveYUSDAdapter', curvelikePools.CurveYUSD, 2.8e5)),
         CurveMimAdapterFactory.then(f => f.deploy('CurveMimAdapter', 1.1e6)),
         CurveMoreAdapterFactory.then(f => f.deploy('CurveMoreAdapter', 1.1e6)),
         CurveDeUSDCAdapterFactory.then(f => f.deploy('CurveDeUSDCAdapter', 1.1e6))
@@ -239,8 +239,8 @@ const _curveAdapter = async () => {
 }
 
 const _axialAdapter = async () => {
-    const CurvelikeMetaAdapterFactory = ethers.getContractFactory('CurvelikeMetaAdapter')
-    const CurveLikeAdapterFactory = ethers.getContractFactory('CurveLikeAdapter')
+    const SaddleMetaAdapterFactory = ethers.getContractFactory('SaddleMetaAdapter')
+    const SaddleAdapterFactory = ethers.getContractFactory('SaddleAdapter')
     const [
         AxialAM3DUSDC, 
         AxialAM3D, 
@@ -253,32 +253,32 @@ const _axialAdapter = async () => {
         AxialAA3DAdapter,
         AxialAS4DAdapter
     ] = await Promise.all([
-        ethers.getContractAt('ICurvelikeMeta', curvelikePools.AxialAM3DUSDC),
-        ethers.getContractAt('ICurveLikePool', curvelikePools.AxialAM3D),
-        ethers.getContractAt('ICurveLikePool', curvelikePools.AxialAC4D),
-        ethers.getContractAt('ICurveLikePool', curvelikePools.AxialAA3D),
-        ethers.getContractAt('ICurveLikePool', curvelikePools.AxialAS4D),
-        CurvelikeMetaAdapterFactory.then(f => f.deploy(
+        ethers.getContractAt('ISaddleMeta', curvelikePools.AxialAM3DUSDC),
+        ethers.getContractAt('ISaddle', curvelikePools.AxialAM3D),
+        ethers.getContractAt('ISaddle', curvelikePools.AxialAC4D),
+        ethers.getContractAt('ISaddle', curvelikePools.AxialAA3D),
+        ethers.getContractAt('ISaddle', curvelikePools.AxialAS4D),
+        SaddleMetaAdapterFactory.then(f => f.deploy(
             'AxialAM3DUSDCAdapter',
             curvelikePools.AxialAM3DUSDC,
             6.5e5
         )),
-        CurveLikeAdapterFactory.then(f => f.deploy(
+        SaddleAdapterFactory.then(f => f.deploy(
             'AxialAM3DAdapter',
             curvelikePools.AxialAM3D,
             3.7e5
         )),
-        CurveLikeAdapterFactory.then(f => f.deploy(
+        SaddleAdapterFactory.then(f => f.deploy(
             'AxialAC4DAdapter',
             curvelikePools.AxialAC4D,
             3.6e5
         )),
-        CurveLikeAdapterFactory.then(f => f.deploy(
+        SaddleAdapterFactory.then(f => f.deploy(
             'AxialAA3DAdapter',
             curvelikePools.AxialAA3D,
             4e5
         )),
-        CurveLikeAdapterFactory.then(f => f.deploy(
+        SaddleAdapterFactory.then(f => f.deploy(
             'AxialAS4DAdapter',
             curvelikePools.AxialAS4D,
             3.6e5
@@ -299,12 +299,12 @@ const _axialAdapter = async () => {
 }
 
 const _synapseAdapter = async () => {
-    const CurvelikeAdapterFactory = ethers.getContractFactory('CurveLikeAdapter')
+    const CurvelikeAdapterFactory = ethers.getContractFactory('SaddleAdapter')
     const [
         SynapsePool, 
         SynapseAdapter
     ] = await Promise.all([
-        ethers.getContractAt('ICurveLikePool', curvelikePools.SynapseDAIeUSDCeUSDTeNUSD),
+        ethers.getContractAt('ISaddle', curvelikePools.SynapseDAIeUSDCeUSDTeNUSD),
         CurvelikeAdapterFactory.then(f => f.deploy(
             'Synapse YakAdapter',
             curvelikePools.SynapseDAIeUSDCeUSDTeNUSD, 
@@ -321,66 +321,66 @@ const _curvelikeAdapters = async () => {
     const [ deployer ] = await ethers.getSigners()
     // Import live contracts
     const pools = {
-        GondolaUSDTUSDTe: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaUSDTUSDTe),
-        GondolaUSDTeUSDCe: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaUSDTeUSDCe),
-        GondolaUSDTeTSD: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaUSDTeTSD),
-        GondolaUSDT: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaUSDT),
-        GondolaDAI: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaDAI),
-        GondolaBTC: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaBTC),
-        GondolaETH: await ethers.getContractAt('ICurveLikePool', curvelikePools.GondolaETH),
-        SnobF3D: await ethers.getContractAt('ICurveLikePool', curvelikePools.snobF3D),
-        SnobS3D: await ethers.getContractAt('ICurveLikePool', curvelikePools.snobS3D),
-        SnobS4D: await ethers.getContractAt('ICurveLikePool', curvelikePools.snobS4D),
+        GondolaUSDTUSDTe: await ethers.getContractAt('ISaddle', curvelikePools.GondolaUSDTUSDTe),
+        GondolaUSDTeUSDCe: await ethers.getContractAt('ISaddle', curvelikePools.GondolaUSDTeUSDCe),
+        GondolaUSDTeTSD: await ethers.getContractAt('ISaddle', curvelikePools.GondolaUSDTeTSD),
+        GondolaUSDT: await ethers.getContractAt('ISaddle', curvelikePools.GondolaUSDT),
+        GondolaDAI: await ethers.getContractAt('ISaddle', curvelikePools.GondolaDAI),
+        GondolaBTC: await ethers.getContractAt('ISaddle', curvelikePools.GondolaBTC),
+        GondolaETH: await ethers.getContractAt('ISaddle', curvelikePools.GondolaETH),
+        SnobF3D: await ethers.getContractAt('ISaddle', curvelikePools.snobF3D),
+        SnobS3D: await ethers.getContractAt('ISaddle', curvelikePools.snobS3D),
+        SnobS4D: await ethers.getContractAt('ISaddle', curvelikePools.snobS4D),
     }
     // Init Adapters
     const adapters = {}
-    const  CurveLikeAdapterFactory = await ethers.getContractFactory('CurveLikeAdapter')
-    adapters['SnobF3DAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    const  SaddleAdapterFactory = await ethers.getContractFactory('SaddleAdapter')
+    adapters['SnobF3DAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'SnobF3D YakAdapter',
         curvelikePools.snobF3D, 
         170000
     )
-    adapters['SnobS3DAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['SnobS3DAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'SnobS3D YakAdapter',
         curvelikePools.snobS3D, 
         170000
     )
-    adapters['SnobS4DAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['SnobS4DAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'SnobS4D YakAdapter',
         curvelikePools.snobS4D, 
         180000
     )
-    adapters['GondolaDAIAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['GondolaDAIAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'GondolaDAI YakAdapter',
         curvelikePools.GondolaDAI, 
         150000
     )
-    adapters['GondolaBTCAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['GondolaBTCAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'GondolaBTC YakAdapter',
         curvelikePools.GondolaBTC, 
         150000
     )
-    adapters['GondolaUSDTAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['GondolaUSDTAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'GondolaUSDT YakAdapter',
         curvelikePools.GondolaUSDT, 
         150000
     )
-    adapters['GondolaETHAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['GondolaETHAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'GondolaETH YakAdapter',
         curvelikePools.GondolaETH, 
         150000
     )
-    adapters['GondolaUSDTeUSDCeAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['GondolaUSDTeUSDCeAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'GondolaUSDTeUSDCe YakAdapter',
         curvelikePools.GondolaUSDTeUSDCe, 
         150000
     )
-    adapters['GondolaUSDTeTSDAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['GondolaUSDTeTSDAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'GondolaUSDTeTSD YakAdapter',
         curvelikePools.GondolaUSDTeTSD, 
         150000
     )
-    adapters['GondolaUSDTUSDTeAdapter'] = await CurveLikeAdapterFactory.connect(deployer).deploy(
+    adapters['GondolaUSDTUSDTeAdapter'] = await SaddleAdapterFactory.connect(deployer).deploy(
         'GondolaUSDTUSDTe YakAdapter',
         curvelikePools.GondolaUSDTUSDTe, 
         150000
@@ -394,7 +394,7 @@ const _curvelikeAdapters = async () => {
         }
     }
     return {
-        CurveLikeAdapterFactory,
+        SaddleAdapterFactory,
         adapters, 
         pools,
     }
