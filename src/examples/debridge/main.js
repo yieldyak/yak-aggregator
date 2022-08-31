@@ -1,26 +1,24 @@
 require('dotenv').config()
-const { ethers } = require('ethers')
+const { ethers, config } = require('hardhat')
 
-const { assets } = require('../../test/addresses.json').avalanche
+const { assets } = require('../../misc/addresses.json').avalanche
 
 const YAK_ROUTER_MAINNET = '0xC4729E56b831d74bBc18797e0e17A295fA77488c'
-const PROVIDER = new ethers.providers.JsonRpcProvider(
-    process.env.AVALANCHE_MAINNET_RPC
-)
+const PROVIDER = new ethers.providers.JsonRpcProvider(config.networks.avalanche)
 const YAK_ROUTER_CONTRACT = new ethers.Contract(
     YAK_ROUTER_MAINNET, 
-    require('./yakrouter.abi.json'), 
+    require('../../abis/YakRouter.json'), 
     PROVIDER
 )
 
 async function query(tknFrom, tknTo, amountIn) {
-    const steps = 3 // Number of hops between markets swap is able to take
+    const maxHops = 3
     const gasPrice = ethers.utils.parseUnits('225', 'gwei')
     return YAK_ROUTER_CONTRACT.findBestPathWithGas(
         amountIn, 
         tknFrom, 
         tknTo, 
-        steps,
+        maxHops,
         gasPrice,
         { gasLimit: 1e9 }
     )
@@ -29,6 +27,7 @@ async function query(tknFrom, tknTo, amountIn) {
 async function swap(signer, tknFrom, tknTo, amountIn) {
     const queryRes = await query(tknFrom, tknTo, amountIn)
     const amountOutMin = queryRes.amounts[queryRes.amounts.length-1]
+    const fee = 0
     await YAK_ROUTER_CONTRACT.connect(signer).swapNoSplit(
         [
             amountIn, 
@@ -37,7 +36,7 @@ async function swap(signer, tknFrom, tknTo, amountIn) {
             queryRes.adapters
         ],
         signer.address, 
-        0  // Fee %
+        fee
     ).then(r => r.wait())
      .then(console.log)
 }
@@ -59,5 +58,5 @@ async function exampleSwap() {
     console.log(r)
 }
 
-// exampleQuery()
-exampleSwap()
+exampleQuery()
+// exampleSwap()
