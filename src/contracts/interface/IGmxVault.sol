@@ -47,6 +47,28 @@ interface IGmxVault {
 
     function poolAmounts(address) external view returns (uint256);
 
+    function usdg() external view returns (address);
+
+    function hasDynamicFees() external view returns (bool);
+
+    function stableTokens(address) external view returns (bool);
+
+    function getFeeBasisPoints(
+        address,
+        uint256,
+        uint256,
+        uint256,
+        bool
+    ) external view returns (uint256);
+
+    function stableSwapFeeBasisPoints() external view returns (uint256);
+
+    function swapFeeBasisPoints() external view returns (uint256);
+
+    function stableTaxBasisPoints() external view returns (uint256);
+
+    function taxBasisPoints() external view returns (uint256);
+
     function setBufferAmount(address, uint256) external;
 
     function gov() external view returns (address);

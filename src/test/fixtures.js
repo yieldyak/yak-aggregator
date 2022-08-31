@@ -12,7 +12,7 @@ const {
     unilikeRouters, 
     assets, 
     other 
-} = addresses
+} = addresses.avalanche
 let ADAPTERS = {}
 
 const _geodeWPAdapter = async () => {

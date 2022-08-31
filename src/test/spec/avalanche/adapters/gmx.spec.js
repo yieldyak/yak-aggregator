@@ -43,7 +43,7 @@ describe("YakAdapter - Gmx", function() {
                 assets.WETHe, 
             ]
             for (let tkn of supportedTokens) {
-                expect(await Adapter.isPoolToken(tkn)).to.be.true
+                expect(await Adapter.isPoolTkn(tkn)).to.be.true
             }
         })
 
