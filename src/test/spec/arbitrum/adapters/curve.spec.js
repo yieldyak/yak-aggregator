@@ -146,7 +146,7 @@ describe('YakAdapter - Curve', function() {
                 await checkAdapterSwapMatchesQuery(tkns.USDT, tkns.USDC, '100')
             })
             it('USDT -> USDC', async () => {
-                await checkAdapterSwapMatchesQuery(tkns.USDT, tkns.USDC, '1000000')
+                await checkAdapterSwapMatchesQuery(tkns.USDT, tkns.USDC, '10000')
             })
             it('USDC -> USDT', async () => {
                 await checkAdapterSwapMatchesQuery(tkns.USDC, tkns.USDT, '100')
