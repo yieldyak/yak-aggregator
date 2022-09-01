@@ -130,7 +130,7 @@ contract GmxAdapter is YakAdapter {
         address _tokenOut
     ) internal view returns (uint256 amountOut, uint256 usdgAmount) {
         (uint256 priceIn, uint256 priceOut) = _getPrices(_tokenIn, _tokenOut);
-        amountOut = _amountIn * priceIn / priceOut;
+        amountOut = (_amountIn * priceIn) / priceOut;
         amountOut = _adjustForDecimals(amountOut, _tokenIn, _tokenOut);
         usdgAmount = _getUsdgAmount(_amountIn, priceIn, _tokenIn);
     }
@@ -140,12 +140,12 @@ contract GmxAdapter is YakAdapter {
         uint256 _priceIn,
         address _tokenIn
     ) internal view returns (uint256 usdgAmount) {
-        usdgAmount = _amountIn * _priceIn / PRICE_PRECISION;
+        usdgAmount = (_amountIn * _priceIn) / PRICE_PRECISION;
         usdgAmount = _adjustForDecimals(usdgAmount, _tokenIn, USDG);
     }
 
     function _amountOutAfterFees(uint256 _amountOut, uint256 _feeBasisPoints) internal pure returns (uint256) {
-        return _amountOut * (BASIS_POINTS_DIVISOR - _feeBasisPoints) / BASIS_POINTS_DIVISOR;
+        return (_amountOut * (BASIS_POINTS_DIVISOR - _feeBasisPoints)) / BASIS_POINTS_DIVISOR;
     }
 
     function _adjustForDecimals(
@@ -155,7 +155,7 @@ contract GmxAdapter is YakAdapter {
     ) internal view returns (uint256) {
         uint256 decimalsDiv = _tokenDiv == USDG ? USDG_DECIMALS : tokenDecimals[_tokenDiv];
         uint256 decimalsMul = _tokenMul == USDG ? USDG_DECIMALS : tokenDecimals[_tokenMul];
-        return _amount * 10**decimalsMul / 10**decimalsDiv;
+        return (_amount * 10**decimalsMul) / 10**decimalsDiv;
     }
 
     function _getPrices(address _tokenIn, address _tokenOut) internal view returns (uint256 priceIn, uint256 priceOut) {

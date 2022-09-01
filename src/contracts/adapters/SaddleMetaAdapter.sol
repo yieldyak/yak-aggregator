@@ -105,7 +105,7 @@ contract SaddleMetaAdapter is YakAdapter {
     }
 
     function _applyError(uint256 _amount) internal pure returns (uint256) {
-        return _amount * 9998 / 10000;
+        return (_amount * 9998) / 10000;
     }
 
     function _swap(

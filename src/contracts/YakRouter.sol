@@ -319,7 +319,7 @@ contract YakRouter is Ownable {
         FormattedOffer memory gasQuery = findBestPath(1e18, WNATIVE, _tokenOut, 2);
         if (gasQuery.path.length != 0) {
             // Leave result in nWei to preserve precision for assets with low decimal places
-            price = gasQuery.amounts[gasQuery.amounts.length - 1] * _gasPrice / 1e9;
+            price = (gasQuery.amounts[gasQuery.amounts.length - 1] * _gasPrice) / 1e9;
         }
     }
 

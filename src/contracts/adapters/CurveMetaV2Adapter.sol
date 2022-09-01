@@ -44,7 +44,7 @@ interface IBasePool {
 }
 
 contract CurveMetaV2Adapter is YakAdapter {
-    using SafeERC20 for IERC20; 
+    using SafeERC20 for IERC20;
 
     address public immutable META_COIN;
     address public immutable POOL;
