@@ -18,17 +18,15 @@
 // Supports Curve deUSDC(DeBridge) pool (manually enter base tokens)
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/ICurveMim.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 contract CurveDeUSDCAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     address public constant deUSDC = 0x28690ec942671aC8d9Bc442B667EC338eDE6dFd3;
     address public constant BASE_POOL = 0x7f90122BF0700F9E7e1F688fe926940E8839F353;

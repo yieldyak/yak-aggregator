@@ -16,18 +16,16 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IUniswapFactory.sol";
 import "../interface/IUniswapPair.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 contract UnilswapV2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     uint256 internal constant FEE_DENOMINATOR = 1e3;
     uint256 public immutable feeCompliment;
@@ -39,8 +37,7 @@ contract UnilswapV2Adapter is YakAdapter {
         uint256 _fee,
         uint256 _swapGasEstimate
     ) YakAdapter(_name, _swapGasEstimate) {
-        require(FEE_DENOMINATOR > _fee, "Fee greater than the denominator");
-        feeCompliment = FEE_DENOMINATOR.sub(_fee);
+        feeCompliment = FEE_DENOMINATOR - _fee;
         factory = _factory;
     }
 
@@ -50,9 +47,9 @@ contract UnilswapV2Adapter is YakAdapter {
         uint256 _reserveOut
     ) internal view returns (uint256 amountOut) {
         // Based on https://github.com/Uniswap/uniswap-v2-periphery/blob/master/contracts/UniswapV2Router02.sol
-        uint256 amountInWithFee = _amountIn.mul(feeCompliment);
-        uint256 numerator = amountInWithFee.mul(_reserveOut);
-        uint256 denominator = _reserveIn.mul(FEE_DENOMINATOR).add(amountInWithFee);
+        uint256 amountInWithFee = _amountIn * feeCompliment;
+        uint256 numerator = amountInWithFee * _reserveOut;
+        uint256 denominator = _reserveIn * FEE_DENOMINATOR + amountInWithFee;
         amountOut = numerator / denominator;
     }
 

@@ -23,11 +23,11 @@ const _geodeWPAdapter = async () => {
         GeodeWP,
         GeodeWPAdapter
     ] = await Promise.all([
-        ethers.getContractAt('IgAVAX', addresses.assets.gAVAX),
-        ethers.getContractAt('IGeodeWP', addresses.other.GWPyyAvax),
+        ethers.getContractAt('IgAVAX', assets.gAVAX),
+        ethers.getContractAt('IGeodeWP', other.GWPyyAvax),
         GeodeWPAdapterFactory.then(f => f.connect(deployer).deploy(
             'GWPyyAvaxAdapter',
-            addresses.other.GeodePortal,
+            other.GeodePortal,
             constants.geode.yyPlanet,
             4.3e5
         ))

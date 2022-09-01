@@ -17,19 +17,16 @@
 
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IGmxVault.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 contract GmxAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
-    bytes32 public constant id = keccak256("GmxAdapter");
     uint256 public constant BASIS_POINTS_DIVISOR = 1e4;
     uint256 public constant PRICE_PRECISION = 1e30;
     uint256 public constant USDG_DECIMALS = 18;
@@ -133,7 +130,7 @@ contract GmxAdapter is YakAdapter {
         address _tokenOut
     ) internal view returns (uint256 amountOut, uint256 usdgAmount) {
         (uint256 priceIn, uint256 priceOut) = _getPrices(_tokenIn, _tokenOut);
-        amountOut = _amountIn.mul(priceIn) / priceOut;
+        amountOut = _amountIn * priceIn / priceOut;
         amountOut = _adjustForDecimals(amountOut, _tokenIn, _tokenOut);
         usdgAmount = _getUsdgAmount(_amountIn, priceIn, _tokenIn);
     }
@@ -143,12 +140,12 @@ contract GmxAdapter is YakAdapter {
         uint256 _priceIn,
         address _tokenIn
     ) internal view returns (uint256 usdgAmount) {
-        usdgAmount = _amountIn.mul(_priceIn) / PRICE_PRECISION;
+        usdgAmount = _amountIn * _priceIn / PRICE_PRECISION;
         usdgAmount = _adjustForDecimals(usdgAmount, _tokenIn, USDG);
     }
 
     function _amountOutAfterFees(uint256 _amountOut, uint256 _feeBasisPoints) internal pure returns (uint256) {
-        return _amountOut.mul(BASIS_POINTS_DIVISOR.sub(_feeBasisPoints)) / BASIS_POINTS_DIVISOR;
+        return _amountOut * (BASIS_POINTS_DIVISOR - _feeBasisPoints) / BASIS_POINTS_DIVISOR;
     }
 
     function _adjustForDecimals(
@@ -158,7 +155,7 @@ contract GmxAdapter is YakAdapter {
     ) internal view returns (uint256) {
         uint256 decimalsDiv = _tokenDiv == USDG ? USDG_DECIMALS : tokenDecimals[_tokenDiv];
         uint256 decimalsMul = _tokenMul == USDG ? USDG_DECIMALS : tokenDecimals[_tokenMul];
-        return _amount.mul(10**decimalsMul) / 10**decimalsDiv;
+        return _amount * 10**decimalsMul / 10**decimalsDiv;
     }
 
     function _getPrices(address _tokenIn, address _tokenOut) internal view returns (uint256 priceIn, uint256 priceOut) {
@@ -179,7 +176,7 @@ contract GmxAdapter is YakAdapter {
     ) private view returns (bool) {
         uint256 poolBalTknOut = IGmxVault(VAULT).poolAmounts(_tokenOut);
         if (poolBalTknOut < _amountOut) return false;
-        uint256 newPoolBalTknOut = poolBalTknOut.sub(_amountOut);
+        uint256 newPoolBalTknOut = poolBalTknOut - _amountOut;
         return
             !reservedAmountExceeded(newPoolBalTknOut, _tokenOut) &&
             !bufferAmountExceeded(newPoolBalTknOut, _tokenOut) &&
@@ -199,7 +196,7 @@ contract GmxAdapter is YakAdapter {
     function maxDebtExceeded(uint256 _amountInUsdg, address _tokenIn) internal view returns (bool) {
         uint256 maxUsdgAmount = IGmxVault(VAULT).maxUsdgAmounts(_tokenIn);
         if (maxUsdgAmount == 0) return false;
-        uint256 newUsdgAmount = IGmxVault(VAULT).usdgAmounts(_tokenIn).add(_amountInUsdg);
+        uint256 newUsdgAmount = IGmxVault(VAULT).usdgAmounts(_tokenIn) + _amountInUsdg;
         return newUsdgAmount > maxUsdgAmount;
     }
 

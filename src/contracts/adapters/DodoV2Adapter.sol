@@ -16,17 +16,15 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IDodoV2.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 contract DodoV2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     mapping(address => mapping(address => address)) public tknsToPool; // base > quote > pool
 

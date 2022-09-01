@@ -16,13 +16,12 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IUniswapFactory.sol";
 import "../interface/IUniswapPair.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 interface IDxSwapPair is IUniswapPair {
@@ -31,7 +30,6 @@ interface IDxSwapPair is IUniswapPair {
 
 contract DxSwapAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     uint256 internal constant FEE_DENOMINATOR = 1e4;
     address public immutable FACTORY;
@@ -50,10 +48,10 @@ contract DxSwapAdapter is YakAdapter {
         uint256 _reserveOut,
         uint256 _fee
     ) internal pure returns (uint256 amountOut) {
-        uint256 feeCompliment = FEE_DENOMINATOR.sub(_fee);
-        uint256 amountInWithFee = _amountIn.mul(feeCompliment);
-        uint256 numerator = amountInWithFee.mul(_reserveOut);
-        uint256 denominator = _reserveIn.mul(FEE_DENOMINATOR).add(amountInWithFee);
+        uint256 feeCompliment = FEE_DENOMINATOR - _fee;
+        uint256 amountInWithFee = _amountIn * feeCompliment;
+        uint256 numerator = amountInWithFee * _reserveOut;
+        uint256 denominator = _reserveIn * FEE_DENOMINATOR + amountInWithFee;
         amountOut = numerator / denominator;
     }
 

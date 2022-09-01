@@ -16,22 +16,19 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 interface IPairFactory {
     function isPair(address) external view returns (bool);
-
     function pairCodeHash() external view returns (bytes32);
 }
 
 interface IPair {
     function getAmountOut(uint256, address) external view returns (uint256);
-
     function swap(
         uint256,
         uint256,
@@ -42,7 +39,6 @@ interface IPair {
 
 contract VelodromeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     bytes32 immutable PAIR_CODE_HASH;
     address immutable FACTORY;

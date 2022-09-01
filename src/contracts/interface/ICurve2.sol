@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 interface ICurve2 {
     function underlying_coins(uint256 index) external view returns (address);

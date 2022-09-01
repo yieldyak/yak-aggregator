@@ -16,20 +16,18 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "./lib/BytesManipulation.sol";
 import "./interface/IAdapter.sol";
 import "./interface/IERC20.sol";
 import "./interface/IWETH.sol";
-import "./lib/SafeMath.sol";
 import "./lib/SafeERC20.sol";
 import "./lib/Ownable.sol";
 
 contract YakRouter is Ownable {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     address public immutable WNATIVE;
     address public constant NATIVE = address(0);
@@ -143,7 +141,7 @@ contract YakRouter is Ownable {
 
     function _applyFee(uint256 _amountIn, uint256 _fee) internal view returns (uint256) {
         require(_fee >= MIN_FEE, "YakRouter: Insufficient fee");
-        return _amountIn.mul(FEE_DENOMINATOR.sub(_fee)) / FEE_DENOMINATOR;
+        return (_amountIn * (FEE_DENOMINATOR - _fee)) / FEE_DENOMINATOR;
     }
 
     function _wrap(uint256 _amount) internal {
@@ -321,7 +319,7 @@ contract YakRouter is Ownable {
         FormattedOffer memory gasQuery = findBestPath(1e18, WNATIVE, _tokenOut, 2);
         if (gasQuery.path.length != 0) {
             // Leave result in nWei to preserve precision for assets with low decimal places
-            price = gasQuery.amounts[gasQuery.amounts.length - 1].mul(_gasPrice / 1e9);
+            price = gasQuery.amounts[gasQuery.amounts.length - 1] * _gasPrice / 1e9;
         }
     }
 
@@ -401,7 +399,8 @@ contract YakRouter is Ownable {
                 // Check that the last token in the path is the tokenOut and update the new best option if neccesary
                 if (_tokenOut == tokenOut && amountOut > bestAmountOut) {
                     if (newOffer.gasEstimate > bestOption.gasEstimate) {
-                        uint256 gasCostDiff = _tknOutPriceNwei.mul(newOffer.gasEstimate - bestOption.gasEstimate) / 1e9;
+                        uint256 gasCostDiff = (_tknOutPriceNwei * (newOffer.gasEstimate - bestOption.gasEstimate)) /
+                            1e9;
                         uint256 priceDiff = amountOut - bestAmountOut;
                         if (gasCostDiff > priceDiff) {
                             continue;
@@ -427,7 +426,7 @@ contract YakRouter is Ownable {
         if (_fee > 0 || MIN_FEE > 0) {
             // Transfer fees to the claimer account and decrease initial amount
             amounts[0] = _applyFee(_trade.amountIn, _fee);
-            IERC20(_trade.path[0]).safeTransferFrom(_from, FEE_CLAIMER, _trade.amountIn.sub(amounts[0]));
+            IERC20(_trade.path[0]).safeTransferFrom(_from, FEE_CLAIMER, _trade.amountIn - amounts[0]);
         } else {
             amounts[0] = _trade.amountIn;
         }

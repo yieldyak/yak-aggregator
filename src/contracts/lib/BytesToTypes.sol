@@ -1,7 +1,7 @@
 // From https://github.com/pouladzade/Seriality/blob/master/src/BytesToTypes.sol (Licensed under Apache2.0)
 
 // SPDX-License-Identifier: Apache2.0
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 library BytesToTypes {
     function bytesToAddress(uint256 _offst, bytes memory _input) internal pure returns (address _output) {

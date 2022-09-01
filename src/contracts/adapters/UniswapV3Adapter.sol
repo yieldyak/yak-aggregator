@@ -16,12 +16,10 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
-pragma abicoder v2;
+pragma solidity ^0.8.0;
 
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 struct QParams {
@@ -68,7 +66,6 @@ interface IUniV3Quoter {
 
 contract UniswapV3Adapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     uint160 internal constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342;
     uint160 internal constant MIN_SQRT_RATIO = 4295128739;
@@ -198,7 +195,7 @@ contract UniswapV3Adapter is YakAdapter {
     function uniswapV3SwapCallback(
         int256 amount0Delta,
         int256 amount1Delta,
-        bytes calldata data
+        bytes calldata
     ) external {
         if (amount0Delta > 0) {
             IERC20(IUniV3Pool(msg.sender).token0()).transfer(msg.sender, uint256(amount0Delta));

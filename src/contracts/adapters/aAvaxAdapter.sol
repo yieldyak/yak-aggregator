@@ -17,11 +17,10 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
 import "../interface/ISAVAX.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 interface IwAVAX {
@@ -33,7 +32,6 @@ interface IwAVAX {
  **/
 contract SAvaxAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     address public constant SAVAX = 0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE;
     address public constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -66,7 +64,7 @@ contract SAvaxAdapter is YakAdapter {
     }
 
     function _exceedsCap(uint256 _amountIn) internal view returns (bool) {
-        uint256 newBal = ISAVAX(SAVAX).totalPooledAvax().add(_amountIn); // Assume U256::max won't be reached
+        uint256 newBal = ISAVAX(SAVAX).totalPooledAvax() + _amountIn; // Assume U256::max won't be reached
         return newBal > ISAVAX(SAVAX).totalPooledAvaxCap();
     }
 

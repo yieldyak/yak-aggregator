@@ -16,18 +16,15 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
-pragma abicoder v2;
+pragma solidity ^0.8.0;
 
 import "../interface/ISaddleMeta.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../lib/SafeMath.sol";
 import "../YakAdapter.sol";
 
 contract SaddleMetaAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     uint256 public constant feeDenominator = 1e10;
     mapping(address => bool) public isPoolToken;
@@ -108,7 +105,7 @@ contract SaddleMetaAdapter is YakAdapter {
     }
 
     function _applyError(uint256 _amount) internal pure returns (uint256) {
-        return _amount.mul(9998) / 10000;
+        return _amount * 9998 / 10000;
     }
 
     function _swap(
