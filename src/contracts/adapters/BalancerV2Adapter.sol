@@ -19,8 +19,6 @@
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
-
-import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 import "../interface/IVault.sol";
 import "../interface/IBasePool.sol";
