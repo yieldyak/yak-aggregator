@@ -22,31 +22,43 @@ const getERC20SlotByExecute = async (token, _signer) => {
         to: token, 
     })
     const result = await signer.provider.send('debug_traceTransaction', [tx.hash])
-    const [ slot ] = result.structLogs.flatMap(log => {
+    let depthToAddress = { 1: token }
+    const bytes32ToAddress = x => '0x' + x.replace(/^0+/, '')
+    const r = result.structLogs.flatMap(log => {
         // Find SLOAD operations containing the holder address
-        const addressMatches = () => '0x'+log.memory[0].replace(/^0+/, '') == holder.toLowerCase()
+        const addressMatches = () => bytes32ToAddress(log.memory[0]) == holder.toLowerCase()
         if (log.op == 'SLOAD' && addressMatches()) {
             const hash = ethers.utils.keccak256('0x' + log.memory[0] + log.memory[1])
+            const shash = hash.slice(2)
             // Return the slot if its hash with holder address is mapped to return value in storage and hash is on top of stack
-            if (log.stack[log.stack.length-1] == hash.slice(2) && log.storage[hash.slice(2)] == result.returnValue) {
-                return parseInt(log.memory[1])
+            if (log.stack[log.stack.length-1] == shash && log.storage[shash] == result.returnValue) {
+                const slot = parseInt(log.memory[1])
+                const contract = depthToAddress[log.depth]
+                return [contract, slot]
             }
+        } else if (log.op == 'STATICCALL') {
+            depthToAddress[log.depth + 1] = bytes32ToAddress(log.stack[4])
+        } else if (log.op == 'DELEGATECALL') {
+            depthToAddress[log.depth + 1] = depthToAddress[log.depth]
         }
         return []
     })
-    return slot ?? null
+    return r ?? null
 }
 
 const getERC20Slot = async (token, signer) => {
     const cacheTarget = `${process.cwd()}/cache/slots/${token}`
     try {
-        const savedSlot = fs.readFileSync(cacheTarget)
-        return parseInt(savedSlot.toString())
+        const cached = fs.readFileSync(cacheTarget)
+        const [ contract, slot ] = cached.split('::')
+        return [contract, parseInt(slot)]
     } catch (_) {
-        const executedSlot = await getERC20SlotByExecute(token, signer)
-        if (executedSlot != null) {
-            fs.writeFile(cacheTarget, executedSlot.toString(), () => {})
-            return executedSlot
+        const res = await getERC20SlotByExecute(token, signer)
+        if (res != null) {
+            const [contract, slot] = res
+            const cache = `${contract}::${slot}`
+            fs.writeFile(cacheTarget, cache, () => {})
+            return res
         }
         throw new Error(`Could not find ERC20 slot for token ${token}`)
     }
@@ -110,12 +122,12 @@ const _getTokenContract = tokenAddress => ethers.getContractAt(
 module.exports.getTokenContract = _getTokenContract
 
 module.exports.setERC20Bal = async (_token, _holder, _amount) => {
-    const storageSlot = await getERC20Slot(_token)
+    const [contract, storageSlot] = await getERC20Slot(_token)
     const key = addressToBytes32(_holder)
     const index = ethers.utils.keccak256(
         key + storageSlot.toString().padStart(64, '0')
     ).replace(/0x0+/, "0x")  // Hardhat doesn't like leading zeroes
-    await setStorageAt(_token, index, bigNumToBytes32(_amount))
+    await setStorageAt(contract, index, bigNumToBytes32(_amount))
 }
 
 module.exports.impersonateAccount = async (account) => {
