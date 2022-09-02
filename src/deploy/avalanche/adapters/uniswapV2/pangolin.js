@@ -11,7 +11,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   log(`PangolinYakAdapterV0`)
   const deployResult = await deploy("PangolinYakAdapterV0", {
     from: deployer,
-    contract: "UnilswapV2Adapter",
+    contract: "UniswapV2Adapter",
     gas: 4000000,
     args: [
         NAME,

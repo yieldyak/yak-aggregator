@@ -24,7 +24,7 @@ import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
-contract UnilswapV2Adapter is YakAdapter {
+contract UniswapV2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
 
     uint256 internal constant FEE_DENOMINATOR = 1e3;

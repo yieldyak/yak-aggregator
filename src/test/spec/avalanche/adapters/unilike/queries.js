@@ -4,7 +4,7 @@ const { fixtures } = require('../../../../fixtures')
 
 describe("YakAdapter - Pangolin - Queries", function() {
 
-    let UnilswapV2AdapterFactory
+    let UniswapV2AdapterFactory
     let PangolinAdapter
     let PangolinRouter
     let unilikeRouters
@@ -16,7 +16,7 @@ describe("YakAdapter - Pangolin - Queries", function() {
 
     before(async () => {
         const fixUnilike = await fixtures.unilikeAdapters()
-        UnilswapV2AdapterFactory = fixUnilike.UnilswapV2AdapterFactory
+        UniswapV2AdapterFactory = fixUnilike.UniswapV2AdapterFactory
         adapters = fixUnilike.adapters
         fix = await fixtures.general()
         PangolinRouter = fix.PangolinRouter
@@ -29,7 +29,7 @@ describe("YakAdapter - Pangolin - Queries", function() {
         // Start each test with a fresh account
         trader = fix.genNewAccount()
         // Start each test with a fresh adapter
-        PangolinAdapter = await UnilswapV2AdapterFactory.connect(owner).deploy(
+        PangolinAdapter = await UniswapV2AdapterFactory.connect(owner).deploy(
             'Pangolin YakAdapter',
             fix.unilikeFactories.pangolin,
             3,

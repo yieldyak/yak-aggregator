@@ -432,62 +432,62 @@ const _balancerlikeAdapters = async () => {
 const _unilikeAdapters = async () => {
     const [ deployer ] = await ethers.getSigners()
     const adapters = {}
-    const UnilswapV2AdapterFactory = await ethers.getContractFactory('UnilswapV2Adapter')
-    adapters['ElkAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    const UniswapV2AdapterFactory = await ethers.getContractFactory('UniswapV2Adapter')
+    adapters['ElkAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Elk YakAdapter',
         unilikeFactories.elk,
         3,
         100000
     )
-    adapters['PandaAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['PandaAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'PandaSwap YakAdapter',
         unilikeFactories.pandaswap,
         3,
         100000
     )
-    adapters['OliveAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['OliveAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'OliveSwap YakAdapter',
         unilikeFactories.olive,
         2,
         100000
     )
-    adapters['SushiswapAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['SushiswapAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Sushiswap YakAdapter',
         unilikeFactories.sushiswap,
         3,
         100000
     )
-    adapters['ComplusAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['ComplusAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Complus YakAdapter',
         unilikeFactories.complus,
         3,
         100000
     )
-    adapters['ZeroAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['ZeroAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Zero YakAdapter',
         unilikeFactories.zero,
         3,
         100000
     )
-    adapters['PangolinAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['PangolinAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Pangolin YakAdapter',
         unilikeFactories.pangolin,
         3,
         100000
     )
-    adapters['LydiaAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['LydiaAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Lydia YakAdapter',
         unilikeFactories.lydia,
         2,
         100000
     )
-    adapters['YetiAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['YetiAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Yeti YakAdapter',
         unilikeFactories.yeti,
         3,
         100000
     )
-    adapters['JoeAdapter'] = await UnilswapV2AdapterFactory.connect(deployer).deploy(
+    adapters['JoeAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Joe YakAdapter',
         unilikeFactories.joe,
         3,
@@ -502,7 +502,7 @@ const _unilikeAdapters = async () => {
         }
     }
     return {
-        UnilswapV2AdapterFactory, 
+        UniswapV2AdapterFactory, 
         adapters,
     }
 }
