@@ -1,96 +1,134 @@
-## 🐃  YY Swap
+# [<img align="left" alt="Java" width="50px" src="https://github.com/yieldyak/brand-assets/blob/main/y/y_400x400.png?raw=true" />](https://yieldyak.com/swap) YakSwap 
+Dex aggregator for EVM chains. UI available [here](https://yieldyak.com/swap). 
 
-Dex aggregator for Avalanche. Use at your own risk.
+## About
 
-UI available from https://yieldyak.com/swap
+YakSwap is a set of smart contracts for optimal path finding between two assets and execution of that path. For input&output token and input-amount optimal path should have a greatest net amount-out by considering execution gas-cost.
 
-## Overview
+Search is performed by calling on-chain query-methods and can be called by anyone. However, user should avoid calling query-methods in a mutative call due to a very large gas-cost associated with a call. 
 
-The Avalanche C-Chain is saturated with 10+ exchanges competing ~200M of liquidity. This creates the following issues for traders:
-* **Split liquidity:**
-Traders are more likely to get affected by price impact and negative slippage since liquidity is split across many exchanges.
-* **Disconnected assets:**
-Traders need to approve and swap on multiple platforms to swap between certain assets in the Avalanche ecosystem.
-* **No simple way to determine best price for swap:**
-With all the options there is no clear way of knowing which exchange will offer the best price for a particular trade. 
+## Usage
 
-## How it works
 
-YY Swap solves these problems by finding and executing the most profitable trades for users.
-* Multi-path trades (e.g. Pangolin > Gondola > Zero)
-* Gas-cost considerations
-* Easy to build on top of
+### Router
 
-## Mainnet Deployments and Supported Platforms
+YakRouter is the user-facing interface to check prices and make trades. See example off-chain usage [here](./src/examples/debridge/main.js).
 
-### Routers
 
-YakRouter is the user-facing interface to check prices and make trades.
-
-| Name      | Address |
+| Chain      | Address |
 | ----------- | ----------- |
-| YakRouter   | `0xC4729E56b831d74bBc18797e0e17A295fA77488c` |
+| Avalanche   | [`0xC4729E56b831d74bBc18797e0e17A295fA77488c`](https://snowtrace.io/address/0xc4729e56b831d74bbc18797e0e17a295fa77488c) |
 
-#### Query
+#### **findBestPathWithGas**
 
-Query YakRouter for the best trade execution.
 
-**Parameters**
- - **amountIn[BigNumber]:** Amount of tokens being sold
- - **tokenIn[String]:** ERC20 token being sold (pass WAVAX address for AVAX)
- - **tokenOut[String]:** ERC20 token being bought (pass WAVAX address for AVAX)
- - **steps[BigNumber]:** Number of steps within which best path will be searched (max is 4)
- - **gasPrice[BigNumber]:** Gas price in gwei (should be 225 GWEI now, but is planned be dynamic in the future)
+Finds the best path from tokenA to tokenB. Considers path's amount-out and its gas-cost.
 
-###### findBestPathWithGas
-
-```js
-router.findBestPathWithGas(
-    amountIn, 
-    tokenIn, 
-    tokenOut, 
-    steps, 
-    gasPrice
-)
-```
-
-#### Swap
-
-Swap YakRouter to execute a trade.
-
-**Parameters**
- - **trade[Array]:** Array of paramters used for swapping
-    - **amountIn[BigNumber]:** Amount of tokens being sold
-    - **amountOut[BigNumber]:** Minimum amount of tokens bought
-    - **path[Array]:** Tokens being traded (in respective order)
-    - **adapters[Array]:** Adapters through which tokens will be traded (in respective order)
- - **to[String]:** Address where output tokens should be sent to
- - **fee[BigNumber]:** Optional fee in bps taken before the trades
-
-###### swapNoSplit
-
-```js
-router.swapNoSplit(trade, to, fee)
-```
-
-###### swapNoSplitToAVAX
-
-```js
-router.swapNoSplitToAVAX(trade, to, fee);
-```
-
-###### swapNoSplitFromAVAX
-
-```js
-router.swapNoSplitFromAVAX(trade, to, fee, { value: amountIn });
+```solidity
+function findBestPathWithGas(
+    uint256 _amountIn,
+    address _tokenIn,
+    address _tokenOut,
+    uint256 _maxSteps,
+    uint256 _gasPrice
+) external view returns (FormattedOffer memory);
 ```
 
 
-### Adapters
+| Input params | Details |
+| ------------ | ------- |
+| amountIn     |  Amount of tokens being sold       |
+| tokenIn      |   ERC20 token being sold      |
+| tokenOut     |    ERC20 token being bought     |
+| steps        | Max number of steps for path finding (must be less than 4)    |
+| gasPrice             |   Gas price in gwei that will be used to estimate gasCost of each step      |
+
+
+```solidity
+struct FormattedOffer {
+    uint256[] amounts;
+    address[] adapters;
+    address[] path;
+    uint256 gasEstimate;
+}
+```
+
+
+| Return arg | Details                                                                                        |
+| ---------- | ---------------------------------------------------------------------------------------------- |
+| amounts    | Amount of token being swapped for each step. First amount is `_amountIn` and last `amountOut`. |
+| adapters   | Addresses of adapters through which trade goes.                                                |
+| path       | Addresses of tokens through which trade goes. First token is `_tokenIn` and last `_tokenOut`.  |
+|   gasEstimate         |     Rough estimate for gas-cost of all swaps. Gas estimates only include gas-cost of swapping and querying on adapter and not intermediate logic, nor tx-gas-cost.                                                                                           |
+
+
+
+#### **swapNoSplit**
+
+Executes trades through provided path.
+
+```solidity
+function swapNoSplit(
+    Trade calldata _trade,
+    address _to,
+    uint256 _fee
+) external;
+```
+
+
+| Input param | Details |
+| ----------- | ------- |
+| _trade            |   Arguments used for swapping      |
+|  _to           |  Reciever address       |
+| _fee        |  Optional fee in bps taken before the trades    |
+
+
+```solidity
+struct Trade {
+    uint256 amountIn;
+    uint256 amountOut;
+    address[] path;
+    address[] adapters;
+}
+```
+
+
+| Param | Details |
+| -------- | -------- |
+| amountIn     |  Amount of tokens being sold     |
+| amountOut     |  Amount of tokens being bought     |
+| path     |   Tokens being traded in respective order     |
+| adapters     |   Adapters through which tokens will be traded in respective order    |
+
+
+
+
+
+
+### Adapter
 
 Adapters act as a common interface for YakRouter to interact with external contracts.
 
-Adapters must offer methods: `query` and `swap`. 
+Adapters offers methods: `query` and `swap`. 
+
+```solidity
+function query(
+    uint256 _amountIn,
+    address _tokenIn,
+    address _tokenOut
+) external view returns (uint256);
+
+function swap(
+    uint256 _amountIn,
+    uint256 _amountOut,
+    address _fromToken,
+    address _toToken,
+    address _to
+) external;
+```
+
+After setting up this repo call `npx hardhat list-adapters --network {network-id}` to get a list of live adapters and their addresses. Or see  [`deployOptions`](./src/misc/deployOptions.js) for a list of live adapters per chain.
+
 
 ## Local Development and testing
 
@@ -105,13 +143,16 @@ yarn install
 ```
 cp .env.sample > .env
 ```
- * `AVALANCHE_FORK_RPC` is Avalanche C-Chain RPC provider that will be used for the tests [ testing ]
- * `AVALANCHE_DEPLOY_RPC` is Avalanche C-Chain RPC provider that will be used deployment [ deployment ]
- * `PK_DEPLOYER` is private-key for the account that will deploy contracts [ deployment ]
+
 
 ### Actions
 
 #### Test
+Test for chain:
+```
+yarn test:{network-id}
+```
+Test individual:
 ```
 npx hardhat test {path to the test/tests | empty to run all}
 ```
@@ -119,18 +160,21 @@ npx hardhat test {path to the test/tests | empty to run all}
 #### Deploy
 
 ```
-npx hardhat deploy --network {your network tag}
+yarn deploy:{network-id}
 ```
 #### Verify
 ```
-npx hardhat verifyContract --deployment-file-path {path to deployment file} --network {your network tag}
+npx hardhat verify-contract --deployment-file-path {path to deployment file} --network {your network tag}
 ```
 
 ## Audits and Security
 
-This project is in alpha stage and is unaudited. Use at your own risk. Report bugs to [Telegram admins](https://t.me/yieldyak)
+This project is not audited. Use at your own risk.
+For any questions or bug reports reach out via Telegram group [YakDevs](https://t.me/yakdevs) or its admins.
 
 ---
+
+
 
 Project is licensed under GPL-3, although some parts of it might be less restrictive.
 Copyright© 2021 Yield Yak

@@ -9,43 +9,30 @@ require('hardhat-log-remover');
 require("hardhat-tracer");
 require('hardhat-deploy');
 
-const verifyContract = require("./scripts/verify-contract");
-const { task } = require("hardhat/config");
+// Tasks
+require('./src/tasks/update-hop-tokens')
+require('./src/tasks/update-adapters')
+require('./src/tasks/verify-contract')
+require('./src/tasks/list-adapters')
 
-if (!process.env.AVALANCHE_FORK_RPC) {
-  throw new Error('Fork RPC provider not defined')
-}
-const AVALANCHE_FORK_RPC = process.env.AVALANCHE_FORK_RPC
-if (!process.env.PK_DEPLOYER) {
-  console.log('WARNING: Missing private-key for deployer - cant deploy')
-}
-if (!process.env.AVALANCHE_DEPLOY_RPC) {
-  console.log('WARNING: Missing RPC provider for deployer')
-}
-const PK_DEPLOYER = process.env.PK_DEPLOYER || "1111111111111111111111111111111111111111111111111111111111"
-const AVALANCHE_DEPLOY_RPC = process.env.AVALANCHE_DEPLOY_RPC || process.env.AVALANCHE_FORK_RPC
+const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')
+const ARBITRUM_RPC = getEnvValSafe('ARBITRUM_RPC')
+const OPTIMISM_RPC = getEnvValSafe('OPTIMISM_RPC')
+const AURORA_RPC = getEnvValSafe('AURORA_RPC')
+const DOGECHAIN_RPC = getEnvValSafe('DOGECHAIN_RPC')
+const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
+const ARBITRUM_PK_DEPLOYER = getEnvValSafe('ARBITRUM_PK_DEPLOYER')
+const OPTIMISM_PK_DEPLOYER = getEnvValSafe('OPTIMISM_PK_DEPLOYER')
+const AURORA_PK_DEPLOYER = getEnvValSafe('AURORA_PK_DEPLOYER')
+const DOGECHAIN_PK_DEPLOYER = getEnvValSafe('DOGECHAIN_PK_DEPLOYER')
+const ETHERSCAN_API_KEY = getEnvValSafe('ETHERSCAN_API_KEY', false)
 
-// to verify all contracts use
-// find ./deployments/mainnet -maxdepth 1 -type f -not -path '*/\.*' -path "*.json" | xargs -L1 npx hardhat verifyContract --deployment-file-path --network mainnet
-task("verifyContract", "Verifies the contract in the snowtrace")
-  .addParam("deploymentFilePath", "Deployment file path")
-  .setAction(
-    async({deploymentFilePath}, hre) => verifyContract(deploymentFilePath, hre)
-  )
-
-// npx hardhat list-adapters --network mainnet
-task("list-adapters", "Lists all adapters for the current YakRouter", async (_, hre) => {
-  const YakRouter = await hre.ethers.getContract("YakRouterV0")
-  const adapterLen = await YakRouter.adaptersCount()
-  const adapterIndices = Array.from(Array(adapterLen.toNumber()).keys())
-  const liveAdapters = await Promise.all(adapterIndices.map(async (i) => {
-      const adapter = await YakRouter.ADAPTERS(i)
-      const name = await hre.ethers.getContractAt("YakAdapter", adapter)
-        .then(a => a.name())
-      return { adapter, name }
-  }))
-  console.table(liveAdapters)
-})
+function getEnvValSafe(key, required=true) {
+  const endpoint = process.env[key];
+  if (!endpoint && required)
+      throw(`Missing env var ${key}`);
+  return endpoint
+}
 
 module.exports = {
   mocha: {
@@ -68,14 +55,14 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: process.env.SNOWTRACE_API_KEY
+    apiKey: ETHERSCAN_API_KEY
   },
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
       chainId: 43114,
       forking: {
-        url: AVALANCHE_FORK_RPC, 
+        url: AVALANCHE_RPC, 
         blockNumber: 18154644
       },
       accounts: {
@@ -83,18 +70,40 @@ module.exports = {
         count: 200
       }
     }, 
-    mainnet: {
+    avalanche: {
       chainId: 43114,
       gasPrice: 225000000000,
-      url: AVALANCHE_DEPLOY_RPC,
-      accounts: [
-        PK_DEPLOYER
-      ]
-    }
+      url: AVALANCHE_RPC,
+      accounts: [ AVALANCHE_PK_DEPLOYER ]
+    },
+    arbitrum: {
+      chainId: 42161,
+      url: ARBITRUM_RPC,
+      accounts: [ ARBITRUM_PK_DEPLOYER ],
+    },
+    optimism: {
+      chainId: 10,
+      url: OPTIMISM_RPC,
+      accounts: [ OPTIMISM_PK_DEPLOYER ],
+    },
+    aurora: {
+      chainId: 1313161554,
+      url: AURORA_RPC,
+      accounts: [ AURORA_PK_DEPLOYER ],
+    },
+    dogechain: {
+      chainId: 2000,
+      url: DOGECHAIN_RPC,
+      accounts: [ DOGECHAIN_PK_DEPLOYER ],
+    },
   },
   paths: {
-    deploy: 'deploy',
-    deployments: 'deployments'
+    deployments: './src/deployments',
+    artifacts: "./src/artifacts",
+    sources: "./src/contracts",
+    deploy: './src/deploy',
+    cache: "./src/cache",
+    tests: "./src/test"
   },
   abiExporter: {
     path: './abis',
@@ -102,13 +111,13 @@ module.exports = {
     flat: true
   },
   contractSizer: {
-    alphaSort: false,
-    runOnCompile: false,
     disambiguatePaths: false,
+    runOnCompile: false,
+    alphaSort: false,
   },
   gasReporter: {
-    enabled: false,
     showTimeSpent: true, 
+    enabled: false,
     gasPrice: 225
   }
 };
