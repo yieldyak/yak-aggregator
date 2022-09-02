@@ -9,40 +9,11 @@ require('hardhat-log-remover');
 require("hardhat-tracer");
 require('hardhat-deploy');
 
-require('./src/scripts/update-adapters')
-require('./src/scripts/update-hop-tokens')
-
-const verifyContract = require("./src/scripts/verify-contract");
-const { task } = require("hardhat/config");
-
-// to verify all contracts use
-// find ./deployments/mainnet -maxdepth 1 -type f -not -path '*/\.*' -path "*.json" | xargs -L1 npx hardhat verifyContract --deployment-file-path --network mainnet
-task("verifyContract", "Verifies the contract in the snowtrace")
-  .addParam("deploymentFilePath", "Deployment file path")
-  .setAction(
-    async({deploymentFilePath}, hre) => verifyContract(deploymentFilePath, hre)
-  )
-
-// npx hardhat list-adapters --network mainnet
-task("list-adapters", "Lists all adapters for the current YakRouter", async (_, hre) => {
-  const YakRouter = await hre.ethers.getContract("YakRouterV0")
-  const adapterLen = await YakRouter.adaptersCount()
-  const adapterIndices = Array.from(Array(adapterLen.toNumber()).keys())
-  const liveAdapters = await Promise.all(adapterIndices.map(async (i) => {
-      const adapter = await YakRouter.ADAPTERS(i)
-      const name = await hre.ethers.getContractAt("YakAdapter", adapter)
-        .then(a => a.name())
-      return { adapter, name }
-  }))
-  console.table(liveAdapters)
-})
-
-function getEnvValSafe(key, required=true) {
-  const endpoint = process.env[key];
-  if (!endpoint && required)
-      throw(`Missing env var ${key}`);
-  return endpoint
-}
+// Tasks
+require('./src/tasks/update-hop-tokens')
+require('./src/tasks/update-adapters')
+require('./src/tasks/verify-contract')
+require('./src/tasks/list-adapters')
 
 const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')
 const ARBITRUM_RPC = getEnvValSafe('ARBITRUM_RPC')
@@ -55,6 +26,13 @@ const OPTIMISM_PK_DEPLOYER = getEnvValSafe('OPTIMISM_PK_DEPLOYER')
 const AURORA_PK_DEPLOYER = getEnvValSafe('AURORA_PK_DEPLOYER')
 const DOGECHAIN_PK_DEPLOYER = getEnvValSafe('DOGECHAIN_PK_DEPLOYER')
 const ETHERSCAN_API_KEY = getEnvValSafe('ETHERSCAN_API_KEY', false)
+
+function getEnvValSafe(key, required=true) {
+  const endpoint = process.env[key];
+  if (!endpoint && required)
+      throw(`Missing env var ${key}`);
+  return endpoint
+}
 
 module.exports = {
   mocha: {

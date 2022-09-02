@@ -164,7 +164,7 @@ yarn deploy:{network-id}
 ```
 #### Verify
 ```
-npx hardhat verifyContract --deployment-file-path {path to deployment file} --network {your network tag}
+npx hardhat verify-contract --deployment-file-path {path to deployment file} --network {your network tag}
 ```
 
 ## Audits and Security
