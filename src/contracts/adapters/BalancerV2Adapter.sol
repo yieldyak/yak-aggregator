@@ -42,7 +42,7 @@ contract BalancerV2Adapter is YakAdapter {
         addPools(_pools);
     }
 
-    function addPools(address[] memory _pools) public onlyOwner {
+    function addPools(address[] memory _pools) public onlyMaintainer {
         for (uint128 i = 0; i < _pools.length; i++) {
             address pool = _pools[i];
             bytes32 poolId = IBasePool(pool).getPoolId();
@@ -60,7 +60,7 @@ contract BalancerV2Adapter is YakAdapter {
         }
     }
 
-    function removePools(address[] memory _pools) public onlyOwner {
+    function removePools(address[] memory _pools) public onlyMaintainer {
         for (uint256 i = 0; i < _pools.length; i++) {
             address pool = _pools[i];
             bytes32 poolId = IBasePool(pool).getPoolId();

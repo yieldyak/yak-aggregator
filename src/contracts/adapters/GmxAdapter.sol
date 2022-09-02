@@ -49,11 +49,11 @@ contract GmxAdapter is YakAdapter {
 
     //                                 UTILS                                  \\
 
-    function addPoolTkns(address[] calldata _tokens) external onlyOwner {
+    function addPoolTkns(address[] calldata _tokens) external onlyMaintainer {
         for (uint256 i; i < _tokens.length; ++i) _setToken(_tokens[i]);
     }
 
-    function rmPoolTkns(address[] calldata _tokens) external onlyOwner {
+    function rmPoolTkns(address[] calldata _tokens) external onlyMaintainer {
         for (uint256 i; i < _tokens.length; ++i) isPoolTkn[_tokens[i]] = false;
     }
 

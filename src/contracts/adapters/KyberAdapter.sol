@@ -37,7 +37,7 @@ contract KyberAdapter is YakAdapter {
         addPools(_pools);
     }
 
-    function addPools(address[] memory _pools) public onlyOwner {
+    function addPools(address[] memory _pools) public onlyMaintainer {
         // Note: Overrides existing if pool has same tkns but different APR
         for (uint256 i = 0; i < _pools.length; i++) {
             address tkn0 = IKyberPool(_pools[i]).token0();
@@ -47,7 +47,7 @@ contract KyberAdapter is YakAdapter {
         }
     }
 
-    function removePools(address[] memory _pools) public onlyOwner {
+    function removePools(address[] memory _pools) public onlyMaintainer {
         // Note: Overrides existing if pool has same tkns but different APR
         for (uint256 i = 0; i < _pools.length; i++) {
             address tkn0 = IKyberPool(_pools[i]).token0();

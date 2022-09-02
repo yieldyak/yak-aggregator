@@ -51,16 +51,16 @@ contract GeodeWPAdapter is YakAdapter {
         pool = _pool;
     }
 
-    function setInterfaceForPooledTkn(address interfaceAddress) public onlyOwner {
+    function setInterfaceForPooledTkn(address interfaceAddress) public onlyMaintainer {
         require(IgAVAX(gavax).isInterface(interfaceAddress, pooledTknId), "Not valid interface");
         pooledTknInterface = interfaceAddress;
     }
 
-    function setGAvaxAllowance() public onlyOwner {
+    function setGAvaxAllowance() public onlyMaintainer {
         IgAVAX(gavax).setApprovalForAll(pool, true);
     }
 
-    function revokeGAvaxAllowance() public onlyOwner {
+    function revokeGAvaxAllowance() public onlyMaintainer {
         IgAVAX(gavax).setApprovalForAll(pool, false);
     }
 

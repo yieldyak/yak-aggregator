@@ -54,7 +54,7 @@ contract BridgeMigrationAdapter is YakAdapter {
         _returnTo(_tokenOut, _amountOut, _to);
     }
 
-    function setNewBridgeTokens(address[] memory _newTokens, address[] memory _oldTokens) public onlyOwner {
+    function setNewBridgeTokens(address[] memory _newTokens, address[] memory _oldTokens) public onlyMaintainer {
         require(_newTokens.length == _oldTokens.length, "Needs to be surjective");
         for (uint256 i; i < _newTokens.length; i++) {
             require(IERC20(_newTokens[i]).swapSupply(_oldTokens[i]) > 0, "Invalid combination");

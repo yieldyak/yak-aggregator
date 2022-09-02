@@ -87,7 +87,7 @@ contract PlatypusAdapter is YakAdapter {
         }
     }
 
-    function addPools(address[] memory pools) public onlyOwner {
+    function addPools(address[] memory pools) public onlyMaintainer {
         for (uint256 i = 0; i < pools.length; i++) {
             address pool = pools[i];
             address[] memory supportedTkns = IPlatypus(pool).getTokenAddresses();
@@ -96,7 +96,7 @@ contract PlatypusAdapter is YakAdapter {
         }
     }
 
-    function setPoolForTkns(address pool, address[] memory tkns) external onlyOwner {
+    function setPoolForTkns(address pool, address[] memory tkns) external onlyMaintainer {
         require(tkns.length > 1, "At least two tkns");
         require(pool != address(0), "Only non-zero pool");
         require(_poolSupportsTkns(pool, tkns), "Pool does not support tkns");
@@ -105,7 +105,7 @@ contract PlatypusAdapter is YakAdapter {
         emit PartialPoolSupport(pool, tkns);
     }
 
-    function rmPools(address[] calldata pools) external onlyOwner {
+    function rmPools(address[] calldata pools) external onlyMaintainer {
         for (uint256 i = 0; i < pools.length; i++) {
             address pool = pools[i];
             address[] memory supportedTkns = IPlatypus(pool).getTokenAddresses();
