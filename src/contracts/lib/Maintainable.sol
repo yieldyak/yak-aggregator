@@ -36,6 +36,12 @@ abstract contract Maintainable is Context, AccessControl {
         renounceRole(role, msgSender);
     }
 
+    function transferOwnership(address newOwner) public virtual {
+        address msgSender = _msgSender();
+        grantRole(DEFAULT_ADMIN_ROLE, newOwner);
+        renounceRole(DEFAULT_ADMIN_ROLE, msgSender);
+    }
+
     modifier onlyMaintainer() {
         address msgSender = _msgSender();
         require(hasRole(MAINTAINER_ROLE, msgSender), "Maintainable: Caller is not a maintainer");
