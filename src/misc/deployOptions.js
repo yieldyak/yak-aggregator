@@ -1,4 +1,7 @@
-const { assets } = require('./addresses.json').avalanche
+const { 
+    avalanche: ava, 
+    dogechain: dog
+} = require('./addresses.json')
 
 module.exports = {
     "avalanche": {
@@ -33,16 +36,30 @@ module.exports = {
             'WAvaxAdapter',
         ],
         hopTokens: [
-            assets.WAVAX,
-            assets.WETHe,
-            assets.USDTe,
-            assets.USDC,
-            assets.USDCe,
-            assets.MIM,
-            assets.WBTCe,
-            assets.DAIe,
-            assets.USDt,
+            ava.assets.WAVAX,
+            ava.assets.WETHe,
+            ava.assets.USDTe,
+            ava.assets.USDC,
+            ava.assets.USDCe,
+            ava.assets.MIM,
+            ava.assets.WBTCe,
+            ava.assets.DAIe,
+            ava.assets.USDt,
           ],
-        wnative: assets.WAVAX
+        wnative: ava.assets.WAVAX
+    }, 
+    "dogechain": {
+        adapterWhitelist: [
+            'DogeSwapAdapter',
+            'KibbleSwapAdapter',
+            'YodeSwapAdapter',
+        ],
+        hopTokens: [
+            dog.assets.ETH,
+            dog.assets.USDC,
+            dog.assets.USDT,
+            dog.assets.WWDOGE,
+        ], 
+        wnative: dog.assets.WWDOGE
     }
 }
