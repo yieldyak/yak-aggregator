@@ -6,15 +6,14 @@ module.exports = {
             'TraderJoeYakAdapterV0',
             'PangolinYakAdapterV0',
             'SushiYakAdapterV0',
-            'LydiaYakAdapterV0',
-            'HakuSwapAdapterV0',
             'ElkYakAdapterV0',
             'KyberAdapter',
       
             'SynapsePlainYakAdapterV0',
+            'AxialAS4DYakAdapterV0',
             'PlatypusYakAdapterV2',
             
-            'CurveAtricryptoAdapterV',
+            'CurveAtricryptoAdapterV0',
             'Curve3poolV2AdapterV0',
             'Curve3poolfAdapterV0',
             'CurveDeUSDCAdapterV0',
@@ -23,11 +22,6 @@ module.exports = {
             'CurveMoreAdapterV0',
             'CurveRenAdapterV0',
             'CurveYUSDAdapter',
-            
-            'AxialAS4DYakAdapterV0',
-            'AxialAM3DYakAdapterV0',
-            'AxialAA3DYakAdapterV0',
-            'AxialAC4DYakAdapterV0',
       
             'WoofiUSDCAdapter',
             'GWPyyAvaxAdapter',
@@ -37,7 +31,6 @@ module.exports = {
             'MiniYakAdapterV0',
             'SAvaxAdapterV0',
             'WAvaxAdapter',
-            'XJoeAdapter',
         ],
         hopTokens: [
             assets.WAVAX,
@@ -49,7 +42,6 @@ module.exports = {
             assets.WBTCe,
             assets.DAIe,
             assets.USDt,
-            assets.JOE, // Needed to swap WAVAX to yyJOE
           ],
         wnative: assets.WAVAX
     }

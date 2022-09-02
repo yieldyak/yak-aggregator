@@ -9,6 +9,9 @@ require('hardhat-log-remover');
 require("hardhat-tracer");
 require('hardhat-deploy');
 
+require('./src/scripts/update-adapters')
+require('./src/scripts/update-hop-tokens')
+
 const verifyContract = require("./src/scripts/verify-contract");
 const { task } = require("hardhat/config");
 

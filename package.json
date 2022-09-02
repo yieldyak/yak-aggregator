@@ -43,6 +43,7 @@
     "minimist": "^1.2.6",
     "prettier": "^2.7.1",
     "prettier-plugin-solidity": "^1.0.0-beta.24",
+    "prompt-sync": "^4.2.0",
     "solc": "^0.6.12",
     "solhint": "^3.3.7",
     "solhint-plugin-prettier": "^0.0.5",
