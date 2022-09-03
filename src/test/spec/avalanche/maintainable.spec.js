@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { utils } = require("ethers");
 
-const { fixtures, addresses } = require("../../../fixtures");
+const { fixtures, addresses } = require("../../fixtures");
 const { assets } = addresses.avalanche;
 
 const newTrustedTokens = [
