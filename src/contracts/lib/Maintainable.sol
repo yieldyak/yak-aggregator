@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
  * to include many maintainers, whom only the owner (DEFAULT_ADMIN_ROLE) may add and
  * remove.
  *
- * By default, the owner account will be the one that deploys the contract. This
- * can later be changed with {transferOwnership}.
+ * By default, the owner account will be the one that deploys the contract. This can
+ * later be changed with {transferOwnership}.
  *
  * This module is used through inheritance. It will make available this modifier:
  * `onlyMaintainer`, which can be applied to your functions to restrict their use to
