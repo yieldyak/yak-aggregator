@@ -81,6 +81,20 @@ module.exports.makeAccountGen = async () => {
     return genNewAccount
 }
 
+module.exports.getAccountsGen = async () => {
+    const accounts = await ethers.getSigners()
+
+    function* makeGen() {
+        for (let account of accounts)
+            yield account
+    }
+
+    const gen = makeGen()
+    return { next: () => gen.next().value }
+
+    
+}
+
 module.exports.approveERC20 = (signer, token, spender, amount) => {
     return signer.sendTransaction({
         to: token, 
@@ -170,9 +184,14 @@ module.exports.forkGlobalNetwork = async (_blockNumber, _networkId) => {
     })
 }
 
-module.exports.getSupportedERC20Tokens = async (networkName) => {
+module.exports.getTknContractsForNetwork = async (networkName) => {
     const { assets } = require('../misc/addresses.json')[networkName]
     return Promise.all(Object.keys(assets).map(tknSymbol => {
         return _getTokenContract(assets[tknSymbol]).then(tc => [tknSymbol, tc])
     })).then(Object.fromEntries)
+}
+
+module.exports.deployContract = async (_contractName, { deployer, args }) => {
+    return ethers.getContractFactory(_contractName)
+        .then(f => f.connect(deployer).deploy(...args))
 }
