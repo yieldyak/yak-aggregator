@@ -172,8 +172,10 @@
             "deUSDC": "0x28690ec942671aC8d9Bc442B667EC338eDE6dFd3",
             "YUSD": "0x111111111111ed1D73f860F57b2798b683f2d325",
             "yyAVAX": "0xF7D9281e8e363584973F946201b82ba72C965D27",
-            "gAVAX": "0x6026a85e11BD895c934Af02647E8C7b4Ea2D9808"
-    
+            "gAVAX": "0x6026a85e11BD895c934Af02647E8C7b4Ea2D9808",
+            "SNX": "0xBeC243C995409E6520D7C41E404da5dEba4b209B",
+            "BTCb": "0x152b9d0FdC40C096757F570A51E494bd4b943E50", 
+            "H20": "0x026187BdbC6b751003517bcb30Ac7817D5B766f8"
         }, 
         "unilikeRouters": {
             "zero": "0x85995d5f8ee9645cA855e92de16FA62D26398060", 
@@ -266,7 +268,13 @@
             "main": "0x66357dCaCe80431aee0A7507e2E361B7e2402370",
             "frax": "0xB8E567fc23c39C94a1f6359509D7b43D1Fbed824",
             "mim": "0x30C30d826be87Cd0A4b90855C2F38f7FcfE4eaA7", 
-            "ust": "0xe0D166DE15665bC4B7185B2e35E847E51316E126" 
+            "ust": "0xe0D166DE15665bC4B7185B2e35E847E51316E126", 
+            "savax": "0x4658EA7e9960D6158a261104aAA160cC953bb6ba",
+            "yusd": "0xC828D995C686AaBA78A4aC89dfc8eC0Ff4C5be83",
+            "h20": "0x233Ba46B01d2FbF1A31bDBc500702E286d6de218", 
+            "money": "0x27912AE6Ba9a54219d8287C3540A8969FF35500B", 
+            "tsd": "0x91BB10D68C72d64a7cE10482b453153eEa03322C",
+            "btc": "0x39dE4e02F76Dbd4352Ec2c926D8d64Db8aBdf5b2"
         },
         "other": {
             "GmxVault": "0x9ab2De34A33fB459b538c43f251eB825645e8595",
@@ -274,7 +282,8 @@
             "WoofiPoolUSDC": "0x1df3009c57a8B143c6246149F00B090Bce3b8f88",
             "GWPyyAvax": "0xa974DE60871907AAFE3A4634766aDb40dF461C16",
             "GeodePortal": "0x4fe8C658f268842445Ae8f95D4D6D8Cfd356a8C8",
-            "ArableSF": "0xF39b1c8b977030F5FC81117C244Bf7B9514Ee562"
+            "ArableSF": "0xF39b1c8b977030F5FC81117C244Bf7B9514Ee562", 
+            "curveMetaSwapper": "0x001E3BA199B4FF4B5B6e97aCD96daFC0E2e4156e"
         }
     }, 
     "dogechain": {

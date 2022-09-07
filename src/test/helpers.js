@@ -32,7 +32,7 @@ const getERC20SlotByExecute = async (token, _signer) => {
             const shash = hash.slice(2)
             // Return the slot if its hash with holder address is mapped to return value in storage and hash is on top of stack
             if (log.stack[log.stack.length-1] == shash && log.storage[shash] == result.returnValue) {
-                const slot = parseInt(log.memory[1])
+                const slot = parseInt(log.memory[1], 16)
                 const contract = depthToAddress[log.depth]
                 return [contract, slot]
             }
@@ -81,6 +81,20 @@ module.exports.makeAccountGen = async () => {
     return genNewAccount
 }
 
+module.exports.getAccountsGen = async () => {
+    const accounts = await ethers.getSigners()
+
+    function* makeGen() {
+        for (let account of accounts)
+            yield account
+    }
+
+    const gen = makeGen()
+    return { next: () => gen.next().value }
+
+    
+}
+
 module.exports.approveERC20 = (signer, token, spender, amount) => {
     return signer.sendTransaction({
         to: token, 
@@ -125,7 +139,7 @@ module.exports.setERC20Bal = async (_token, _holder, _amount) => {
     const [contract, storageSlot] = await getERC20Slot(_token)
     const key = addressToBytes32(_holder)
     const index = ethers.utils.keccak256(
-        key + storageSlot.toString().padStart(64, '0')
+        key + storageSlot.toString(16).padStart(64, '0')
     ).replace(/0x0+/, "0x")  // Hardhat doesn't like leading zeroes
     await setStorageAt(contract, index, bigNumToBytes32(_amount))
 }
@@ -170,9 +184,14 @@ module.exports.forkGlobalNetwork = async (_blockNumber, _networkId) => {
     })
 }
 
-module.exports.getSupportedERC20Tokens = async (networkName) => {
+module.exports.getTknContractsForNetwork = async (networkName) => {
     const { assets } = require('../misc/addresses.json')[networkName]
     return Promise.all(Object.keys(assets).map(tknSymbol => {
         return _getTokenContract(assets[tknSymbol]).then(tc => [tknSymbol, tc])
     })).then(Object.fromEntries)
+}
+
+module.exports.deployContract = async (_contractName, { deployer, args }) => {
+    return ethers.getContractFactory(_contractName)
+        .then(f => f.connect(deployer).deploy(...args))
 }

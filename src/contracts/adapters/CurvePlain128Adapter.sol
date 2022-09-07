@@ -42,7 +42,7 @@ contract CurvePlain128Adapter is YakAdapter {
     // Mapping indicator which tokens are included in the pool
     function _setPoolTokens(address _pool) internal {
         for (uint256 i = 0; true; i++) {
-            try CurvePlain128(_pool).coins(i) returns (address token) {
+            try ICurvePlain128(_pool).coins(i) returns (address token) {
                 _approveToken(_pool, token, int128(int256(i)));
             } catch {
                 break;
@@ -84,7 +84,7 @@ contract CurvePlain128Adapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view returns (uint256) {
-        try CurvePlain128(POOL).get_dy(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
+        try ICurvePlain128(POOL).get_dy(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
             uint256 amountOut
         ) {
             return amountOut;
@@ -100,7 +100,7 @@ contract CurvePlain128Adapter is YakAdapter {
         address _tokenOut,
         address _to
     ) internal override {
-        CurvePlain128(POOL).exchange(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
+        ICurvePlain128(POOL).exchange(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
         // Confidently transfer amount-out
         _returnTo(_tokenOut, _amountOut, _to);
     }

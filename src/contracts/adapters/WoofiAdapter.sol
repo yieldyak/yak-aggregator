@@ -36,7 +36,9 @@ contract WoofiAdapter is YakAdapter {
         uint256 _swapGasEstimate,
         address _pool
     ) YakAdapter(_name, _swapGasEstimate) {
-        quoteToken = IWooPP(_pool).quoteToken();
+        address _quoteToken = IWooPP(_pool).quoteToken();
+        IERC20(_quoteToken).approve(_pool, UINT_MAX);
+        quoteToken = _quoteToken;
         pool = _pool;
     }
 
@@ -89,7 +91,6 @@ contract WoofiAdapter is YakAdapter {
             realToAmount = IWooPP(pool).sellBase(_tokenIn, _amountIn, _amountOut, _to, rebateCollector);
         } else {
             uint256 quoteAmount = IWooPP(pool).sellBase(_tokenIn, _amountIn, 0, address(this), rebateCollector);
-            _approveIfNeeded(quoteToken, quoteAmount);
             realToAmount = IWooPP(pool).sellQuote(_tokenOut, quoteAmount, _amountOut, _to, rebateCollector);
         }
     }
