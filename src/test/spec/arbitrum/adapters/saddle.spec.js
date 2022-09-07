@@ -117,9 +117,9 @@ describe('YakAdapter - Saddle', () => {
 
         describe('Swapping matches query with error', async () => {
 
-            it('3000 USDs -> USDC', async () => {
+            it('30 USDs -> USDC', async () => {
                 await ate.checkSwapMatchesQueryWithErr(
-                    '3000', 
+                    '30', 
                     tkns.USDs,
                     tkns.USDC,
                     maxErrorBps

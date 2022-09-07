@@ -8,12 +8,13 @@ const BN_ZERO = ethers.constants.AddressZero
 const DEFAULT_ERROR_BPS = 0
 
 class AdapterTestEnv {
-    #Adapter
+    Adapter
     #env
 
-    constructor(env, _adapter) {
+    constructor(env, _adapter, _deployer) {
         this.#env = env
-        this.#Adapter = _adapter
+        this.Adapter = _adapter
+        this.deployer = _deployer
         this.trader = () => this.#env.trader
     }
 
@@ -44,7 +45,7 @@ class AdapterTestEnv {
         tokenFrom, 
         tokenTo,
     ) {
-        await this.checkSwapMatchesQueryWithErrWithDust(
+        await this.checkSwapMatchesQueryWithDustWithErr(
             dxFixed,
             tokenFrom, 
             tokenTo,
@@ -59,7 +60,7 @@ class AdapterTestEnv {
         tokenTo,
         errorBps,
     ) {
-        await this.checkSwapMatchesQueryWithErrWithDust(
+        await this.checkSwapMatchesQueryWithDustWithErr(
             dxFixed,
             tokenFrom, 
             tokenTo,
@@ -74,7 +75,7 @@ class AdapterTestEnv {
         tokenTo,
         maxDustWei
     ) {
-        await this.checkSwapMatchesQueryWithErrWithDust(
+        await this.checkSwapMatchesQueryWithDustWithErr(
             dxFixed,
             tokenFrom, 
             tokenTo,
@@ -83,7 +84,7 @@ class AdapterTestEnv {
         )
     }
 
-    async checkSwapMatchesQueryWithErrWithDust(
+    async checkSwapMatchesQueryWithDustWithErr(
         dxFixed,
         tokenFrom, 
         tokenTo,
@@ -98,10 +99,10 @@ class AdapterTestEnv {
         const balDiffs = await this.#executeAndReturnBalChange(
             swapFn, 
             tokenTo,
-            [ this.trader().address, this.#Adapter.address ] 
+            [ this.trader().address, this.Adapter.address ] 
         )
         const [ traderBalDiff, adapterBalDiff ] = balDiffs
-        const errUpperThreshold = getErrUpperThreshold(queryDy, errorBps)
+        const errUpperThreshold = getErrUpperThreshold(queryDy, errorBps).add(maxDustWei)
         expect(traderBalDiff).to.be.within(queryDy, errUpperThreshold)
         expect(adapterBalDiff).to.be.lte(maxDustWei)
     }
@@ -119,20 +120,20 @@ class AdapterTestEnv {
                 maxGas = gasUsed
             }
         }
-        const adapterGasEstimate = await this.#Adapter.swapGasEstimate().then(parseInt)
+        const adapterGasEstimate = await this.Adapter.swapGasEstimate().then(parseInt)
         const upperBoundryPct = 100 + accuracyPct
         expect(adapterGasEstimate).to.be.within(maxGas, maxGas*upperBoundryPct)
     }
 
     // << INTERNAL >>
 
-    // also checks execution does not revert
     async #executeAndReturnBalChange(fn, tknObj, holders) {
         const getBals = () => Promise.all(holders.map(holder => {
             return tknObj.balanceOf(holder)
         }))
         const balBefore = await getBals()
-        await expect(fn()).to.not.reverted
+        // await expect(fn()).to.not.reverted
+        await fn()
         const balAfter = await getBals()
         const balDiffs = balAfter.map((b0, i) => b0.sub(balBefore[i]))
 
@@ -148,7 +149,7 @@ class AdapterTestEnv {
     }
 
     async #getGasEstimateForQuery(amountIn, tokenFrom, tokenTo) {
-        return this.#Adapter.estimateGas.query(
+        return this.Adapter.estimateGas.query(
             amountIn,
             tokenFrom.address, 
             tokenTo.address
@@ -157,7 +158,7 @@ class AdapterTestEnv {
 
     async #getGasEstimateForSwap(amountIn, tokenFrom, tokenTo) {
         const minDy = parseUnits('1', 'wei')
-        const txReceipt = await this.#mintAndSwap(
+        const txReceipt = await this.mintAndSwap(
             amountIn,
             minDy,
             tokenFrom, 
@@ -177,7 +178,7 @@ class AdapterTestEnv {
             tokenFrom.address, 
             tokenTo.address
         )
-        const swapFn = async () => this.#mintAndSwap(
+        const swapFn = async () => this.mintAndSwap(
             amountIn, 
             queryDy,
             tokenFrom,
@@ -191,21 +192,21 @@ class AdapterTestEnv {
         tokenFromAdd, 
         tokenToAdd
     ) {
-        return this.#Adapter.query(
+        return this.Adapter.query(
             amountIn, 
             tokenFromAdd, 
             tokenToAdd
         )
     }
 
-    async #mintAndSwap(
+    async mintAndSwap(
         amountIn, 
         amountOutQuery, 
         tokenFrom, 
         tokenTo,
         to
     ) {
-        await setERC20Bal(tokenFrom.address, this.#Adapter.address, amountIn)
+        await setERC20Bal(tokenFrom.address, this.Adapter.address, amountIn)
         return this.#swap(amountIn, amountOutQuery, tokenFrom, tokenTo, to)
     }
 
@@ -216,7 +217,7 @@ class AdapterTestEnv {
         tokenTo,
         to=this.trader().address
     ) {
-        return this.#Adapter.connect(this.trader()).swap(
+        return this.Adapter.connect(this.trader()).swap(
             amountIn, 
             amountOutQuery,
             tokenFrom.address,
@@ -234,7 +235,7 @@ async function parseUnitsForTkn(fixedAmount, token) {
 function getErrUpperThreshold(expectedAmount, _errorBps) {
     const errorBps = parseUnits(`${_errorBps}`, 'wei')
     const denominator = parseUnits('1', 4)
-    const high = expectedAmount.mul(denominator.add(errorBps)).div(denominator)
+    const high = expectedAmount.mul(denominator).div(denominator.sub(errorBps))
     return high
 }
 

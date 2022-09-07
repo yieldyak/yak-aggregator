@@ -40,7 +40,13 @@ contract PlatypusAdapter is YakAdapter {
 
     mapping(address => mapping(address => address)) private tknToTknToPool;
 
-    constructor(string memory _name, uint256 _swapGasEstimate) YakAdapter(_name, _swapGasEstimate) {}
+    constructor(
+        string memory _name, 
+        uint256 _swapGasEstimate,
+        address[] memory _initPools
+    ) YakAdapter(_name, _swapGasEstimate) {
+        addPools(_initPools);
+    }
 
     function getPoolForTkns(address tknIn, address tknOut) public view returns (address) {
         return tknToTknToPool[tknIn][tknOut];
@@ -81,8 +87,7 @@ contract PlatypusAdapter is YakAdapter {
         }
     }
 
-    // Add pools for all tkns it supports
-    function addPools(address[] calldata pools) external onlyOwner {
+    function addPools(address[] memory pools) public onlyOwner {
         for (uint256 i = 0; i < pools.length; i++) {
             address pool = pools[i];
             address[] memory supportedTkns = IPlatypus(pool).getTokenAddresses();
@@ -91,7 +96,6 @@ contract PlatypusAdapter is YakAdapter {
         }
     }
 
-    // Manually set the pool support for tkns
     function setPoolForTkns(address pool, address[] memory tkns) external onlyOwner {
         require(tkns.length > 1, "At least two tkns");
         require(pool != address(0), "Only non-zero pool");

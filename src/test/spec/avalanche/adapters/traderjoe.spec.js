@@ -1,7 +1,7 @@
 const { setTestEnv, addresses } = require('../../../utils/test-env')
-const { curvelikePools } = addresses.avalanche
+const { unilikeFactories } = addresses.avalanche
 
-describe('YakAdapter - synapse', () => {
+describe('YakAdapter - TraderJoe', () => {
     
     let testEnv
     let tkns
@@ -13,11 +13,12 @@ describe('YakAdapter - synapse', () => {
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
-        const contractName = 'SaddleAdapter'
-        const adapterArgs = [
-            'SynapseAdapter',
-            curvelikePools.SynapseDAIeUSDCeUSDTeNUSD,
-            320_000
+        const contractName = 'UniswapV2Adapter'
+        const adapterArgs = [ 
+            'UniswapV2Adapter', 
+            unilikeFactories.joe, 
+            3, 
+            170_000
         ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
     })
@@ -28,28 +29,30 @@ describe('YakAdapter - synapse', () => {
 
     describe('Swapping matches query', async () => {
 
-        it('100 USDTe -> DAIe', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.USDTe, tkns.DAIe)
+        it('100 USDC -> WAVAX', async () => {
+            await ate.checkSwapMatchesQuery('100', tkns.USDC, tkns.WAVAX)
         })
-        it('100 DAIe -> USDCe', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.DAIe, tkns.USDCe)
+
+        it('100 WETHe -> WAVAX', async () => {
+            await ate.checkSwapMatchesQuery('100', tkns.WETHe, tkns.WAVAX)
         })
-        it('100 USDCe -> USDTe', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.USDCe, tkns.USDTe)
+
+        it('100 USDCe -> USDC', async () => {
+            await ate.checkSwapMatchesQuery('100', tkns.USDCe, tkns.USDC)
         })
 
     })
 
     it('Query returns zero if tokens not found', async () => {
-        const supportedTkn = tkns.USDTe
+        const supportedTkn = tkns.WAVAX
         ate.checkQueryReturnsZeroForUnsupportedTkns(supportedTkn)
     })
 
     it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
         const options = [
-            [ '1', tkns.USDTe, tkns.USDCe ],
-            [ '1', tkns.USDCe, tkns.DAIe ],
-            [ '1', tkns.DAIe, tkns.USDTe ],
+            [ '1', tkns.USDC, tkns.WAVAX ],
+            [ '1', tkns.WETHe, tkns.WAVAX ],
+            [ '1', tkns.USDCe, tkns.USDC ],
         ]
         await ate.checkGasEstimateIsSensible(options)
     })

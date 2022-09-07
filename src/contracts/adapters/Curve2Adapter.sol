@@ -28,6 +28,9 @@ import "../YakAdapter.sol";
 contract Curve2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
 
+    uint256 constant BPS_DEN = 1e4;
+    uint256 constant MAX_ERR_BPS = 1;
+
     mapping(address => bool) public isPoolToken;
     mapping(address => int128) public tokenIndex;
     address public pool;
@@ -69,11 +72,14 @@ contract Curve2Adapter is YakAdapter {
         try ICurve2(pool).get_dy_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
             uint256 amountOut
         ) {
-            // Account for rounding error (swap and query may calc different amounts) by substracting 1 gwei
-            return amountOut == 0 ? 0 : amountOut - 1;
+            return _applyErr(amountOut);
         } catch {
             return 0;
         }
+    }
+
+    function _applyErr(uint256 x) internal pure returns (uint256) {
+        return x * (BPS_DEN - MAX_ERR_BPS) / BPS_DEN;
     }
 
     function _swap(
@@ -83,8 +89,9 @@ contract Curve2Adapter is YakAdapter {
         address _tokenOut,
         address _to
     ) internal override {
-        ICurve2(pool).exchange_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
-        // Confidently transfer amount-out
-        _returnTo(_tokenOut, _amountOut, _to);
+        ICurve2(pool).exchange_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, 0);
+        uint256 balThis = IERC20(_tokenOut).balanceOf(address(this));
+        require(balThis >= _amountOut, "Insufficient amount out");
+        _returnTo(_tokenOut, balThis, _to);
     }
 }

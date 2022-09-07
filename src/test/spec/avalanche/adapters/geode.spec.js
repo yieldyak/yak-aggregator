@@ -1,494 +1,316 @@
-const { ethers } = require("hardhat")
-const { expect } = require("chai")
-const { parseUnits } = ethers.utils
+const { expect } = require('chai')
 
-const { fixtures: fix, helpers, addresses, constants } = require('../../../fixtures')
-const { impersonateAccount, forkGlobalNetwork, setERC20Bal } = helpers
-const { yyPlanet } = constants.geode
+const { 
+    setTestEnv, 
+    addresses, 
+    constants,
+    helpers,
+} = require('../../../utils/test-env')
 const { assets, other } = addresses.avalanche
+const { parseUnits, formatUnits } = ethers.utils
+const { yyPlanet } = constants.geode
 
-describe("YakAdapter - Geode", function() {
-
-    let Adapter
-    let Original
-    let genNewAccount
-    let fixGeode
-    let owner
+describe('YakAdapter - geode', () => {
+    
+    let testEnv
     let tkns
+    let ate // adapter-test-env
     let gAVAX
     let Portal
 
     before(async () => {
-        const forkBlock = 16452180;
-        forkGlobalNetwork(forkBlock)
-        const fixSimple = await fix.simple()
-        genNewAccount = fixSimple.genNewAccount
-        tkns = fixSimple.tokenContracts
-        fixGeode = await fix.geodeWPAdapter()
-        owner = fixGeode.deployer
-        gAVAX = fixGeode.gAVAX
-        Portal = await ethers.getContractAt(
-            'IGeodePortal', 
-            other.GeodePortal
-        )
-        
+        const networkName = 'avalanche'
+        const forkBlockNumber = 19595355
+        testEnv = await setTestEnv(networkName, forkBlockNumber)
+        tkns = testEnv.supportedTkns
+
+        const contractName = 'GeodeWPAdapter'
+        const adapterArgs = [
+            'GWPyyAvaxAdapter',
+            other.GeodePortal,
+            constants.geode.yyPlanet,
+            4.3e5,
+        ]
+        ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
+        gAVAX = await ethers.getContractAt('IgAVAX', assets.gAVAX),
+        GeodeWP = await ethers.getContractAt('IGeodeWP', other.GWPyyAvax),
+        Portal = await ethers.getContractAt('IGeodePortal', other.GeodePortal)
+        Adapter = ate.Adapter
+
     })
 
-    describe('yyAvax', async () => {
+    beforeEach(async () => {
+        testEnv.updateTrader()
+    })
 
-        before(async () => {
-            Adapter = fixGeode.GeodeWPAdapter
-            Original = fixGeode.GeodeWP
+    // @dev: Leave no side effects on Adapter instance
+    describe('maintanance', async () => {
+
+        let Adapter
+
+        before(() => {
+            Adapter = ate.Adapter.connect(ate.deployer)
         })
 
-        describe('maintanance', async () => {
-
-            before(() => {
-                Adapter = Adapter.connect(owner)
-            })
-
-            it('cant set invalid interface', async () => {
-                await expect(Adapter.setInterfaceForPooledTkn(owner.address))
-                    .to.revertedWith('Not valid interface')
-            })
-
-            it('revoke/set token allowance', async () => {
-                // First except allowance as it is set in the constructor
-                const approved = await gAVAX.isApprovedForAll(
-                    Adapter.address, 
-                    Original.address
-                )
-                if (!approved) {
-                    await Adapter.setGAvaxAllowance()      
-                }
-
-                // Revoke allowance and check allowance is revoked
-                await Adapter['revokeGAvaxAllowance()']()
-                expect(await gAVAX.isApprovedForAll(
-                    Adapter.address, 
-                    Original.address
-                )).to.be.false
-
-                // Set allowance and check allowance is set
-                await Adapter.setGAvaxAllowance()
-                expect(await gAVAX.isApprovedForAll(
-                    Adapter.address, 
-                    Original.address
-                )).to.be.true
-            })
-
-            it('set valid interface', async () => {
-                const validInterface = await Adapter.pooledTknInterface()
-                await expect(Adapter.setInterfaceForPooledTkn(validInterface))
-                    .to.not.reverted
-            })
-
+        it('set valid interface', async () => {
+            const validInterface = await Adapter.pooledTknInterface()
+            await expect(Adapter.setInterfaceForPooledTkn(validInterface))
+                .to.not.reverted
         })
 
-        describe('query & swap', async () => {
+        it('cant set invalid interface', async () => {
+            await expect(Adapter.setInterfaceForPooledTkn(ate.deployer.address))
+                .to.revertedWith('Not valid interface')
+        })
 
-            async function addLiquidity(amountInOneSide) {
-                const deadline = Math.floor(Date.now()/1e3) + 300
-                const amountInAvax = amountInOneSide
-                // Mint yyavax
-                await Portal.connect(trader).stake(
-                    ethers.BigNumber.from(yyPlanet), 
-                    parseUnits("0"),
-                    deadline, 
-                    { value: amountInAvax }
-                )
-                const balYYavax = await gAVAX.balanceOf(trader.address, yyPlanet)
-                // Approve gAvax for pool 
-                const isApproved = await gAVAX.isApprovedForAll(
-                    trader.address, 
-                    Original.address
-                )
-                if (!isApproved)
-                    await gAVAX.connect(trader).setApprovalForAll(Original.address, true)
-                // Add liquidity
-                await Original.connect(trader).addLiquidity(
-                    [amountInAvax, balYYavax],
-                    ethers.constants.Zero,
-                    deadline, 
-                    { value: amountInAvax }
-                )
+        it('revoke/set token allowance', async () => {
+            // First expect allowance as it is set in the constructor
+            const approved = await gAVAX.isApprovedForAll(
+                Adapter.address, 
+                GeodeWP.address
+            )
+            if (!approved) {
+                await Adapter.setGAvaxAllowance()      
             }
 
-            // Note: this method wont't produce debt in certain conditions
-            async function createDebt() {
-                const trader = genNewAccount()
-                // Sell for half of the pooled avax
-                const pooledAvax = await ethers.provider.getBalance(
-                    Original.address
-                )
-                const avaxIn = pooledAvax.div(2)
-                // Mint yyavax
+            // Revoke allowance and check allowance is revoked
+            await Adapter['revokeGAvaxAllowance()']()
+            expect(await gAVAX.isApprovedForAll(
+                Adapter.address, 
+                GeodeWP.address
+            )).to.be.false
+
+            // Set allowance and check allowance is set
+            await Adapter.setGAvaxAllowance()
+            expect(await gAVAX.isApprovedForAll(
+                Adapter.address, 
+                GeodeWP.address
+            )).to.be.true
+        })
+
+    })
+
+    describe('Swapping matches query', async () => {
+
+        // Note: this method wont't produce debt in certain conditions
+        async function createDebt() {
+            const trader = testEnv.nextAccount()
+            // Sell for half of the pooled avax
+            const pooledAvax = await ethers.provider.getBalance(
+                GeodeWP.address
+            )
+            const avaxIn = pooledAvax.div(2)
+            // Mint yyavax
+            const deadline = Math.floor(Date.now()/1e3) + 300
+            await Portal.connect(trader).stake(
+                ethers.BigNumber.from(yyPlanet), 
+                avaxIn.div(2),
+                deadline, 
+                { value: avaxIn }
+            )
+            const yyAvaxIn = await tkns.yyAVAX.balanceOf(trader.address)
+            await tkns.yyAVAX.connect(trader).transfer(
+                Adapter.address, 
+                yyAvaxIn
+            )
+            // Sell yyavax 
+            await Adapter.swap(
+                yyAvaxIn,
+                0,
+                assets.yyAVAX, 
+                assets.WAVAX, 
+                trader.address
+            )
+
+            const finalDebt = await GeodeWP.getDebt()
+            return finalDebt
+        }
+
+        async function removeDebt() {
+            const minDebt = parseUnits('1', 15)
+            const trader = testEnv.nextAccount()
+            const debt = await GeodeWP.getDebt()
+            if (debt.gt(minDebt)) {
                 const deadline = Math.floor(Date.now()/1e3) + 300
                 await Portal.connect(trader).stake(
                     ethers.BigNumber.from(yyPlanet), 
-                    avaxIn.div(2),
-                    deadline, 
-                    { value: avaxIn }
-                )
-                const yyAvaxIn = await tkns.yyAVAX.balanceOf(trader.address)
-                await tkns.yyAVAX.connect(trader).transfer(
-                    Adapter.address, 
-                    yyAvaxIn
-                )
-                // Sell yyavax 
-                await Adapter.swap(
-                    yyAvaxIn,
                     0,
-                    assets.yyAVAX, 
-                    assets.WAVAX, 
-                    trader.address
+                    deadline, 
+                    { value: debt }
                 )
-
-                const finalDebt = await Original.getDebt()
-                return finalDebt
+                expect(await GeodeWP.getDebt()).to.lte(minDebt)
             }
+        }
 
-            async function removeDebt() {
-                const minDebt = parseUnits('1', 15)
-                const trader = genNewAccount()
-                const debt = await Original.getDebt()
-                if (debt.gt(minDebt)) {
-                    const deadline = Math.floor(Date.now()/1e3) + 300
-                    await Portal.connect(trader).stake(
-                        ethers.BigNumber.from(yyPlanet), 
-                        0,
-                        deadline, 
-                        { value: debt }
-                    )
-                    expect(await Original.getDebt()).to.lte(minDebt)
-                }
+        describe('staking is paused && debt < amountIn', async () => {
+            // When staking is paused swapping is the only option even
+            // if latter offers worse price
+
+            async function pausePool() {
+                const maitainterAddress = await Portal.getMaintainerFromId(yyPlanet)
+                await helpers.impersonateAccount(maitainterAddress)
+                const maintainer = await ethers.getSigner(maitainterAddress)
+                await Portal.connect(maintainer).pauseStakingForPool(yyPlanet)
             }
-
-            async function checkAdapterQueryMatchesOriginal(
-                tokenFrom, 
-                tokenTo, 
-                amountIn
-            ) {
-                const [ ti0, ti1 ] = tokenFrom.address == assets.WAVAX
-                    ? [ 0, 1 ]
-                    : [ 1, 0 ]
-                // Query original contract
-                const amountOutOriginal = await Original.calculateSwap(
-                    ti0, 
-                    ti1,
-                    amountIn
-                )
-                // Query adapter 
-                const amountOutAdapter = await Adapter.query(
-                    amountIn, 
-                    tokenFrom.address, 
-                    tokenTo.address
-                )
-                // Compare two prices
-                expect(amountOutOriginal).to.equal(amountOutAdapter)
-            }
-
-            async function checkAdapterSwapMatchesQuery(
-                tokenFrom, 
-                tokenTo, 
-                amountIn
-            ) {
-                // Querying adapter 
-                const amountOutQuery = await Adapter.query(
-                    amountIn, 
-                    tokenFrom.address, 
-                    tokenTo.address
-                )
-                // Swapping
-                const swap = () => Adapter.connect(trader).swap(
-                    amountIn, 
-                    amountOutQuery,
-                    tokenFrom.address,
-                    tokenTo.address, 
-                    trader.address
-                )
-                // Check that swap matches the query
-                await expect(swap).to.changeTokenBalance(
-                    tokenTo, 
-                    trader, 
-                    amountOutQuery
-                )
-                // Check leftovers arent left in the adapter
-                expect(await tokenTo.balanceOf(Adapter.address)).to.equal(0)
-            }
-
-            let trader
 
             before(async () => {
-                trader = genNewAccount()
-                await addLiquidity(parseUnits("100"))
+                await removeDebt()
+                await pausePool()
             })
 
-            beforeEach(() => {
-                trader = genNewAccount()
+            it('Swapping matches query :: 0.3456789 WAVAX -> yyAVAX', async () => {
+                const amountIn = '0.3456789'
+                const tknIn = tkns.WAVAX
+                const tknOut = tkns.yyAVAX
+                await ate.checkSwapMatchesQuery(amountIn, tknIn, tknOut)
             })
 
-            describe('staking is paused && debt < amountIn', async () => {
-                // Since staking is paused swapping is the only option even
-                // if latter offers worse price
+        })
 
-                async function pausePool() {
-                    const maitainterAddress = await Portal.getMaintainerFromId(yyPlanet)
-                    await impersonateAccount(maitainterAddress)
-                    const maintainer = await ethers.getSigner(maitainterAddress)
-                    await Portal.connect(maintainer).pauseStakingForPool(yyPlanet)
-                }
+        describe('staking is not paused', async () => {
 
-                before(async () => {
-                    await removeDebt()
-                    await pausePool()
-                })
+            async function unpausePool() {
+                const maitainterAddress = await Portal.getMaintainerFromId(yyPlanet)
+                await helpers.impersonateAccount(maitainterAddress)
+                const maintainer = await ethers.getSigner(maitainterAddress)
+                await Portal.connect(maintainer).unpauseStakingForPool(yyPlanet)
+            }
 
-                it('WAVAX -> yyAVAX query should match original', async () => {
-                    const amountIn = parseUnits('0.13')
-                    await checkAdapterQueryMatchesOriginal(
-                        tkns.WAVAX, 
-                        tkns.yyAVAX, 
-                        amountIn
-                    )
-                })
+            let tknIn
+            let tknOut
 
-                it('WAVAX -> yyAVAX swap should match query', async () => {
-                    const amountIn = parseUnits('0.3456789')
-                    const tknIn = tkns.WAVAX
-                    const tknOut = tkns.yyAVAX
-                    // Mint tokens to adapter address
-                    await setERC20Bal(tknIn.address, Adapter.address, amountIn)
-                    // Check 
-                    await checkAdapterSwapMatchesQuery(
-                        tknIn,
-                        tknOut, 
-                        amountIn
-                    )
-                })
-
-
+            before(async () => {
+                await unpausePool()
             })
 
-            describe('staking is not paused', async () => {
+            describe('wavax -> yyavax', async () => {
 
-                async function unpausePool() {
-                    const maitainterAddress = await Portal.getMaintainerFromId(yyPlanet)
-                    await impersonateAccount(maitainterAddress)
-                    const maintainer = await ethers.getSigner(maitainterAddress)
-                    await Portal.connect(maintainer).unpauseStakingForPool(yyPlanet)
-                }
-
-                let tknIn
-                let tknOut
-
-                before(async () => {
-                    await unpausePool()
+                before(() => {
+                    tknIn = tkns.WAVAX
+                    tknOut = tkns.yyAVAX
                 })
 
-                describe('wavax->yyavax', async () => {
+                describe('debt < amountIn', async () => {
 
-                    before(() => {
-                        tknIn = tkns.WAVAX
-                        tknOut = tkns.yyAVAX
+                    before(async () => {
+                        await removeDebt()
                     })
 
-                    describe('debt < amountIn', async () => {
-
-                        async function checkAdapterQueryGtThanOriginal(
-                            tokenFrom, 
-                            tokenTo, 
+                    async function checkAdapterQueryGtThanOriginal(
+                        tokenFrom, 
+                        tokenTo, 
+                        amountIn
+                    ) {
+                        const [ ti0, ti1 ] = tokenFrom.address == assets.WAVAX
+                            ? [ 0, 1 ]
+                            : [ 1, 0 ]
+                        // Query original contract
+                        const amountOutOriginal = await GeodeWP.calculateSwap(
+                            ti0, 
+                            ti1,
                             amountIn
-                        ) {
-                            const [ ti0, ti1 ] = tokenFrom.address == assets.WAVAX
-                                ? [ 0, 1 ]
-                                : [ 1, 0 ]
-                            // Query original contract
-                            const amountOutOriginal = await Original.calculateSwap(
-                                ti0, 
-                                ti1,
-                                amountIn
-                            )
-                            // Query adapter 
-                            const amountOutAdapter = await Adapter.query(
-                                amountIn, 
-                                tokenFrom.address, 
-                                tokenTo.address
-                            )
-                            // Compare two prices
-                            expect(amountOutAdapter).to.gt(amountOutOriginal)
-                        }
+                        )
+                        // Query adapter 
+                        const amountOutAdapter = await Adapter.query(
+                            amountIn, 
+                            tokenFrom.address, 
+                            tokenTo.address
+                        )
+                        // Compare two prices
+                        expect(amountOutAdapter).to.gt(amountOutOriginal)
+                    }
 
-                        before(async () => {
-                            await removeDebt()
-                        })
-
-                        it('query should offer better price than original', async () => {
-                            const amountIn = parseUnits('2')
-                            await checkAdapterQueryGtThanOriginal(
-                                tknIn, 
-                                tknOut, 
-                                amountIn
-                            )
-                        })
-
-                        it('swap should match query', async () => {
-                            const amountIn = parseUnits('1.7772')
-                            // Mint tokens to adapter address
-                            await setERC20Bal(tknIn.address, Adapter.address, amountIn)
-                            // Check 
-                            await checkAdapterSwapMatchesQuery(
-                                tknIn,
-                                tknOut, 
-                                amountIn
-                            )
-                        })
-
-                    })
-
-                    describe('debt >= amountIn', async () => {
-
-                        let debt
-
-                        before(async () => {
-                            debt = await createDebt()
-                            expect(debt).gt(0)
-                        })
-
-                        describe('query should match the original', async () => {
-
-                            it('1% debt', async () => {
-                                const amountIn = debt.mul(1).div(100) // 1% of debt
-                                await checkAdapterQueryMatchesOriginal(
-                                    tknIn, 
-                                    tknOut, 
-                                    amountIn
-                                )
-                            })
-    
-                            it('100% debt', async () => {
-                                const amountIn = debt // 100% of debt
-                                await checkAdapterQueryMatchesOriginal(
-                                    tknIn, 
-                                    tknOut, 
-                                    amountIn
-                                )
-                            })
-
-                        })
-
-                        describe('swap should match query', async () => {
-
-                            beforeEach(async () => {
-                                debt = await Original.getDebt()
-                            })
-
-                            it('1% debt', async () => {
-                                const amountIn = debt.mul(1).div(100) // 1% of debt
-                                // Mint tokens to adapter address
-                                await setERC20Bal(tknIn.address, Adapter.address, amountIn)
-                                // Check 
-                                await checkAdapterSwapMatchesQuery(
-                                    tknIn,
-                                    tknOut, 
-                                    amountIn
-                                )
-                            })
-    
-                            it('100% debt', async () => {
-                                const amountIn = debt.mul(1).div(100) // 100% of debt
-                                // Mint tokens to adapter address
-                                await setERC20Bal(tknIn.address, Adapter.address, amountIn)
-                                // Check 
-                                await checkAdapterSwapMatchesQuery(
-                                    tknIn,
-                                    tknOut, 
-                                    amountIn
-                                )
-                            })
-
-                        })    
-
-                    })
-
-                })
-
-                describe('yyavax->wavax', async () => {
-
-                    before(() => {
-                        tknIn = tkns.yyAVAX
-                        tknOut = tkns.WAVAX
-                    })
-
-                    it('query should match original', async () => {
-                        const amountIn = parseUnits('11')
-                        await checkAdapterQueryMatchesOriginal(
+                    it('query should offer better price than original', async () => {
+                        const amountIn = parseUnits('2')
+                        await checkAdapterQueryGtThanOriginal(
                             tknIn, 
                             tknOut, 
                             amountIn
                         )
                     })
 
-                    it('swap should match the query', async () => {
-                        const amountIn = parseUnits('2')
-                        // Send yyAVAX to the adapter (cant be minted with `setERC20Bal`)
-                        // Note: test assumes that yyAVAX/WAVAX ratio is lte 2
-                        await setERC20Bal(tknOut.address, Adapter.address, amountIn.mul(2))
-                        await Adapter.connect(trader).swap(
-                            amountIn.mul(2), 
-                            0,
-                            tknOut.address,
-                            tknIn.address, 
-                            Adapter.address
-                        )
-                        // Check 
-                        await checkAdapterSwapMatchesQuery(
+                    it('swap should match query', async () => {
+                        const amountIn = '1.7772'
+                        await ate.checkSwapMatchesQuery(
+                            amountIn,
                             tknIn,
                             tknOut, 
-                            amountIn
                         )
                     })
 
                 })
 
+                describe('debt >= amountIn', async () => {
+
+                    let debt
+
+                    before(async () => {
+                        debt = await createDebt()
+                        expect(debt).gt(0)
+                    })
+
+                    beforeEach(async () => {
+                        debt = await GeodeWP.getDebt()
+                    })
+
+                    it('1% debt', async () => {
+                        const amountIn = formatUnits(debt.mul(1).div(100), 18)
+                        await ate.checkSwapMatchesQuery(amountIn, tknIn, tknOut)
+                    })
+
+                    it('100% debt', async () => {
+                        const amountIn = formatUnits(debt, 18)
+                        await ate.checkSwapMatchesQuery(amountIn, tknIn, tknOut)
+                    })
+
+                })
+            })
+
+            describe('yyavax->wavax', async () => {
+
+                before(() => {
+                    tknIn = tkns.yyAVAX
+                    tknOut = tkns.WAVAX
+                })
+
+                it('swap should match the query', async () => {
+                    const trader = testEnv.nextAccount()
+                    const amountIn = parseUnits('2')
+                    // Send yyAVAX to the adapter (cant be minted with `setERC20Bal`)
+                    // Note: test assumes that yyAVAX/WAVAX ratio is lte 2
+                    await helpers.setERC20Bal(tknOut.address, Adapter.address, amountIn.mul(2))
+                    await Adapter.connect(trader).swap(
+                        amountIn.mul(2), 
+                        0,
+                        tknOut.address,
+                        tknIn.address, 
+                        Adapter.address
+                    )
+                    // Check 
+                    await ate.checkSwapMatchesQuery(
+                        formatUnits(amountIn, 18),
+                        tknIn,
+                        tknOut, 
+                    )
+                })
 
             })
 
-            it('Check gas cost', async () => {
-                // Greatest gas cost would be when you are staking and swapping
-                // this occurs when debt > MIN_DEBT and amountIn > debt
-    
-                // Create debt and check debt> MIN_DEBT
-                const debt = await createDebt()
-                expect(debt).gt(parseUnits('1', 15))
-                // Get query and swap costs: wAVAX => yyAVAX 
-                const amountIn = debt.mul(110).div(100) // amountIn is 110% of debt
-                const tokenIn = tkns.WAVAX
-                const tokenOut = tkns.yyAVAX
-                const trader = genNewAccount()
-                
-                await setERC20Bal(tokenIn.address, Adapter.address, amountIn)
-                const swapGasCost = await Adapter.connect(trader).estimateGas.swap(
-                    amountIn, 
-                    0,
-                    tokenIn.address,
-                    tokenOut.address, 
-                    trader.address
-                ).then(parseInt)
-                const queryGasCost = await Adapter.estimateGas.query(
-                    amountIn,
-                    tokenIn.address,
-                    tokenOut.address
-                ).then(parseInt)
-                const maxGas = swapGasCost + queryGasCost
-                // Check that gas estimate is above 90% of maxGas but also below it
-                const estimatedGas = await Adapter.swapGasEstimate().then(parseInt)
-                expect(estimatedGas).to.be.within(parseInt(maxGas*0.9), maxGas)
-            })
 
         })
 
+    })
 
+    it('Query returns zero if tokens not found', async () => {
+        const supportedTkn = tkns.WAVAX
+        ate.checkQueryReturnsZeroForUnsupportedTkns(supportedTkn)
+    })
+
+    it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
+        const options = [
+            [ '1', tkns.WAVAX, tkns.yyAVAX ],
+        ]
+        await ate.checkGasEstimateIsSensible(options)
     })
 
 })

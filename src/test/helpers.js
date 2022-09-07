@@ -32,7 +32,7 @@ const getERC20SlotByExecute = async (token, _signer) => {
             const shash = hash.slice(2)
             // Return the slot if its hash with holder address is mapped to return value in storage and hash is on top of stack
             if (log.stack[log.stack.length-1] == shash && log.storage[shash] == result.returnValue) {
-                const slot = parseInt(log.memory[1])
+                const slot = parseInt(log.memory[1], 16)
                 const contract = depthToAddress[log.depth]
                 return [contract, slot]
             }
@@ -139,7 +139,7 @@ module.exports.setERC20Bal = async (_token, _holder, _amount) => {
     const [contract, storageSlot] = await getERC20Slot(_token)
     const key = addressToBytes32(_holder)
     const index = ethers.utils.keccak256(
-        key + storageSlot.toString().padStart(64, '0')
+        key + storageSlot.toString(16).padStart(64, '0')
     ).replace(/0x0+/, "0x")  // Hardhat doesn't like leading zeroes
     await setStorageAt(contract, index, bigNumToBytes32(_amount))
 }
