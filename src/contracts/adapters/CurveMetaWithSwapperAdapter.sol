@@ -28,9 +28,9 @@ import "../YakAdapter.sol";
 
 interface ICurveSwapper128 {
     function exchange_underlying(
-        address pool, 
+        address pool,
         int128 i,
-        int128 j, 
+        int128 j,
         uint256 dx,
         uint256 minDy
     ) external;
@@ -48,7 +48,7 @@ contract CurveMetaWithSwapperAdapter is YakAdapter {
 
     constructor(
         string memory _name,
-        uint256 _swapGasEstimate, 
+        uint256 _swapGasEstimate,
         address _metaPool,
         address _basePool,
         address _swapper
@@ -61,10 +61,7 @@ contract CurveMetaWithSwapperAdapter is YakAdapter {
     }
 
     // Mapping indicator which tokens are included in the pool
-    function _setUnderlyingTokens(
-        address _basePool,
-        address _swapper
-    ) internal {
+    function _setUnderlyingTokens(address _basePool, address _swapper) internal {
         for (uint256 i = 0; true; i++) {
             try ICurve2(_basePool).underlying_coins(i) returns (address token) {
                 _setPoolTokenAllowance(token, _swapper);
@@ -76,10 +73,7 @@ contract CurveMetaWithSwapperAdapter is YakAdapter {
         }
     }
 
-    function setMetaTkn(
-        address _metaPool, 
-        address _swapper
-    ) internal returns (address _metaTkn) {
+    function setMetaTkn(address _metaPool, address _swapper) internal returns (address _metaTkn) {
         _metaTkn = ICurveMeta(_metaPool).coins(0);
         _setPoolTokenAllowance(_metaTkn, _swapper);
         isPoolToken[_metaTkn] = true;

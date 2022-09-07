@@ -79,7 +79,7 @@ contract Curve2Adapter is YakAdapter {
     }
 
     function _applyErr(uint256 x) internal pure returns (uint256) {
-        return x * (BPS_DEN - MAX_ERR_BPS) / BPS_DEN;
+        return (x * (BPS_DEN - MAX_ERR_BPS)) / BPS_DEN;
     }
 
     function _swap(
