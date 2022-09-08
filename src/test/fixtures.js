@@ -15,6 +15,17 @@ const {
 } = addresses.avalanche
 let ADAPTERS = {}
 
+const _dummyMaintainable = async () => {
+  const [deployer] = await ethers.getSigners();
+  const DummyMaintainable = await ethers
+    .getContractFactory("DummyMaintainable")
+    .then((f) => f.connect(deployer).deploy());
+  return {
+    DummyMaintainable,
+    deployer,
+  };
+};
+
 const _geodeWPAdapter = async () => {
     const [ deployer ] = await ethers.getSigners()
     const GeodeWPAdapterFactory = ethers.getContractFactory('GeodeWPAdapter')
@@ -622,6 +633,7 @@ const general = deployments.createFixture(async () => {
     }
 })
 
+const dummyMaintainable = deployments.createFixture(_dummyMaintainable);
 const geodeWPAdapter = deployments.createFixture(_geodeWPAdapter)
 const woofiAdapter = deployments.createFixture(_woofiAdapter)
 const savaxAdapter = deployments.createFixture(_savaxAdapter)
@@ -718,6 +730,7 @@ module.exports = {
         arableAdapter,
         general, 
         simple,
-        router
+        router,
+	dummyMaintainable
     }
 }
