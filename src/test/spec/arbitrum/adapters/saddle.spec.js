@@ -73,11 +73,11 @@ describe('YakAdapter - Saddle', () => {
         describe('Swapping matches query', async () => {
 
     
-            it('1000000 FRAX -> USDC', async () => {
-                await ate.checkSwapMatchesQuery('1000000', tkns.FRAX, tkns.USDC)
+            it('50000 FRAX -> USDC', async () => {
+                await ate.checkSwapMatchesQuery('50000', tkns.FRAX, tkns.USDC)
             })
-            it('1000000 USDT -> USDC', async () => {
-                await ate.checkSwapMatchesQuery('1000000', tkns.USDT, tkns.USDC)
+            it('50000 USDT -> USDC', async () => {
+                await ate.checkSwapMatchesQuery('50000', tkns.USDT, tkns.USDC)
             })
             it('3333 USDT -> FRAX', async () => {
                 await ate.checkSwapMatchesQuery('3333', tkns.USDT, tkns.FRAX)
