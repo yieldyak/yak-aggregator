@@ -1,24 +1,11 @@
-module.exports = async ({ getNamedAccounts, deployments }) => {
-    const { deploy, log } = deployments;
-    const { deployer } = await getNamedAccounts();
+const { deployAdapter } = require('../../../utils')
 
-    const NAME = 'SAvaxAdapterV0';
-    const GAS_ESTIMATE = 1.7e5
+const networkName = 'avalanche'
+const tags = [ 'savax' ]
+const name = 'SAvaxAdapter'
+const contractName = 'SAvaxAdapter'
 
-    log(NAME)
-    const deployResult = await deploy(NAME, {
-      from: deployer,
-      contract: "SAvaxAdapter",
-      gas: 4000000,
-      args: [ GAS_ESTIMATE ],
-      skipIfAlreadyDeployed: true
-    });
-  
-    if (deployResult.newlyDeployed) {
-      log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`);
-    } else {
-      log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
-    }
-  };
+const gasEstimate = 170_000
+const args = [ gasEstimate ]
 
-  module.exports.tags = ['V0', 'adapter', 'savax', 'avalanche'];
+module.exports = deployAdapter(networkName, tags, name, contractName, args)

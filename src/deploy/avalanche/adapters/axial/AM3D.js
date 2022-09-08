@@ -1,30 +1,13 @@
-module.exports = async ({ getNamedAccounts, deployments }) => {
-    const { deploy, log } = deployments;
-    const { deployer } = await getNamedAccounts();
-    const { curvelikePools } = require("../../../../misc/addresses.json").avalanche
+const { deployAdapter, addresses } = require('../../../utils')
+const { AxialAM3D } = addresses.avalanche.curvelikePools
 
-    const NAME = 'AxialAM3DYakAdapterV0'
-    const POOL = curvelikePools.AxialAM3D
-    const GAS_ESTIMATE = 3.7e5
+const networkName = 'avalanche'
+const tags = [ 'axial', 'axialAM3D' ]
+const name = 'AxialAM3DAdapter'
+const contractName = 'SaddleAdapter'
 
-    log(NAME)
-    const deployResult = await deploy(NAME, {
-      from: deployer,
-      contract: "SaddleAdapter",
-      gas: 4000000,
-      args: [
-          NAME,
-          POOL, 
-          GAS_ESTIMATE
-      ],
-      skipIfAlreadyDeployed: true
-    });
-  
-    if (deployResult.newlyDeployed) {
-      log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`);
-    } else {
-      log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
-    }
-  };
+const gasEstimate = 370_000
+const pool = AxialAM3D
+const args = [ name, pool, gasEstimate ]
 
-  module.exports.tags = ['V0', 'adapter', 'AM3D', 'axial', 'avalanche'];
+module.exports = deployAdapter(networkName, tags, name, contractName, args)

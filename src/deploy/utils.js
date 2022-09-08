@@ -1,4 +1,5 @@
 module.exports.addresses = require('../misc/addresses.json')
+module.exports.constants = require('../misc/constants.json')
 
 module.exports.deployUniV2Contract = (
     networkName,
@@ -11,7 +12,7 @@ module.exports.deployUniV2Contract = (
     const contractName = 'UniswapV2Adapter'
     const gasEstimate = 120000
     tags = [ ...tags, adapterType ]
-    return deployAdapter(
+    return _deployAdapter(
         networkName,
         tags, 
         name, 
@@ -64,7 +65,9 @@ module.exports.deployRouter = (networkName) => {
     return exportEnv
 }
 
-function deployAdapter(networkName, tags, name, contractName, args) {
+module.exports.deployAdapter = _deployAdapter
+
+function _deployAdapter(networkName, tags, name, contractName, args) {
     tags = [ 'adapter', ...tags ]
     return deployContract(networkName, tags, name, contractName, args)
 }

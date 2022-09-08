@@ -1,30 +1,13 @@
-module.exports = async ({ getNamedAccounts, deployments }) => {
-    const { deploy, log } = deployments;
-    const { deployer } = await getNamedAccounts();
-    const { other } = require("../../../../misc/addresses.json").avalanche
+const { deployAdapter, addresses } = require('../../../utils')
+const { GmxVault } = addresses.avalanche.other
 
-    const NAME = 'GmxAdapterV0'
-    const VAULT = other.GmxVault
-    const GAS_ESTIMATE = 6.32e5
+const networkName = 'avalanche'
+const tags = [ 'gmx' ]
+const name = 'GmxAdapter'
+const contractName = 'GmxAdapter'
 
-    log(NAME)
-    const deployResult = await deploy(NAME, {
-      from: deployer,
-      contract: "GmxAdapter",
-      gas: 4000000,
-      args: [
-          NAME,
-          VAULT, 
-          GAS_ESTIMATE
-      ],
-      skipIfAlreadyDeployed: true
-    });
-  
-    if (deployResult.newlyDeployed) {
-      log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`);
-    } else {
-      log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
-    }
-  };
+const gasEstimate = 630_000
+const vault = GmxVault
+const args = [ name, vault, gasEstimate ]
 
-  module.exports.tags = ['V0', 'adapter', 'gmx', 'avalanche'];
+module.exports = deployAdapter(networkName, tags, name, contractName, args)

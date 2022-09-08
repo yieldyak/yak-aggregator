@@ -284,6 +284,9 @@
             "GeodePortal": "0x4fe8C658f268842445Ae8f95D4D6D8Cfd356a8C8",
             "ArableSF": "0xF39b1c8b977030F5FC81117C244Bf7B9514Ee562", 
             "curveMetaSwapper": "0x001E3BA199B4FF4B5B6e97aCD96daFC0E2e4156e"
+        }, 
+        "kyberPools": {
+            "USDTeUSDCe": "0xe1dad9e06380bc8962e259ddd6a5257a4f56d525"
         }
     }, 
     "dogechain": {
