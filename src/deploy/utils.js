@@ -61,6 +61,7 @@ module.exports.deployRouter = (networkName) => {
         await deployFn({ getNamedAccounts, deployments })
     }
     exportEnv.tags = [ 'router', networkName ]
+    exportEnv.dependencies = adapterWhitelist
     
     return exportEnv
 }
