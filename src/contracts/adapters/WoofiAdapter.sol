@@ -42,7 +42,7 @@ contract WoofiAdapter is YakAdapter {
         pool = _pool;
     }
 
-    function setRebateCollector(address _rebateCollector) external onlyOwner {
+    function setRebateCollector(address _rebateCollector) external onlyMaintainer {
         rebateCollector = _rebateCollector;
     }
 

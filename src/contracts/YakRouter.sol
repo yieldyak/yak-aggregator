@@ -24,9 +24,9 @@ import "./interface/IAdapter.sol";
 import "./interface/IERC20.sol";
 import "./interface/IWETH.sol";
 import "./lib/SafeERC20.sol";
-import "./lib/Ownable.sol";
+import "./lib/Maintainable.sol";
 
-contract YakRouter is Ownable {
+contract YakRouter is Maintainable {
     using SafeERC20 for IERC20;
 
     address public immutable WNATIVE;
@@ -92,22 +92,22 @@ contract YakRouter is Ownable {
         IERC20(_wnative).safeApprove(_wnative, type(uint256).max);
     }
 
-    function setTrustedTokens(address[] memory _trustedTokens) public onlyOwner {
+    function setTrustedTokens(address[] memory _trustedTokens) public onlyMaintainer {
         emit UpdatedTrustedTokens(_trustedTokens);
         TRUSTED_TOKENS = _trustedTokens;
     }
 
-    function setAdapters(address[] memory _adapters) public onlyOwner {
+    function setAdapters(address[] memory _adapters) public onlyMaintainer {
         emit UpdatedAdapters(_adapters);
         ADAPTERS = _adapters;
     }
 
-    function setMinFee(uint256 _fee) external onlyOwner {
+    function setMinFee(uint256 _fee) external onlyMaintainer {
         emit UpdatedMinFee(MIN_FEE, _fee);
         MIN_FEE = _fee;
     }
 
-    function setFeeClaimer(address _claimer) public onlyOwner {
+    function setFeeClaimer(address _claimer) public onlyMaintainer {
         emit UpdatedFeeClaimer(FEE_CLAIMER, _claimer);
         FEE_CLAIMER = _claimer;
     }
@@ -122,13 +122,13 @@ contract YakRouter is Ownable {
         return ADAPTERS.length;
     }
 
-    function recoverERC20(address _tokenAddress, uint256 _tokenAmount) external onlyOwner {
+    function recoverERC20(address _tokenAddress, uint256 _tokenAmount) external onlyMaintainer {
         require(_tokenAmount > 0, "YakRouter: Nothing to recover");
         IERC20(_tokenAddress).safeTransfer(msg.sender, _tokenAmount);
         emit Recovered(_tokenAddress, _tokenAmount);
     }
 
-    function recoverAVAX(uint256 _amount) external onlyOwner {
+    function recoverAVAX(uint256 _amount) external onlyMaintainer {
         require(_amount > 0, "YakRouter: Nothing to recover");
         payable(msg.sender).transfer(_amount);
         emit Recovered(address(0), _amount);

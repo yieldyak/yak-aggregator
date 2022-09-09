@@ -92,7 +92,7 @@ contract UniswapV3Adapter is YakAdapter {
         addFeeAmount(10000);
     }
 
-    function enableFeeAmounts(uint24[] calldata _amounts) external onlyOwner {
+    function enableFeeAmounts(uint24[] calldata _amounts) external onlyMaintainer {
         for (uint256 i; i < _amounts.length; ++i) enableFeeAmount(_amounts[i]);
     }
 

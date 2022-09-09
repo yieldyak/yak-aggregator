@@ -39,11 +39,11 @@ contract DodoV1Adapter is YakAdapter {
         HELPER = _helper;
     }
 
-    function setPools(address[] memory _pools, bool overwrite) external onlyOwner {
+    function setPools(address[] memory _pools, bool overwrite) external onlyMaintainer {
         _setPools(_pools, overwrite);
     }
 
-    function _rmPools(address[] memory _pools) external onlyOwner {
+    function _rmPools(address[] memory _pools) external onlyMaintainer {
         for (uint256 i; i < _pools.length; ++i) {
             (address baseTkn, address quoteTkn) = _getTknsForPool(_pools[i]);
             tknsToPool[baseTkn][quoteTkn] = address(0);

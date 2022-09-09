@@ -61,11 +61,11 @@ contract CurveMetaV3Adapter is YakAdapter {
         return poolForTokens[tkn0][tkn1];
     }
 
-    function rmPools(address[] memory _pools) external onlyOwner {
+    function rmPools(address[] memory _pools) external onlyMaintainer {
         for (uint256 i; i < _pools.length; ++i) _rmPool(_pools[i]);
     }
 
-    function setPools(address[] memory _pools) public onlyOwner {
+    function setPools(address[] memory _pools) public onlyMaintainer {
         for (uint256 i; i < _pools.length; ++i) _setPool(_pools[i]);
     }
 
