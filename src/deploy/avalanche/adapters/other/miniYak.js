@@ -1,22 +1,11 @@
-module.exports = async ({ getNamedAccounts, deployments }) => {
-  const { deploy, log } = deployments
-  const { deployer } = await getNamedAccounts()
+const { deployAdapter } = require('../../../utils')
 
-  const GAS_ESTIMATE = 82e3
-  log(`MiniYakAdapterV0`)
-  const deployResult = await deploy("MiniYakAdapterV0", {
-    from: deployer,
-    contract: "MiniYakAdapter",
-    gas: 4000000,
-    args: [ GAS_ESTIMATE ],
-    skipIfAlreadyDeployed: true
-  })
-  
-    if (deployResult.newlyDeployed) {
-      log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`);
-    } else {
-      log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
-    }
-};
+const networkName = 'avalanche'
+const tags = [ 'miniyak' ]
+const name = 'MiniYakAdapter'
+const contractName = 'MiniYakAdapter'
 
-module.exports.tags = ['V0', 'adapter', 'miniYak', 'avalanche'];
+const gasEstimate = 82_000
+const args = [ gasEstimate ]
+
+module.exports = deployAdapter(networkName, tags, name, contractName, args)

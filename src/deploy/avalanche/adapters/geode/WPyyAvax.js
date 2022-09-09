@@ -1,34 +1,15 @@
-module.exports = async ({ getNamedAccounts, deployments }) => {
-    const { deploy, log } = deployments;
-    const { deployer } = await getNamedAccounts();
-    const { other, assets } = require("../../../../misc/addresses.json").avalanche
-    const { geode } = require('../../../../misc/constants.json')
+const { deployAdapter, addresses, constants } = require('../../../utils')
+const { GeodePortal } = addresses.avalanche.other
+const { yyPlanet } = constants.geode
 
-    // GeodeWithdrawalPoolyyAvaxAdapter
-    const NAME = 'GWPyyAvaxAdapter'
-    const PORTAL = other.GeodePortal
-    const PLANET_ID = geode.yyPlanet
-    const GAS_ESTIMATE = 4.5e5
+const networkName = 'avalanche'
+const tags = [ 'geode' ]
+const name = 'GeodeWPAdapter'
+const contractName = 'GeodeWPAdapter'
 
-    log(NAME)
-    const deployResult = await deploy(NAME, {
-      from: deployer,
-      contract: "GeodeWPAdapter",
-      gas: 4000000,
-      args: [
-          NAME,
-          PORTAL, 
-          PLANET_ID, 
-          GAS_ESTIMATE
-      ],
-      skipIfAlreadyDeployed: true
-    });
-  
-    if (deployResult.newlyDeployed) {
-      log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`);
-    } else {
-      log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
-    }
-  };
+const gasEstimate = 430_000
+const portal = GeodePortal
+const planetId = yyPlanet
+const args = [ name, portal, planetId, gasEstimate ]
 
-  module.exports.tags = ['V0', 'adapter', 'geode', 'yyAvax', 'avalanche'];
+module.exports = deployAdapter(networkName, tags, name, contractName, args)

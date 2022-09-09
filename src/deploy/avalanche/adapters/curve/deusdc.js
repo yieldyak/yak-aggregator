@@ -1,29 +1,16 @@
-const { curvelikePools } = require("../../../../misc/addresses.json").avalanche  
+const { deployAdapter, addresses } = require('../../../utils')
+const { CurveDeUSDC, CurveAave } = addresses.avalanche.curvelikePools
+const { curveMetaSwapper } = addresses.avalanche.other
 
-module.exports = async ({ getNamedAccounts, deployments }) => {
-    const { deploy, log } = deployments;
-    const { deployer } = await getNamedAccounts();
+const networkName = 'avalanche'
+const tags = [ 'curve', 'curveDeUSDC' ]
+const name = 'CurveDeUSDCAdapter'
+const contractName = 'CurveMetaWithSwapperAdapter'
 
-    const NAME = 'CurveDeUSDCAdapterV0';
-    const GAS_ESTIMATE = 1.1e6
+const metaPool = CurveDeUSDC
+const basePool = CurveAave
+const swapper = curveMetaSwapper
+const gasEstimate = 1_100_000
+const args = [ name, gasEstimate, metaPool, basePool, swapper ]
 
-    log(NAME)
-    const deployResult = await deploy(NAME, {
-      from: deployer,
-      contract: "CurveDeUSDCAdapter",
-      gas: 4000000,
-      args: [
-          NAME,
-          GAS_ESTIMATE
-      ],
-      skipIfAlreadyDeployed: true
-    });
-  
-    if (deployResult.newlyDeployed) {
-      log(`- ${deployResult.contractName} deployed at ${deployResult.address} using ${deployResult.receipt.gasUsed} gas`);
-    } else {
-      log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
-    }
-  };
-
-  module.exports.tags = ['V0', 'adapter', 'curve', 'deusdc', 'avalanche'];
+module.exports = deployAdapter(networkName, tags, name, contractName, args)
