@@ -1,3 +1,5 @@
+const { expect } = require('chai')
+const { ethers } = require('hardhat')
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { uniV3 } = addresses.optimism
 
@@ -44,6 +46,30 @@ describe('YakAdapter - UniswapV3', function() {
             await ate.checkSwapMatchesQuery('100', tkns.USDT, tkns.WETH)
         })
 
+    })
+
+    it('Most liquid pool offers best quote', async () => {
+        const tknIn = tkns.DAI.address
+        const tknOut = tkns.USDC.address
+        const dx = ethers.utils.parseUnits('1', 18)
+
+        const cAdapter = ate.Adapter
+        const cFactory = await ethers.getContractAt('IUniV3Factory', uniV3.factory)
+        const feeOptions = [500, 3000, 10000].map(f => ethers.BigNumber.from(f.toString()))
+
+        let bestQuote = ethers.constants.Zero
+        for (let fee of feeOptions) {
+            const pool = await cFactory.getPool(tknIn, tknOut, fee)
+            if (pool == ethers.constants.AddressZero)
+                continue
+            const quote = await cAdapter.getQuoteForPool(pool, dx, tknIn, tknOut)
+            if (quote.gt(bestQuote))
+                bestQuote = quote
+        }
+
+        const adapterQuote = await cAdapter.query(dx, tknIn, tknOut)
+
+        expect(adapterQuote).to.eq(bestQuote)
     })
 
     it('Query returns zero if tokens not found', async () => {

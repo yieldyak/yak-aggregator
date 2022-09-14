@@ -51,6 +51,8 @@ interface IUniV3Pool {
     function token0() external view returns (address);
 
     function token1() external view returns (address);
+
+    function liquidity() external view returns (uint128);
 }
 
 interface IUniV3Quoter {
@@ -96,6 +98,19 @@ contract UniswapV3Adapter is YakAdapter {
         for (uint256 i; i < _amounts.length; ++i) enableFeeAmount(_amounts[i]);
     }
 
+    function getQuoteForPool(
+        address pool,
+        int256 amountIn,
+        address tokenIn,
+        address tokenOut
+    ) external view returns (uint256) {
+        QParams memory params;
+        params.amountIn = amountIn;
+        params.tokenIn = tokenIn;
+        params.tokenOut = tokenOut;
+        return getQuoteForPool(pool, params);
+    }
+
     function enableFeeAmount(uint24 _fee) internal {
         require(!isFeeAmountEnabled[_fee], "Fee already enabled");
         if (IUniV3Factory(FACTORY).feeAmountTickSpacing(_fee) == 0) revert("Factory doesn't support fee");
@@ -113,7 +128,7 @@ contract UniswapV3Adapter is YakAdapter {
         address _tokenOut
     ) internal view override returns (uint256 quote) {
         QParams memory params = getQParams(_amountIn, _tokenIn, _tokenOut);
-        (quote, ) = getBestQuoteAndPool(params);
+        quote = getQuoteForMostLiquidPool(params);
     }
 
     function getQParams(
@@ -124,36 +139,33 @@ contract UniswapV3Adapter is YakAdapter {
         params = QParams({ tokenIn: tokenIn, tokenOut: tokenOut, amountIn: int256(amountIn), fee: 0 });
     }
 
-    function getBestQuoteAndPool(QParams memory params) internal view returns (uint256 bestQuote, address bestPool) {
+    function getQuoteForMostLiquidPool(
+        QParams memory params
+    ) internal view returns (uint256 quote) {
+        address mostLiquidPool = getMostLiquidPool(params.tokenIn, params.tokenOut);
+        quote = getQuoteForPool(mostLiquidPool, params);
+    }
+
+    function getMostLiquidPool(
+        address token0, 
+        address token1
+    ) internal view returns (address mostLiquid) {
+        uint128 deepestLiquidity;
         for (uint256 i; i < feeAmounts.length; ++i) {
-            (uint256 quote, address pool) = getQuoteAndPoolForFee(feeAmounts[i], params);
-            if (quote > bestQuote) {
-                bestQuote = quote;
-                bestPool = pool;
+            address pool = IUniV3Factory(FACTORY).getPool(token0, token1, feeAmounts[i]);
+            if (pool == address(0))
+                continue;
+            uint128 liquidity = IUniV3Pool(pool).liquidity();
+            if (liquidity > deepestLiquidity) {
+                deepestLiquidity = liquidity;
+                mostLiquid = pool;
             }
         }
-    }
-
-    function getQuoteAndPoolForFee(uint24 fee, QParams memory params)
-        internal
-        view
-        returns (uint256 amountOut, address pool)
-    {
-        pool = IUniV3Factory(FACTORY).getPool(params.tokenIn, params.tokenOut, fee);
-        if (pool != address(0)) {
-            params.fee = fee;
-            amountOut = getQuoteForPool(pool, params);
-        }
-    }
+    } 
 
     function getQuoteForPool(address pool, QParams memory params) internal view returns (uint256) {
-        (bool zeroForOne, uint160 sqrtPriceLimitX96) = getZeroOneAndSqrtPriceLimitX96(params.tokenIn, params.tokenOut);
-        (int256 amount0, int256 amount1) = IUniV3Quoter(QUOTER).quote(
-            pool,
-            zeroForOne,
-            params.amountIn,
-            sqrtPriceLimitX96
-        );
+        (bool zeroForOne, uint160 priceLimit) = getZeroOneAndSqrtPriceLimitX96(params.tokenIn, params.tokenOut);
+        (int256 amount0, int256 amount1) = IUniV3Quoter(QUOTER).quote(pool, zeroForOne, params.amountIn, priceLimit);
         return zeroForOne ? uint256(-amount1) : uint256(-amount0);
     }
 
@@ -180,7 +192,7 @@ contract UniswapV3Adapter is YakAdapter {
     }
 
     function _underlyingSwap(QParams memory params, bytes memory callbackData) internal returns (uint256) {
-        (, address pool) = getBestQuoteAndPool(params);
+        address pool = getMostLiquidPool(params.tokenIn, params.tokenOut);
         (bool zeroForOne, uint160 sqrtPriceLimitX96) = getZeroOneAndSqrtPriceLimitX96(params.tokenIn, params.tokenOut);
         (int256 amount0, int256 amount1) = IUniV3Pool(pool).swap(
             address(this),
