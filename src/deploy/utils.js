@@ -30,9 +30,9 @@ module.exports.deployBytesManipulation = (networkName) => {
 }
 
 module.exports.deployRouter = (networkName) => {
+    const deployOptions = require('../misc/deployOptions')[networkName]
     const exportEnv = async ({ getNamedAccounts, deployments }) => {
         const { deployer } = await getNamedAccounts()
-        const deployOptions = require('../misc/deployOptions')[networkName]
         if (!deployOptions)
             throw new Error(`Can't find deployOptions for network: "${networkName}"`)
 
@@ -61,7 +61,7 @@ module.exports.deployRouter = (networkName) => {
         await deployFn({ getNamedAccounts, deployments })
     }
     exportEnv.tags = [ 'router', networkName ]
-    exportEnv.dependencies = adapterWhitelist
+    exportEnv.dependencies = deployOptions.adapterWhitelist
     
     return exportEnv
 }

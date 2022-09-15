@@ -20,66 +20,25 @@ pragma solidity ^0.8.0;
 
 import "./UniswapV3likeAdapter.sol";
 
-interface IUniV3Factory {
-    function feeAmountTickSpacing(uint24) external view returns (int24);
-
-    function getPool(
-        address,
-        address,
-        uint24
-    ) external view returns (address);
+interface IAlgebraFactory {
+    function poolByPair(address, address) external view returns (address);
 }
 
-contract UniswapV3Adapter is UniswapV3likeAdapter {
+contract AlgebraAdapter is UniswapV3likeAdapter {
     using SafeERC20 for IERC20;
-
-    mapping(uint24 => bool) public isFeeAmountEnabled;
-    uint24[] public feeAmounts;
 
     constructor(
         string memory _name,
         address _factory,
         address _quoter,
         uint256 _swapGasEstimate
-    ) UniswapV3likeAdapter(_name, _factory, _quoter, _swapGasEstimate) {
-        addDefaultFeeAmounts();
-    }
-
-    function addDefaultFeeAmounts() internal {
-        addFeeAmount(500);
-        addFeeAmount(3000);
-        addFeeAmount(10000);
-    }
-
-    function enableFeeAmounts(uint24[] calldata _amounts) external onlyMaintainer {
-        for (uint256 i; i < _amounts.length; ++i) enableFeeAmount(_amounts[i]);
-    }
-
-    function enableFeeAmount(uint24 _fee) internal {
-        require(!isFeeAmountEnabled[_fee], "Fee already enabled");
-        if (IUniV3Factory(FACTORY).feeAmountTickSpacing(_fee) == 0) revert("Factory doesn't support fee");
-        addFeeAmount(_fee);
-    }
-
-    function addFeeAmount(uint24 _fee) internal {
-        isFeeAmountEnabled[_fee] = true;
-        feeAmounts.push(_fee);
-    }
+    ) UniswapV3likeAdapter(_name, _factory, _quoter, _swapGasEstimate) {}
 
     function getMostLiquidPool(address token0, address token1) internal view override returns (address mostLiquid) {
-        uint128 deepestLiquidity;
-        for (uint256 i; i < feeAmounts.length; ++i) {
-            address pool = IUniV3Factory(FACTORY).getPool(token0, token1, feeAmounts[i]);
-            if (pool == address(0)) continue;
-            uint128 liquidity = IUniV3Pool(pool).liquidity();
-            if (liquidity > deepestLiquidity) {
-                deepestLiquidity = liquidity;
-                mostLiquid = pool;
-            }
-        }
+        return IAlgebraFactory(FACTORY).poolByPair(token0, token1);
     }
 
-    function uniswapV3SwapCallback(
+    function algebraSwapCallback(
         int256 amount0Delta,
         int256 amount1Delta,
         bytes calldata

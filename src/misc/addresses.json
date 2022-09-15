@@ -294,7 +294,8 @@
             "WWDOGE": "0xB7ddC6414bf4F5515b52D8BdD69973Ae205ff101",
             "USDC": "0x765277EebeCA2e31912C9946eAe1021199B39C61",
             "USDT": "0xE3F5a90F9cb311505cd691a46596599aA1A0AD7D",
-            "ETH": "0xB44a9B6905aF7c801311e8F4E76932ee959c663C"
+            "ETH": "0xB44a9B6905aF7c801311e8F4E76932ee959c663C",
+            "DC": "0x7B4328c127B85369D9f82ca0503B000D09CF9180"
         },
         "univ2": {
             "factories": {
@@ -302,6 +303,10 @@
                 "yodeswap": "0xAaA04462e35f3e40D798331657cA015169e005d7",
                 "kibbleswap": "0xF4bc79D32A7dEfd87c8A9C100FD83206bbF19Af5"
             }
+        }, 
+        "quickswap": {
+            "quickswapFactory": "0xd2480162Aa7F02Ead7BF4C127465446150D58452",
+            "algebraQuoter": "0xf558C5Bb5C77f658453dD4baF74B69F2aDd3d934"
         }
     },
     "optimism": {

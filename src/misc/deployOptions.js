@@ -52,6 +52,7 @@ module.exports = {
             'DogeSwapAdapter',
             'KibbleSwapAdapter',
             'YodeSwapAdapter',
+            'QuickswapAdapter'
         ],
         hopTokens: [
             dog.assets.ETH,
