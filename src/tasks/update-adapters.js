@@ -23,7 +23,7 @@ function getRouterAddressForNetworkId(networkId) {
 }
 
 function getRouterDeployment(networkId) {
-    const path = `../deployments/${networkId}/YakRouterV0.json`
+    const path = `../deployments/${networkId}/YakRouter.json`
     try {
         return require(path)
     } catch {
@@ -58,7 +58,17 @@ function showDiff(currentHopTokens, hopTokensWhitelist)  {
 }
 
 function haveSameElements(arr1, arr2) {
-    return arr1.length == arr2.length && arr1.every(a => arr2.includes(a))
+    return arr2.every(a => arr1.includes(a)) && arr1.every(a => arr2.includes(a))
+}
+
+function findDiff(actual, desired) {
+    const addTags = (arr, tag) => Object.fromEntries(arr.map(e => [e, tag]))
+    const toRm = actual.filter(e1 => !desired.some(e2 => e1 == e2))
+    const toAdd = desired.filter(e1 => !actual.some(e2 => e1 == e2))
+    return {
+        ...addTags(toAdd, 'add'),
+        ...addTags(toRm, 'rm'),
+    }
 }
 
 async function getAdapterWhitelist(deployments, networkId) {

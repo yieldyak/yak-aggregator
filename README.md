@@ -167,6 +167,15 @@ yarn deploy:{network-id}
 npx hardhat verify-contract --deployment-file-path {path to deployment file} --network {your network tag}
 ```
 
+#### Query
+```
+npx hardhat find-best-path {fixed-amount-in} {token-in symbol/address} {token-in symbol/address}  --network {network tag}
+```
+Example:
+```
+npx hardhat find-best-path 1000 USDC yyAVAX  --network avalanche
+```
+
 ## Audits and Security
 
 This project is not audited. Use at your own risk.

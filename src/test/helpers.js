@@ -116,6 +116,11 @@ module.exports.getERC20Balance = (provider, token, holder) => {
     }).then(ethers.BigNumber.from)
 } 
 
+module.exports.getERC20Decimals = (provider, token) => {
+    return provider.call({ to: token, data: '0x313ce567' })
+        .then(d => parseInt(d, 16))
+} 
+
 module.exports.topUpAccountWithToken = async (topper, recieverAddress, tokenAddress, amount, routerContract) => {
     let topperBalance = await ethers.provider.getBalance(topper.address)
     const _WAVAX_ = '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'

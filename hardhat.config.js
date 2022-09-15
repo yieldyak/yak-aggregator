@@ -13,6 +13,7 @@ require('hardhat-deploy');
 require('./src/tasks/update-hop-tokens')
 require('./src/tasks/update-adapters')
 require('./src/tasks/verify-contract')
+require('./src/tasks/find-best-path')
 require('./src/tasks/list-adapters')
 
 const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')

@@ -1,7 +1,7 @@
 const { task } = require("hardhat/config");
 
 task("list-adapters", "Lists all adapters for the current YakRouter", async (_, hre) => {
-  const YakRouter = await hre.ethers.getContract("YakRouterV0")
+  const YakRouter = await hre.ethers.getContract("YakRouter")
   const adapterLen = await YakRouter.adaptersCount()
   const adapterIndices = Array.from(Array(adapterLen.toNumber()).keys())
   const liveAdapters = await Promise.all(adapterIndices.map(async (i) => {
