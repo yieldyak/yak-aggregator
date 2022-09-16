@@ -10,7 +10,7 @@ describe('YakAdapter - Platypus', () => {
 
     before(async () => {
         const networkName = 'avalanche'
-        const forkBlockNumber = 19595355
+        const forkBlockNumber = 19928827
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
@@ -28,6 +28,7 @@ describe('YakAdapter - Platypus', () => {
                 platypus.h20,
                 platypus.money,
                 platypus.tsd,
+                platypus.yyavax,
             ]
         ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
@@ -83,6 +84,24 @@ describe('YakAdapter - Platypus', () => {
         })
         it('100 WAVAX -> SAVAX', async () => {
             await ate.checkSwapMatchesQuery('100', tkns.WAVAX, tkns.SAVAX)
+        })
+
+    })
+
+    describe('Swapping matches query :: yyavax', async () => {
+
+        it('100 WAVAX -> yyAVAX', async () => {
+            await ate.checkSwapMatchesQuery('10', tkns.WAVAX, tkns.yyAVAX)
+        })
+        it('100 yyAVAX -> WAVAX', async () => {
+            await ate.mintAndSwap(
+                ethers.utils.parseUnits('20'),
+                ethers.utils.parseUnits('10'),
+                tkns.WAVAX,
+                tkns.yyAVAX, 
+                ate.Adapter.address
+            )
+            await ate.checkSwapMatchesQuery('10', tkns.yyAVAX, tkns.WAVAX)
         })
 
     })
