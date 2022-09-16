@@ -17,9 +17,9 @@ describe('YakAdapter - Quickswap', function() {
         const contractName = 'AlgebraAdapter'
         const adapterArgs = [ 
             'QuickswapAdapter', 
-            quickswap.quickswapFactory, 
+            800_000, 
             quickswap.algebraQuoter, 
-            8e5 
+            quickswap.quickswapFactory, 
         ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
     })

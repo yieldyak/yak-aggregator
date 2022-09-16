@@ -17,7 +17,12 @@ describe('YakAdapter - UniswapV3', function() {
         tkns = testEnv.supportedTkns
 
         const contractName = 'UniswapV3Adapter'
-        const adapterArgs = [ 'UniswapV3Adapter', uniV3.factory, uniV3.quoter, 8e5 ]
+        const adapterArgs = [ 
+            'UniswapV3Adapter', 
+            800_000,
+            uniV3.quoter, 
+            uniV3.factory, 
+        ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
     })
 

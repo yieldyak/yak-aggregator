@@ -61,17 +61,14 @@ abstract contract UniswapV3likeAdapter is YakAdapter {
 
     uint160 internal constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342;
     uint160 internal constant MIN_SQRT_RATIO = 4295128739;
-    address immutable FACTORY;
     address immutable QUOTER;
     mapping(address => mapping(address => uint256[])) paths;
 
     constructor(
         string memory _name,
-        address _factory,
-        address _quoter,
-        uint256 _swapGasEstimate
+        uint256 _swapGasEstimate,
+        address _quoter
     ) YakAdapter(_name, _swapGasEstimate) {
-        FACTORY = _factory;
         QUOTER = _quoter;
     }
 
@@ -118,7 +115,7 @@ abstract contract UniswapV3likeAdapter is YakAdapter {
         params = QParams({ tokenIn: tokenIn, tokenOut: tokenOut, amountIn: int256(amountIn), fee: 0 });
     }
 
-    function _underlyingSwap(QParams memory params, bytes memory callbackData) internal returns (uint256) {
+    function _underlyingSwap(QParams memory params, bytes memory callbackData) internal virtual returns (uint256) {
         address pool = getMostLiquidPool(params.tokenIn, params.tokenOut);
         (bool zeroForOne, uint160 sqrtPriceLimitX96) = getZeroOneAndSqrtPriceLimitX96(params.tokenIn, params.tokenOut);
         (int256 amount0, int256 amount1) = IUniV3Pool(pool).swap(
@@ -133,8 +130,7 @@ abstract contract UniswapV3likeAdapter is YakAdapter {
 
     function getQuoteForMostLiquidPool(QParams memory params) internal view returns (uint256 quote) {
         address mostLiquidPool = getMostLiquidPool(params.tokenIn, params.tokenOut);
-        if (mostLiquidPool != address(0))
-            quote = getQuoteForPool(mostLiquidPool, params);
+        if (mostLiquidPool != address(0)) quote = getQuoteForPool(mostLiquidPool, params);
     }
 
     function getMostLiquidPool(address token0, address token1) internal view virtual returns (address mostLiquid);

@@ -6,7 +6,7 @@ const {
 module.exports = {
     "avalanche": {
         adapterWhitelist: [
-            'TraderjoeAdapter',
+            'TraderJoeAdapter',
             'PangolinAdapter',
             'SushiswapAdapter',
             'KyberAdapter',
@@ -25,7 +25,8 @@ module.exports = {
             'CurveRenAdapter',
             'CurveYUSDAdapter',
       
-            'WoofiAdapter',
+            'KyberElasticAdapter',
+            'WoofiUSDCAdapter',
             'GeodeWPAdapter',
             'ArableAdapter',
             'GmxAdapter',

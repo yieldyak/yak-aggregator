@@ -20,76 +20,82 @@ pragma solidity ^0.8.0;
 
 import "./UniswapV3likeAdapter.sol";
 
-interface IUniV3Factory {
-    function feeAmountTickSpacing(uint24) external view returns (int24);
+interface IKyberPool {
+    function token0() external view returns (address);
 
-    function getPool(
-        address,
-        address,
-        uint24
-    ) external view returns (address);
+    function token1() external view returns (address);
+
+    function swap(
+        address recipient,
+        int256 swapQty,
+        bool isToken0,
+        uint160 limitSqrtP,
+        bytes calldata data
+    ) external returns (int256 qty0, int256 qty1);
 }
 
-contract UniswapV3Adapter is UniswapV3likeAdapter {
+contract KyberElasticAdapter is UniswapV3likeAdapter {
     using SafeERC20 for IERC20;
 
-    address immutable FACTORY;
-    mapping(uint24 => bool) public isFeeAmountEnabled;
-    uint24[] public feeAmounts;
+    mapping(address => mapping(address => address)) public tknsToPoolWL;
 
     constructor(
         string memory _name,
         uint256 _swapGasEstimate,
         address _quoter,
-        address _factory
+        address[] memory _whitelistedPools
     ) UniswapV3likeAdapter(_name, _swapGasEstimate, _quoter) {
-        addDefaultFeeAmounts();
-        FACTORY = _factory;
+        addPoolsToWL(_whitelistedPools);
     }
 
-    function addDefaultFeeAmounts() internal {
-        addFeeAmount(500);
-        addFeeAmount(3000);
-        addFeeAmount(10000);
+    function addPoolsToWL(address[] memory pools) public onlyMaintainer {
+        for (uint256 i; i < pools.length; ++i) addPoolToWL(pools[i]);
     }
 
-    function enableFeeAmounts(uint24[] calldata _amounts) external onlyMaintainer {
-        for (uint256 i; i < _amounts.length; ++i) enableFeeAmount(_amounts[i]);
+    function rmPoolsFromWL(address[] memory pools) external onlyMaintainer {
+        for (uint256 i; i < pools.length; ++i) rmPoolFromWL(pools[i]);
     }
 
-    function enableFeeAmount(uint24 _fee) internal {
-        require(!isFeeAmountEnabled[_fee], "Fee already enabled");
-        if (IUniV3Factory(FACTORY).feeAmountTickSpacing(_fee) == 0) revert("Factory doesn't support fee");
-        addFeeAmount(_fee);
+    function addPoolToWL(address pool) internal {
+        address t0 = IKyberPool(pool).token0();
+        address t1 = IKyberPool(pool).token1();
+        tknsToPoolWL[t0][t1] = pool;
+        tknsToPoolWL[t1][t0] = pool;
     }
 
-    function addFeeAmount(uint24 _fee) internal {
-        isFeeAmountEnabled[_fee] = true;
-        feeAmounts.push(_fee);
+    function rmPoolFromWL(address pool) internal {
+        address t0 = IKyberPool(pool).token0();
+        address t1 = IKyberPool(pool).token1();
+        tknsToPoolWL[t0][t1] = address(0);
+        tknsToPoolWL[t1][t0] = address(0);
     }
 
-    function getMostLiquidPool(address token0, address token1) internal view override returns (address mostLiquid) {
-        uint128 deepestLiquidity;
-        for (uint256 i; i < feeAmounts.length; ++i) {
-            address pool = IUniV3Factory(FACTORY).getPool(token0, token1, feeAmounts[i]);
-            if (pool == address(0)) continue;
-            uint128 liquidity = IUniV3Pool(pool).liquidity();
-            if (liquidity > deepestLiquidity) {
-                deepestLiquidity = liquidity;
-                mostLiquid = pool;
-            }
-        }
+    function _underlyingSwap(QParams memory params, bytes memory callbackData) internal override returns (uint256) {
+        address pool = getMostLiquidPool(params.tokenIn, params.tokenOut);
+        (bool zeroForOne, uint160 sqrtPriceLimitX96) = getZeroOneAndSqrtPriceLimitX96(params.tokenIn, params.tokenOut);
+        (int256 amount0, int256 amount1) = IKyberPool(pool).swap(
+            address(this),
+            int256(params.amountIn),
+            zeroForOne,
+            sqrtPriceLimitX96,
+            callbackData
+        );
+        return zeroForOne ? uint256(-amount1) : uint256(-amount0);
     }
 
-    function uniswapV3SwapCallback(
+    function getMostLiquidPool(address token0, address token1) internal view override returns (address) {
+        return tknsToPoolWL[token0][token1];
+    }
+
+    function swapCallback(
         int256 amount0Delta,
         int256 amount1Delta,
         bytes calldata
     ) external {
         if (amount0Delta > 0) {
-            IERC20(IUniV3Pool(msg.sender).token0()).transfer(msg.sender, uint256(amount0Delta));
+            IERC20(IKyberPool(msg.sender).token0()).transfer(msg.sender, uint256(amount0Delta));
         } else {
-            IERC20(IUniV3Pool(msg.sender).token1()).transfer(msg.sender, uint256(amount1Delta));
+            IERC20(IKyberPool(msg.sender).token1()).transfer(msg.sender, uint256(amount1Delta));
         }
     }
 }

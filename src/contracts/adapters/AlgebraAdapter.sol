@@ -27,12 +27,16 @@ interface IAlgebraFactory {
 contract AlgebraAdapter is UniswapV3likeAdapter {
     using SafeERC20 for IERC20;
 
+    address immutable FACTORY;
+
     constructor(
         string memory _name,
-        address _factory,
+        uint256 _swapGasEstimate,
         address _quoter,
-        uint256 _swapGasEstimate
-    ) UniswapV3likeAdapter(_name, _factory, _quoter, _swapGasEstimate) {}
+        address _factory
+    ) UniswapV3likeAdapter(_name, _swapGasEstimate, _quoter) {
+        FACTORY = _factory;
+    }
 
     function getMostLiquidPool(address token0, address token1) internal view override returns (address mostLiquid) {
         return IAlgebraFactory(FACTORY).poolByPair(token0, token1);

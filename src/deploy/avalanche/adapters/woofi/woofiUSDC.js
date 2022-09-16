@@ -3,7 +3,7 @@ const { WoofiPoolUSDC } = addresses.avalanche.other
 
 const networkName = 'avalanche'
 const tags = [ 'woofi' ]
-const name = 'WoofiAdapter'
+const name = 'WoofiUSDCAdapter'
 const contractName = 'WoofiAdapter'
 
 const gasEstimate = 525_000
