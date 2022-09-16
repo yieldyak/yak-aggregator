@@ -6,7 +6,7 @@ const tags = [ 'quickswap', 'algebra' ]
 const name = 'QuickswapAdapter'
 const contractName = 'AlgebraAdapter'
 
-const gasEstimate = 800_000
+const gasEstimate = 250_000
 const factory = quickswap.quickswapFactory
 const quoter = quickswap.algebraQuoter
 const args = [ name, factory, quoter, gasEstimate ]

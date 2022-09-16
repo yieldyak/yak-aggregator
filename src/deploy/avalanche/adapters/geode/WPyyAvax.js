@@ -7,7 +7,7 @@ const tags = [ 'geode' ]
 const name = 'GeodeWPAdapter'
 const contractName = 'GeodeWPAdapter'
 
-const gasEstimate = 430_000
+const gasEstimate = 340_000
 const portal = GeodePortal
 const planetId = yyPlanet
 const args = [ name, portal, planetId, gasEstimate ]

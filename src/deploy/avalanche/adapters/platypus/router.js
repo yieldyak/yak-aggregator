@@ -6,7 +6,7 @@ const tags = [ 'platypus' ]
 const name = 'PlatypusAdapter'
 const contractName = 'PlatypusAdapter'
 
-const gasEstimate = 550_000
+const gasEstimate = 470_000
 const pools = [
   platypus.main, 
   platypus.frax,

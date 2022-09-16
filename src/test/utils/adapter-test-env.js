@@ -122,7 +122,7 @@ class AdapterTestEnv {
         }
         const adapterGasEstimate = await this.Adapter.swapGasEstimate().then(parseInt)
         const upperBoundryPct = 100 + accuracyPct
-        expect(adapterGasEstimate).to.be.within(maxGas, maxGas*upperBoundryPct)
+        expect(adapterGasEstimate).to.be.within(maxGas, maxGas*upperBoundryPct/100)
     }
 
     // << INTERNAL >>

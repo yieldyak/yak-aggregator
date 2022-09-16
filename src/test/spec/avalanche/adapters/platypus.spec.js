@@ -17,7 +17,7 @@ describe('YakAdapter - Platypus', () => {
         const contractName = 'PlatypusAdapter'
         const adapterArgs = [ 
             'PlatypusAdapter', 
-            550_000,
+            470_000,
             [
                 platypus.main, 
                 platypus.frax,

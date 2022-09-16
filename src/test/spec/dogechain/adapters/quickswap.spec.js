@@ -17,7 +17,7 @@ describe('YakAdapter - Quickswap', function() {
         const contractName = 'AlgebraAdapter'
         const adapterArgs = [ 
             'QuickswapAdapter', 
-            800_000, 
+            250_000, 
             quickswap.algebraQuoter, 
             quickswap.quickswapFactory, 
         ]

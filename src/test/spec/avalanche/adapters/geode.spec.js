@@ -29,7 +29,7 @@ describe('YakAdapter - geode', () => {
             'GWPyyAvaxAdapter',
             other.GeodePortal,
             constants.geode.yyPlanet,
-            4.3e5,
+            340_000,
         ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
         gAVAX = await ethers.getContractAt('IgAVAX', assets.gAVAX),

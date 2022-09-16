@@ -26,7 +26,7 @@ describe('YakAdapter - Axial', () => {
             const adapterArgs = [ 
                 'AxialAM3DAdapter', 
                 curvelikePools.AxialAM3D, 
-                370_000
+                320_000
             ]
             ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
         })
@@ -72,7 +72,7 @@ describe('YakAdapter - Axial', () => {
             const adapterArgs = [ 
                 'AxialAS4DAdapter', 
                 curvelikePools.AxialAS4D, 
-                360_000
+                330_000
             ]
             ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
         })

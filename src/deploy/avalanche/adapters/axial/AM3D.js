@@ -6,7 +6,7 @@ const tags = [ 'axial', 'axialAM3D' ]
 const name = 'AxialAM3DAdapter'
 const contractName = 'SaddleAdapter'
 
-const gasEstimate = 370_000
+const gasEstimate = 320_000
 const pool = AxialAM3D
 const args = [ name, pool, gasEstimate ]
 

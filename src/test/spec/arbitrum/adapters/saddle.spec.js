@@ -23,7 +23,7 @@ describe('YakAdapter - Saddle', () => {
 
         before(async () => {
             const contractName = 'SaddleAdapter'
-            const adapterArgs = [ 'SaddleArbusd', saddle.arbusd, 340_000 ]
+            const adapterArgs = [ 'SaddleArbusd', saddle.arbusd, 360_000 ]
             ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
         })
 
@@ -111,7 +111,7 @@ describe('YakAdapter - Saddle', () => {
 
         before(async () => {
             const contractName = 'SaddleMetaAdapter'
-            const adapterArgs = [ 'SaddleMetaArbV2', saddle.meta_arbusdV2, 400_000 ]
+            const adapterArgs = [ 'SaddleMetaArbV2', saddle.meta_arbusdV2, 350_000 ]
             ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
         })
 

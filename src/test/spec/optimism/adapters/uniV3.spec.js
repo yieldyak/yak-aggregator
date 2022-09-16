@@ -19,7 +19,7 @@ describe('YakAdapter - UniswapV3', function() {
         const contractName = 'UniswapV3Adapter'
         const adapterArgs = [ 
             'UniswapV3Adapter', 
-            800_000,
+            250_000,
             uniV3.quoter, 
             uniV3.factory, 
         ]
