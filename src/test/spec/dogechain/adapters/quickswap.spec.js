@@ -1,3 +1,4 @@
+const { expect } = require('chai')
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { quickswap } = addresses.dogechain
 
@@ -15,9 +16,12 @@ describe('YakAdapter - Quickswap', function() {
         tkns = testEnv.supportedTkns
 
         const contractName = 'AlgebraAdapter'
+        const gasEstimate = 410_000
+        const quoterGasLimit = gasEstimate
         const adapterArgs = [ 
             'QuickswapAdapter', 
-            250_000, 
+            gasEstimate, 
+            quoterGasLimit,
             quickswap.algebraQuoter, 
             quickswap.quickswapFactory, 
         ]
@@ -54,6 +58,26 @@ describe('YakAdapter - Quickswap', function() {
     it('Query returns zero if tokens not found', async () => {
         const supportedTkn = tkns.ETH
         await ate.checkQueryReturnsZeroForUnsupportedTkns(supportedTkn)
+    })
+
+    it('Swapping too much returns zero', async () => {
+        const dy = await ate.Adapter.query(
+            ethers.utils.parseUnits('10000', 18),
+            tkns.ETH.address,
+            tkns.USDC.address
+        )
+        expect(dy).to.eq(0)
+    })
+
+    it('Adapter can only spend max-gas + buffer', async () => {
+        const gasBuffer = ethers.BigNumber.from('50000')
+        const quoterGasLimit = await ate.Adapter.quoterGasLimit()
+        const dy = await ate.Adapter.estimateGas.query(
+            ethers.utils.parseUnits('1000000', 6),
+            tkns.USDC.address,
+            tkns.WWDOGE.address
+        )
+        expect(dy).to.lt(quoterGasLimit.add(gasBuffer))
     })
 
     it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {

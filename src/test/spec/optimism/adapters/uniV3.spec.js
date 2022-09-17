@@ -17,9 +17,12 @@ describe('YakAdapter - UniswapV3', function() {
         tkns = testEnv.supportedTkns
 
         const contractName = 'UniswapV3Adapter'
+        const gasEstimate = 250_000
+        const quoterGasLimit = gasEstimate
         const adapterArgs = [ 
             'UniswapV3Adapter', 
-            250_000,
+            gasEstimate,
+            quoterGasLimit,
             uniV3.quoter, 
             uniV3.factory, 
         ]
@@ -80,6 +83,26 @@ describe('YakAdapter - UniswapV3', function() {
     it('Query returns zero if tokens not found', async () => {
         const supportedTkn = tkns.WBTC
         ate.checkQueryReturnsZeroForUnsupportedTkns(supportedTkn)
+    })
+
+    it('Swapping too much returns zero', async () => {
+        const dy = await ate.Adapter.query(
+            ethers.utils.parseUnits('10000', 18),
+            tkns.WETH.address,
+            tkns.WBTC.address
+        )
+        expect(dy).to.eq(0)
+    })
+
+    it('Adapter can only spend max-gas + buffer', async () => {
+        const gasBuffer = ethers.BigNumber.from('70000')
+        const quoterGasLimit = await ate.Adapter.quoterGasLimit()
+        const dy = await ate.Adapter.estimateGas.query(
+            ethers.utils.parseUnits('1000000', 6),
+            tkns.USDC.address,
+            tkns.WETH.address
+        )
+        expect(dy).to.lt(quoterGasLimit.add(gasBuffer))
     })
 
     it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {

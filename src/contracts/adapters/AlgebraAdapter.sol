@@ -32,13 +32,17 @@ contract AlgebraAdapter is UniswapV3likeAdapter {
     constructor(
         string memory _name,
         uint256 _swapGasEstimate,
+        uint256 _quoterGasLimit,
         address _quoter,
         address _factory
-    ) UniswapV3likeAdapter(_name, _swapGasEstimate, _quoter) {
+    ) UniswapV3likeAdapter(_name, _swapGasEstimate, _quoter, _quoterGasLimit) {
         FACTORY = _factory;
     }
 
-    function getMostLiquidPool(address token0, address token1) internal view override returns (address mostLiquid) {
+    function getBestPool(
+        address token0, 
+        address token1
+    ) internal view override returns (address mostLiquid) {
         return IAlgebraFactory(FACTORY).poolByPair(token0, token1);
     }
 

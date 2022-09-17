@@ -1,3 +1,4 @@
+const { expect } = require('chai')
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { kyberElastic } = addresses.avalanche
 
@@ -10,14 +11,17 @@ describe('YakAdapter - KyberElastic', function() {
 
     before(async () => {
         const networkName = 'avalanche'
-        const forkBlockNumber = 19931756
+        const forkBlockNumber = 19960959
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
         const contractName = 'KyberElasticAdapter'
+        const gasEstimate = 210_000
+        const quoterGasLimit = gasEstimate
         const adapterArgs = [ 
             'KyberElasticAdapter', 
-            200_000,
+            gasEstimate,
+            quoterGasLimit,
             kyberElastic.quoter, 
             Object.values(kyberElastic.pools), 
         ]
@@ -49,6 +53,26 @@ describe('YakAdapter - KyberElastic', function() {
             await ate.checkSwapMatchesQuery('100', tkns.USDC, tkns.USDt)
         })
 
+    })
+
+    it('Swapping too much returns zero', async () => {
+        const dy = await ate.Adapter.query(
+            ethers.utils.parseUnits('10000', 6),
+            tkns.USDC.address,
+            tkns.USDt.address
+        )
+        expect(dy).to.eq(0)
+    })
+
+    it('Adapter can only spend max-gas + buffer', async () => {
+        const gasBuffer = ethers.BigNumber.from('50000')
+        const quoterGasLimit = await ate.Adapter.quoterGasLimit()
+        const dy = await ate.Adapter.estimateGas.query(
+            ethers.utils.parseUnits('1000000', 18),
+            tkns.YUSD.address,
+            tkns.SAVAX.address
+        )
+        expect(dy).to.lt(quoterGasLimit.add(gasBuffer))
     })
 
     it('Query returns zero if tokens not found', async () => {
