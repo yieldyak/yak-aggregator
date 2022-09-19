@@ -290,7 +290,7 @@
             "USDTeUSDCe": "0xe1dad9e06380bc8962e259ddd6a5257a4f56d525"
         }, 
         "kyberElastic": {
-            "quoter": "0xaEA96B816c17EbB7cb36f12A2C6854aF238853a9",
+            "quoter": "0x14ec368E625b1d7a0cC5A9E381794CF56d6224EA",
             "pools": {
                 "savax_wavax": "0x897a83cf016f33fb061e756e4ca89baa9f17990a",
                 "yusd_usdc": "0x42845783dee627f47b40b5ad7f1c5147c052a21c",
@@ -321,7 +321,7 @@
         }, 
         "quickswap": {
             "quickswapFactory": "0xd2480162Aa7F02Ead7BF4C127465446150D58452",
-            "algebraQuoter": "0xf558C5Bb5C77f658453dD4baF74B69F2aDd3d934"
+            "algebraQuoter": "0x4a6c794192831fB9F4782E61Bec05d6C5cC9F3eA"
         }
     },
     "optimism": {

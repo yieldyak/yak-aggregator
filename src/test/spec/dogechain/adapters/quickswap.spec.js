@@ -11,7 +11,7 @@ describe('YakAdapter - Quickswap', function() {
 
     before(async () => {
         const networkName = 'dogechain'
-        const forkBlockNumber = 2109208
+        const forkBlockNumber = 2319084
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
@@ -40,9 +40,6 @@ describe('YakAdapter - Quickswap', function() {
         it('100 WWDOGE -> USDC', async () => {
             await ate.checkSwapMatchesQuery('100', tkns.WWDOGE, tkns.USDC)
         })
-        it('100 USDC -> ETH', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.USDC, tkns.ETH)
-        })
         it('1 ETH -> USDC', async () => {
             await ate.checkSwapMatchesQuery('1', tkns.ETH, tkns.USDC)
         })
@@ -62,7 +59,7 @@ describe('YakAdapter - Quickswap', function() {
 
     it('Swapping too much returns zero', async () => {
         const dy = await ate.Adapter.query(
-            ethers.utils.parseUnits('10000', 18),
+            ethers.utils.parseUnits('10000000', 18),
             tkns.ETH.address,
             tkns.USDC.address
         )
@@ -82,9 +79,9 @@ describe('YakAdapter - Quickswap', function() {
 
     it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
         const options = [
-            [ '100', tkns.USDC, tkns.ETH ],
-            [ '100', tkns.WWDOGE, tkns.USDC ],
-            [ '100', tkns.DC, tkns.WWDOGE ],
+            [ '1', tkns.USDC, tkns.ETH ],
+            [ '1', tkns.WWDOGE, tkns.USDC ],
+            [ '1', tkns.DC, tkns.WWDOGE ],
         ]
         await ate.checkGasEstimateIsSensible(options)
     })

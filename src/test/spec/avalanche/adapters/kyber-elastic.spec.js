@@ -11,7 +11,7 @@ describe('YakAdapter - KyberElastic', function() {
 
     before(async () => {
         const networkName = 'avalanche'
-        const forkBlockNumber = 19960959
+        const forkBlockNumber = 20030871
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
@@ -43,8 +43,8 @@ describe('YakAdapter - KyberElastic', function() {
         it('100 YUSD -> USDC', async () => {
             await ate.checkSwapMatchesQuery('100', tkns.YUSD, tkns.USDC)
         })
-        it('1 SAVAX -> YUSD', async () => {
-            await ate.checkSwapMatchesQuery('1', tkns.SAVAX, tkns.YUSD)
+        it('3000 SAVAX -> YUSD', async () => {
+            await ate.checkSwapMatchesQuery('300', tkns.SAVAX, tkns.YUSD)
         })
         it('100 USDt -> USDC', async () => {
             await ate.checkSwapMatchesQuery('100', tkns.USDt, tkns.USDC)
@@ -57,7 +57,7 @@ describe('YakAdapter - KyberElastic', function() {
 
     it('Swapping too much returns zero', async () => {
         const dy = await ate.Adapter.query(
-            ethers.utils.parseUnits('10000', 6),
+            ethers.utils.parseUnits('100000000', 6),
             tkns.USDC.address,
             tkns.USDt.address
         )

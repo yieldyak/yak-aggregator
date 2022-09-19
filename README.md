@@ -176,6 +176,10 @@ Example:
 npx hardhat find-best-path 1000 USDC yyAVAX  --network avalanche
 ```
 
+## Misc
+
+* Static-Quoters used in KyberElastic, UniswapV3 and Quickswap adapters are published [here](https://github.com/eden-network/uniswap-v3-static-quoter).
+
 ## Audits and Security
 
 This project is not audited. Use at your own risk.
