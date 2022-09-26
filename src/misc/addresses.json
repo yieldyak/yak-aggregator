@@ -300,7 +300,11 @@
                 "usdt_usdte": "0x2d9361f4110e7bf8b8f39559a61c2d2777d14002",
                 "usdc_daie": "0xd0a06776de66a53e94601c7200f00b6584c1861e",
                 "usdt_daie": "0x2304fa3abcb57fe2957cf449f67e03ed5c7205e2",
-                "usdt_usdc": "0xa83e7eebcf91097d116feacfc0d53ea5e4d03fa7"
+                "usdt_usdc": "0xa83e7eebcf91097d116feacfc0d53ea5e4d03fa7",
+                "knc_wethe": "0x518008472ab60b4450f9077ab6fcf72456613729",
+                "wethe_wavax": "0x1701a7e5034ed1e35c52245ab7c07dbdaf353de7",
+                "savax_usdt": "0x53cfb104bf1ccde49b7db7775d3213bf173a0e04",
+                "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9"
             }
         }
     }, 
