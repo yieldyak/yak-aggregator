@@ -468,12 +468,6 @@ const _unilikeAdapters = async () => {
         3,
         100000
     )
-    adapters['SwapsicleAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
-        'Swapsicle YakAdapter',
-        unilikeFactories.swapsicle,
-        3,
-        100000
-    )
     adapters['ComplusAdapter'] = await UniswapV2AdapterFactory.connect(deployer).deploy(
         'Complus YakAdapter',
         unilikeFactories.complus,
@@ -603,7 +597,6 @@ const general = deployments.createFixture(async () => {
     const PangolinRouter = await ethers.getContractAt('IUnilikeAVAXRouter', unilikeRouters.pangolin)
     const LydiaRouter = await ethers.getContractAt('IUnilikeAVAXRouter', unilikeRouters.lydia)
     const SushiswapRouter = await ethers.getContractAt('IUnilikeETHRouter', unilikeRouters.sushiswap)
-    const SwapsicleRouter = await ethers.getContractAt('IUnilikeETHRouter', unilikeRouters.swapsicle)
     const ZeroRouter = await ethers.getContractAt('IUnilikeETHRouter', unilikeRouters.zero)
     // Set tags
     if (TRACER_ENABLED) {
@@ -633,7 +626,6 @@ const general = deployments.createFixture(async () => {
         genNewAccount,
         LydiaRouter,
         ZeroRouter,
-        SwapsicleRouter,
         deployer,
         U256_MAX,
         assets,
