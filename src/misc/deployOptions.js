@@ -11,6 +11,7 @@ module.exports = {
             'SushiswapAdapter',
             'KyberAdapter',
             'ElkAdapter',
+            'SwapsicleAdapter',
       
             'SynapseAdapter',
             'AxialAS4DAdapter',

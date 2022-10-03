@@ -175,7 +175,8 @@
             "gAVAX": "0x6026a85e11BD895c934Af02647E8C7b4Ea2D9808",
             "SNX": "0xBeC243C995409E6520D7C41E404da5dEba4b209B",
             "BTCb": "0x152b9d0FdC40C096757F570A51E494bd4b943E50", 
-            "H20": "0x026187BdbC6b751003517bcb30Ac7817D5B766f8"
+            "H20": "0x026187BdbC6b751003517bcb30Ac7817D5B766f8",
+            "POPS": "0x240248628B7B6850352764C5dFa50D1592A033A8"
         }, 
         "unilikeRouters": {
             "zero": "0x85995d5f8ee9645cA855e92de16FA62D26398060", 
@@ -188,7 +189,8 @@
             "lydia": "0xA52aBE4676dbfd04Df42eF7755F01A3c41f28D27", 
             "pangolin": "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106",
             "joe": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4", 
-            "kyber": "0x8Efa5A9AD6D594Cf76830267077B78cE0Bc5A5F8"
+            "kyber": "0x8Efa5A9AD6D594Cf76830267077B78cE0Bc5A5F8",
+            "swapsicle": "0xC7f372c62238f6a5b79136A9e5D16A2FD7A3f0F5"
         }, 
         "unilikeFactories": {
             "zero": "0x2Ef422F30cdb7c5F1f7267AB5CF567A88974b308",
@@ -204,7 +206,8 @@
             "baguette": "0x3587B8c0136c2C3605a9E5B03ab54Da3e4044b50", 
             "joe": "0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10",
             "partyswap": "0x58A08bc28f3E8dab8Fb2773D8f243bC740398b09",
-            "hakuswap": "0x2Db46fEB38C57a6621BCa4d97820e1fc1de40f41"
+            "hakuswap": "0x2Db46fEB38C57a6621BCa4d97820e1fc1de40f41",
+            "swapsicle": "0x9C60C867cE07a3c403E2598388673C10259EC768"
         },
         "curvelikePools": {
             "snobS3D": "0x6B41E5c07F2d382B921DE5C34ce8E2057d84C042", 
