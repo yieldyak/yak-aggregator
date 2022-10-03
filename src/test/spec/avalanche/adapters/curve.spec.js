@@ -348,7 +348,7 @@ describe('YakAdapter - Curve', () => {
             const adapterArgs = [ 
                 'CurveUSDCAdapter', 
                 curvelikePools.CurveUSDC, 
-                240_000
+                245_000
             ]
             ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
         })

@@ -17,7 +17,7 @@ describe('YakAdapter - UniswapV3', function() {
         tkns = testEnv.supportedTkns
 
         const contractName = 'UniswapV3Adapter'
-        const gasEstimate = 250_000
+        const gasEstimate = 251_000
         const quoterGasLimit = gasEstimate
         const adapterArgs = [ 
             'UniswapV3Adapter', 

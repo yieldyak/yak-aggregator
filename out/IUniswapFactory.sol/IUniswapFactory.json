@@ -1,0 +1,276 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "tokenA",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "tokenB",
+          "type": "address"
+        }
+      ],
+      "name": "getPair",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "pair",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "getPair(address,address)": "e6a43905"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenA\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenB\",\"type\":\"address\"}],\"name\":\"getPair\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"pair\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/contracts/interface/IUniswapFactory.sol\":\"IUniswapFactory\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@ensdomains/=node_modules/@ensdomains/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":hardhat-deploy/=node_modules/hardhat-deploy/\",\":hardhat/=node_modules/hardhat/\"]},\"sources\":{\"src/contracts/interface/IUniswapFactory.sol\":{\"keccak256\":\"0xb7d21e6ccad0889b867393285639d3ce58ac1fe514ea079500808771521b4aa1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4aeef2bca96f47c7b30ec0042d7ef4102e7cf958f9888ade5b366a2214d5d511\",\"dweb:/ipfs/QmVuzntsj27Vxs4suj3cRCCwJh7QZKy1w9qpEM5x9Zt9z8\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "tokenA",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenB",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getPair",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "pair",
+              "type": "address"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@ensdomains/=node_modules/@ensdomains/",
+        ":@openzeppelin/=node_modules/@openzeppelin/",
+        ":eth-gas-reporter/=node_modules/eth-gas-reporter/",
+        ":hardhat-deploy/=node_modules/hardhat-deploy/",
+        ":hardhat/=node_modules/hardhat/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/contracts/interface/IUniswapFactory.sol": "IUniswapFactory"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/contracts/interface/IUniswapFactory.sol": {
+        "keccak256": "0xb7d21e6ccad0889b867393285639d3ce58ac1fe514ea079500808771521b4aa1",
+        "urls": [
+          "bzz-raw://4aeef2bca96f47c7b30ec0042d7ef4102e7cf958f9888ade5b366a2214d5d511",
+          "dweb:/ipfs/QmVuzntsj27Vxs4suj3cRCCwJh7QZKy1w9qpEM5x9Zt9z8"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/contracts/interface/IUniswapFactory.sol",
+    "id": 15901,
+    "exportedSymbols": {
+      "IUniswapFactory": [
+        15900
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:146:68",
+    "nodes": [
+      {
+        "id": 15890,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:68",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 15900,
+        "nodeType": "ContractDefinition",
+        "src": "57:120:68",
+        "nodes": [
+          {
+            "id": 15899,
+            "nodeType": "FunctionDefinition",
+            "src": "89:86:68",
+            "functionSelector": "e6a43905",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPair",
+            "nameLocation": "98:7:68",
+            "parameters": {
+              "id": 15895,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 15892,
+                  "mutability": "mutable",
+                  "name": "tokenA",
+                  "nameLocation": "114:6:68",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15899,
+                  "src": "106:14:68",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 15891,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "106:7:68",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15894,
+                  "mutability": "mutable",
+                  "name": "tokenB",
+                  "nameLocation": "130:6:68",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15899,
+                  "src": "122:14:68",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 15893,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "122:7:68",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "105:32:68"
+            },
+            "returnParameters": {
+              "id": 15898,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 15897,
+                  "mutability": "mutable",
+                  "name": "pair",
+                  "nameLocation": "169:4:68",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15899,
+                  "src": "161:12:68",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 15896,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "161:7:68",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "160:14:68"
+            },
+            "scope": 15900,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IUniswapFactory",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          15900
+        ],
+        "name": "IUniswapFactory",
+        "nameLocation": "67:15:68",
+        "scope": 15901,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 68
+}

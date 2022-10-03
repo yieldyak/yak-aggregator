@@ -81,7 +81,10 @@ abstract contract YakAdapter is Maintainable {
         address _toToken,
         address _to
     ) external {
+        uint256 toBal0 = IERC20(_toToken).balanceOf(_to);
         _swap(_amountIn, _amountOut, _fromToken, _toToken, _to);
+        uint256 diff = IERC20(_toToken).balanceOf(_to) - toBal0;
+        require(diff >= _amountOut, "Insufficient amount-out");
         emit YakAdapterSwap(_fromToken, _toToken, _amountIn, _amountOut);
     }
 

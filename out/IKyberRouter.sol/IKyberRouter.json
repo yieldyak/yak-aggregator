@@ -1,0 +1,371 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amountIn",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address[]",
+          "name": "poolsPath",
+          "type": "address[]"
+        },
+        {
+          "internalType": "contract IERC20[]",
+          "name": "path",
+          "type": "address[]"
+        }
+      ],
+      "name": "getAmountsOut",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "getAmountsOut(uint256,address[],address[])": "a8312b1d"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amountIn\",\"type\":\"uint256\"},{\"internalType\":\"address[]\",\"name\":\"poolsPath\",\"type\":\"address[]\"},{\"internalType\":\"contract IERC20[]\",\"name\":\"path\",\"type\":\"address[]\"}],\"name\":\"getAmountsOut\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"amounts\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/contracts/interface/IKyberRouter.sol\":\"IKyberRouter\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@ensdomains/=node_modules/@ensdomains/\",\":@openzeppelin/=node_modules/@openzeppelin/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":hardhat-deploy/=node_modules/hardhat-deploy/\",\":hardhat/=node_modules/hardhat/\"]},\"sources\":{\"src/contracts/interface/IERC20.sol\":{\"keccak256\":\"0xe5c96d567fa7105b50c9ca77735160db4ade2ea51703c066d02df4fca855a462\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7e435c22b574d3908658f87a5c18bf386ce5b1f689261ad51c7a321ee9c5ca0a\",\"dweb:/ipfs/Qmav516WWpgvyg15SNGr2gM2Ggbqp2nwpMXjB5DjDW3KjB\"]},\"src/contracts/interface/IKyberRouter.sol\":{\"keccak256\":\"0x264f418db29b5c2d69e8f56d2e5702fa5f5b46bbe9eb273168d75317c49bfda8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b07cb4b40d3aa21a81a187215a27fc8d07b56c774347791a814539d71aa5086d\",\"dweb:/ipfs/QmcNEDjz8G14MuxAVcBsukc1XU1HDmYZhD6F6e83tKgFZ4\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "amountIn",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address[]",
+              "name": "poolsPath",
+              "type": "address[]"
+            },
+            {
+              "internalType": "contract IERC20[]",
+              "name": "path",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getAmountsOut",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "amounts",
+              "type": "uint256[]"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@ensdomains/=node_modules/@ensdomains/",
+        ":@openzeppelin/=node_modules/@openzeppelin/",
+        ":eth-gas-reporter/=node_modules/eth-gas-reporter/",
+        ":hardhat-deploy/=node_modules/hardhat-deploy/",
+        ":hardhat/=node_modules/hardhat/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/contracts/interface/IKyberRouter.sol": "IKyberRouter"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/contracts/interface/IERC20.sol": {
+        "keccak256": "0xe5c96d567fa7105b50c9ca77735160db4ade2ea51703c066d02df4fca855a462",
+        "urls": [
+          "bzz-raw://7e435c22b574d3908658f87a5c18bf386ce5b1f689261ad51c7a321ee9c5ca0a",
+          "dweb:/ipfs/Qmav516WWpgvyg15SNGr2gM2Ggbqp2nwpMXjB5DjDW3KjB"
+        ],
+        "license": "MIT"
+      },
+      "src/contracts/interface/IKyberRouter.sol": {
+        "keccak256": "0x264f418db29b5c2d69e8f56d2e5702fa5f5b46bbe9eb273168d75317c49bfda8",
+        "urls": [
+          "bzz-raw://b07cb4b40d3aa21a81a187215a27fc8d07b56c774347791a814539d71aa5086d",
+          "dweb:/ipfs/QmcNEDjz8G14MuxAVcBsukc1XU1HDmYZhD6F6e83tKgFZ4"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/contracts/interface/IKyberRouter.sol",
+    "id": 14783,
+    "exportedSymbols": {
+      "IERC20": [
+        14423
+      ],
+      "IKyberRouter": [
+        14782
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:255:58",
+    "nodes": [
+      {
+        "id": 14765,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:58",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 14766,
+        "nodeType": "ImportDirective",
+        "src": "57:22:58",
+        "absolutePath": "src/contracts/interface/IERC20.sol",
+        "file": "./IERC20.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 14783,
+        "sourceUnit": 14424,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 14782,
+        "nodeType": "ContractDefinition",
+        "src": "81:205:58",
+        "nodes": [
+          {
+            "id": 14781,
+            "nodeType": "FunctionDefinition",
+            "src": "110:174:58",
+            "functionSelector": "a8312b1d",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getAmountsOut",
+            "nameLocation": "119:13:58",
+            "parameters": {
+              "id": 14776,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 14768,
+                  "mutability": "mutable",
+                  "name": "amountIn",
+                  "nameLocation": "150:8:58",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 14781,
+                  "src": "142:16:58",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 14767,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "142:7:58",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 14771,
+                  "mutability": "mutable",
+                  "name": "poolsPath",
+                  "nameLocation": "187:9:58",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 14781,
+                  "src": "168:28:58",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 14769,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "168:7:58",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 14770,
+                    "nodeType": "ArrayTypeName",
+                    "src": "168:9:58",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 14775,
+                  "mutability": "mutable",
+                  "name": "path",
+                  "nameLocation": "224:4:58",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 14781,
+                  "src": "206:22:58",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_contract$_IERC20_$14423_$dyn_calldata_ptr",
+                    "typeString": "contract IERC20[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 14773,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 14772,
+                        "name": "IERC20",
+                        "nameLocations": [
+                          "206:6:58"
+                        ],
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 14423,
+                        "src": "206:6:58"
+                      },
+                      "referencedDeclaration": 14423,
+                      "src": "206:6:58",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_IERC20_$14423",
+                        "typeString": "contract IERC20"
+                      }
+                    },
+                    "id": 14774,
+                    "nodeType": "ArrayTypeName",
+                    "src": "206:8:58",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_contract$_IERC20_$14423_$dyn_storage_ptr",
+                      "typeString": "contract IERC20[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "132:102:58"
+            },
+            "returnParameters": {
+              "id": 14780,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 14779,
+                  "mutability": "mutable",
+                  "name": "amounts",
+                  "nameLocation": "275:7:58",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 14781,
+                  "src": "258:24:58",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 14777,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "258:7:58",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 14778,
+                    "nodeType": "ArrayTypeName",
+                    "src": "258:9:58",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "257:26:58"
+            },
+            "scope": 14782,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IKyberRouter",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          14782
+        ],
+        "name": "IKyberRouter",
+        "nameLocation": "91:12:58",
+        "scope": 14783,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 58
+}
