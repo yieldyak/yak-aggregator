@@ -33,8 +33,8 @@ describe('YakAdapter - Swapsicle', () => {
             await ate.checkSwapMatchesQuery('100', tkns.USDC, tkns.WAVAX)
         })
 
-        it('100 WETHe -> WAVAX', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.WETHe, tkns.WAVAX)
+        it('100 USDCe -> WAVAX', async () => {
+            await ate.checkSwapMatchesQuery('100', tkns.USDCe, tkns.WAVAX)
         })
 
         it('100 USDCe -> USDC', async () => {
@@ -51,7 +51,7 @@ describe('YakAdapter - Swapsicle', () => {
     it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
         const options = [
             [ '1', tkns.USDC, tkns.WAVAX ],
-            [ '1', tkns.WETHe, tkns.WAVAX ],
+            [ '1', tkns.USDCe, tkns.WAVAX ],
             [ '1', tkns.USDCe, tkns.USDC ],
         ]
         await ate.checkGasEstimateIsSensible(options)
