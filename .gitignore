@@ -7,3 +7,4 @@ artifacts
 .scripts
 cache
 .env
+out
