@@ -1,25 +1,37 @@
 const { expect } = require("chai");
 const { utils } = require("ethers");
-
-const { fixtures } = require("../../fixtures");
+const { makeAccountGen } = require("../../helpers");
 
 const KECCAK256_MAINTAINER_ROLE = utils.keccak256(utils.toUtf8Bytes("MAINTAINER_ROLE"));
 const KECCAK256_DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
+async function getDummyMaintainable() {
+  const [deployer] = await ethers.getSigners();
+  const DummyMaintainable = await ethers
+    .getContractFactory("DummyMaintainable")
+    .then((f) => f.connect(deployer).deploy());
+  return {
+    DummyMaintainable,
+    deployer,
+  };
+};
+
 describe("Maintainable", () => {
-  let fix;
+
+  let genNewAccount;
   let owner;
   let nonOwner;
   let DummyMaintainable;
+
   before(async () => {
-    fix = await fixtures.general();
-    owner = fix.deployer;
+    genNewAccount = await makeAccountGen();
+    owner = genNewAccount();
   });
 
   beforeEach(async () => {
     // Start each test with a fresh account
-    nonOwner = fix.genNewAccount();
-    const dummyMaintainable = await fixtures.dummyMaintainable();
+    nonOwner = genNewAccount();
+    const dummyMaintainable = await getDummyMaintainable();
     DummyMaintainable = dummyMaintainable.DummyMaintainable;
   });
 
@@ -56,14 +68,14 @@ describe("Maintainable", () => {
 
       it("Does not allow a maintainer to add a new maintainer", async () => {
         await DummyMaintainable.connect(owner).addMaintainer(nonOwner.address);
-        const newAccount = fix.genNewAccount();
+        const newAccount = genNewAccount();
         await expect(DummyMaintainable.connect(nonOwner).addMaintainer(newAccount.address)).to.be.revertedWith(
           "AccessControl"
         );
       });
 
       it("Does not allow a random user to add a new maintainer", async () => {
-        const newAccount = fix.genNewAccount();
+        const newAccount = genNewAccount();
         await expect(DummyMaintainable.connect(nonOwner).addMaintainer(newAccount.address)).to.be.revertedWith(
           "AccessControl"
         );
@@ -78,7 +90,7 @@ describe("Maintainable", () => {
 
       it("Does not allow a maintainer to remove a maintainer", async () => {
         await DummyMaintainable.connect(owner).addMaintainer(nonOwner.address);
-        const newAccount = fix.genNewAccount();
+        const newAccount = genNewAccount();
         await DummyMaintainable.connect(owner).addMaintainer(nonOwner.address);
         await expect(DummyMaintainable.connect(nonOwner).removeMaintainer(newAccount.address)).to.be.revertedWith(
           "AccessControl"
@@ -87,7 +99,7 @@ describe("Maintainable", () => {
 
       it("Does not allow a random user to remove a maintainer", async () => {
         await DummyMaintainable.connect(owner).addMaintainer(nonOwner.address);
-        const newAccount = fix.genNewAccount();
+        const newAccount = genNewAccount();
         await expect(DummyMaintainable.connect(newAccount).removeMaintainer(nonOwner.address)).to.be.revertedWith(
           "AccessControl"
         );
@@ -102,7 +114,7 @@ describe("Maintainable", () => {
 
     it("Does not allow the owner to add a maintainer after transfering ownership", async () => {
       await DummyMaintainable.connect(owner).transferOwnership(nonOwner.address);
-      const newAccount = fix.genNewAccount();
+      const newAccount = genNewAccount();
       await expect(DummyMaintainable.connect(owner).addMaintainer(newAccount.address)).to.be.revertedWith(
         "AccessControl"
       );
