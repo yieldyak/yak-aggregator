@@ -96,6 +96,7 @@ class AdapterTestEnv {
             tokenFrom, 
             tokenTo,
         )
+        expect(queryDy).gt(0)
         const balDiffs = await this.#executeAndReturnBalChange(
             swapFn, 
             tokenTo,
@@ -132,7 +133,6 @@ class AdapterTestEnv {
             return tknObj.balanceOf(holder)
         }))
         const balBefore = await getBals()
-        // await expect(fn()).to.not.reverted
         await fn()
         const balAfter = await getBals()
         const balDiffs = balAfter.map((b0, i) => b0.sub(balBefore[i]))
