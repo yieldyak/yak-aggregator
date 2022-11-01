@@ -20,13 +20,15 @@ pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "./lib/BytesManipulation.sol";
+import "./interface/IYakRouter.sol";
 import "./interface/IAdapter.sol";
 import "./interface/IERC20.sol";
 import "./interface/IWETH.sol";
-import "./lib/SafeERC20.sol";
 import "./lib/Maintainable.sol";
+import "./lib/SafeERC20.sol";
 
-contract YakRouter is Maintainable {
+
+contract YakRouter is Maintainable, IYakRouter {
     using SafeERC20 for IERC20;
 
     address public immutable WNATIVE;
@@ -37,41 +39,6 @@ contract YakRouter is Maintainable {
     address public FEE_CLAIMER;
     address[] public TRUSTED_TOKENS;
     address[] public ADAPTERS;
-
-    event Recovered(address indexed _asset, uint256 amount);
-    event UpdatedTrustedTokens(address[] _newTrustedTokens);
-    event UpdatedAdapters(address[] _newAdapters);
-    event UpdatedMinFee(uint256 _oldMinFee, uint256 _newMinFee);
-    event UpdatedFeeClaimer(address _oldFeeClaimer, address _newFeeClaimer);
-    event YakSwap(address indexed _tokenIn, address indexed _tokenOut, uint256 _amountIn, uint256 _amountOut);
-
-    struct Query {
-        address adapter;
-        address tokenIn;
-        address tokenOut;
-        uint256 amountOut;
-    }
-
-    struct Offer {
-        bytes amounts;
-        bytes adapters;
-        bytes path;
-        uint256 gasEstimate;
-    }
-
-    struct FormattedOffer {
-        uint256[] amounts;
-        address[] adapters;
-        address[] path;
-        uint256 gasEstimate;
-    }
-
-    struct Trade {
-        uint256 amountIn;
-        uint256 amountOut;
-        address[] path;
-        address[] adapters;
-    }
 
     constructor(
         address[] memory _adapters,
@@ -92,43 +59,43 @@ contract YakRouter is Maintainable {
         IERC20(_wnative).safeApprove(_wnative, type(uint256).max);
     }
 
-    function setTrustedTokens(address[] memory _trustedTokens) public onlyMaintainer {
+    function setTrustedTokens(address[] memory _trustedTokens) override public onlyMaintainer {
         emit UpdatedTrustedTokens(_trustedTokens);
         TRUSTED_TOKENS = _trustedTokens;
     }
 
-    function setAdapters(address[] memory _adapters) public onlyMaintainer {
+    function setAdapters(address[] memory _adapters) override public onlyMaintainer {
         emit UpdatedAdapters(_adapters);
         ADAPTERS = _adapters;
     }
 
-    function setMinFee(uint256 _fee) external onlyMaintainer {
+    function setMinFee(uint256 _fee) override external onlyMaintainer {
         emit UpdatedMinFee(MIN_FEE, _fee);
         MIN_FEE = _fee;
     }
 
-    function setFeeClaimer(address _claimer) public onlyMaintainer {
+    function setFeeClaimer(address _claimer) override public onlyMaintainer {
         emit UpdatedFeeClaimer(FEE_CLAIMER, _claimer);
         FEE_CLAIMER = _claimer;
     }
 
     //  -- GENERAL --
 
-    function trustedTokensCount() external view returns (uint256) {
+    function trustedTokensCount() override external view returns (uint256) {
         return TRUSTED_TOKENS.length;
     }
 
-    function adaptersCount() external view returns (uint256) {
+    function adaptersCount() override external view returns (uint256) {
         return ADAPTERS.length;
     }
 
-    function recoverERC20(address _tokenAddress, uint256 _tokenAmount) external onlyMaintainer {
+    function recoverERC20(address _tokenAddress, uint256 _tokenAmount) override external onlyMaintainer {
         require(_tokenAmount > 0, "YakRouter: Nothing to recover");
         IERC20(_tokenAddress).safeTransfer(msg.sender, _tokenAmount);
         emit Recovered(_tokenAddress, _tokenAmount);
     }
 
-    function recoverAVAX(uint256 _amount) external onlyMaintainer {
+    function recoverAVAX(uint256 _amount) override external onlyMaintainer {
         require(_amount > 0, "YakRouter: Nothing to recover");
         payable(msg.sender).transfer(_amount);
         emit Recovered(address(0), _amount);
@@ -244,7 +211,7 @@ contract YakRouter is Maintainable {
         address _tokenIn,
         address _tokenOut,
         uint8 _index
-    ) external view returns (uint256) {
+    ) override external view returns (uint256) {
         IAdapter _adapter = IAdapter(ADAPTERS[_index]);
         uint256 amountOut = _adapter.query(_amountIn, _tokenIn, _tokenOut);
         return amountOut;
@@ -258,7 +225,7 @@ contract YakRouter is Maintainable {
         address _tokenIn,
         address _tokenOut,
         uint8[] calldata _options
-    ) public view returns (Query memory) {
+    ) override public view returns (Query memory) {
         Query memory bestQuery;
         for (uint8 i; i < _options.length; i++) {
             address _adapter = ADAPTERS[_options[i]];
@@ -277,7 +244,7 @@ contract YakRouter is Maintainable {
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
-    ) public view returns (Query memory) {
+    ) override public view returns (Query memory) {
         Query memory bestQuery;
         for (uint8 i; i < ADAPTERS.length; i++) {
             address _adapter = ADAPTERS[i];
@@ -299,7 +266,7 @@ contract YakRouter is Maintainable {
         address _tokenOut,
         uint256 _maxSteps,
         uint256 _gasPrice
-    ) external view returns (FormattedOffer memory) {
+    ) override external view returns (FormattedOffer memory) {
         require(_maxSteps > 0 && _maxSteps < 5, "YakRouter: Invalid max-steps");
         Offer memory queries;
         queries.amounts = BytesManipulation.toBytes(_amountIn);
@@ -331,7 +298,7 @@ contract YakRouter is Maintainable {
         address _tokenIn,
         address _tokenOut,
         uint256 _maxSteps
-    ) public view returns (FormattedOffer memory) {
+    ) override public view returns (FormattedOffer memory) {
         require(_maxSteps > 0 && _maxSteps < 5, "YakRouter: Invalid max-steps");
         Offer memory queries;
         queries.amounts = BytesManipulation.toBytes(_amountIn);
@@ -456,7 +423,7 @@ contract YakRouter is Maintainable {
         Trade calldata _trade,
         address _to,
         uint256 _fee
-    ) public {
+    ) override public {
         _swapNoSplit(_trade, msg.sender, _to, _fee);
     }
 
@@ -464,7 +431,7 @@ contract YakRouter is Maintainable {
         Trade calldata _trade,
         address _to,
         uint256 _fee
-    ) external payable {
+    ) override external payable {
         require(_trade.path[0] == WNATIVE, "YakRouter: Path needs to begin with WAVAX");
         _wrap(_trade.amountIn);
         _swapNoSplit(_trade, address(this), _to, _fee);
@@ -474,7 +441,7 @@ contract YakRouter is Maintainable {
         Trade calldata _trade,
         address _to,
         uint256 _fee
-    ) public {
+    ) override public {
         require(_trade.path[_trade.path.length - 1] == WNATIVE, "YakRouter: Path needs to end with WAVAX");
         uint256 returnAmount = _swapNoSplit(_trade, msg.sender, address(this), _fee);
         _unwrap(returnAmount);
@@ -492,7 +459,7 @@ contract YakRouter is Maintainable {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) external {
+    ) override external {
         IERC20(_trade.path[0]).permit(msg.sender, address(this), _trade.amountIn, _deadline, _v, _r, _s);
         swapNoSplit(_trade, _to, _fee);
     }
@@ -508,7 +475,7 @@ contract YakRouter is Maintainable {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) external {
+    ) override external {
         IERC20(_trade.path[0]).permit(msg.sender, address(this), _trade.amountIn, _deadline, _v, _r, _s);
         swapNoSplitToAVAX(_trade, _to, _fee);
     }
