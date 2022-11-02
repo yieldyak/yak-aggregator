@@ -16,7 +16,7 @@
 //
 
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity ^0.8.0;
+pragma solidity >=0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "./interface/IYakRouter.sol";
@@ -24,11 +24,12 @@ import "./interface/IAdapter.sol";
 import "./interface/IERC20.sol";
 import "./interface/IWETH.sol";
 import "./lib/Maintainable.sol";
-import "./lib/SafeERC20.sol";
 import "./lib/YakViewUtils.sol";
+import "./lib/Recoverable.sol";
+import "./lib/SafeERC20.sol";
 
 
-contract YakRouter is Maintainable, IYakRouter {
+contract YakRouter is Maintainable, Recoverable, IYakRouter {
     using SafeERC20 for IERC20;
     using OfferUtils for Offer;
 
@@ -88,18 +89,6 @@ contract YakRouter is Maintainable, IYakRouter {
 
     function adaptersCount() override external view returns (uint256) {
         return ADAPTERS.length;
-    }
-
-    function recoverERC20(address _tokenAddress, uint256 _tokenAmount) override external onlyMaintainer {
-        require(_tokenAmount > 0, "YakRouter: Nothing to recover");
-        IERC20(_tokenAddress).safeTransfer(msg.sender, _tokenAmount);
-        emit Recovered(_tokenAddress, _tokenAmount);
-    }
-
-    function recoverAVAX(uint256 _amount) override external onlyMaintainer {
-        require(_amount > 0, "YakRouter: Nothing to recover");
-        payable(msg.sender).transfer(_amount);
-        emit Recovered(address(0), _amount);
     }
 
     // Fallback

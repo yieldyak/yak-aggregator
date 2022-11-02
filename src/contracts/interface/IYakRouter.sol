@@ -62,8 +62,6 @@ interface IYakRouter {
     // misc
     function trustedTokensCount() external view returns (uint256);
     function adaptersCount() external view returns (uint256);
-    function recoverERC20(address _tokenAddress, uint256 _tokenAmount) external;
-    function recoverAVAX(uint256 _amount) external;
 
     // query
 
