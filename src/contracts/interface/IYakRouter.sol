@@ -46,7 +46,6 @@ struct Trade {
 
 interface IYakRouter {
 
-    event Recovered(address indexed _asset, uint256 amount);
     event UpdatedTrustedTokens(address[] _newTrustedTokens);
     event UpdatedAdapters(address[] _newAdapters);
     event UpdatedMinFee(uint256 _oldMinFee, uint256 _newMinFee);
