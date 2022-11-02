@@ -16,6 +16,7 @@ interface ISomeExternalContract {
 }
 
 contract TestWrapper is YakWrapper {
+    using SafeERC20 for IERC20;
 
     address internal immutable someExternalContract;
     mapping(address => bool) internal isWhitelisted;
@@ -76,8 +77,10 @@ contract TestWrapper is YakWrapper {
         address _to
     ) override internal {
         if (_tokenIn == wrappedToken && isWhitelisted[_tokenOut]) {
+            IERC20(_tokenOut).safeTransfer(someExternalContract, _amountIn);
             ISomeExternalContract(someExternalContract).burnWrappedToken(_tokenOut, _amountIn);
         } else if (_tokenOut == wrappedToken && isWhitelisted[_tokenIn]) {
+            IERC20(_tokenIn).safeTransfer(someExternalContract, _amountIn);
             ISomeExternalContract(someExternalContract).mintWrappedToken(_tokenIn, _amountIn);
         } else {
             revert("Invalid token pair");
