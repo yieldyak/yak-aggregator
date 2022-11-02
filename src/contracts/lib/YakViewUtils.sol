@@ -105,4 +105,8 @@ library FormattedOfferUtils {
         offer.gasEstimate += gasEstimate;
     }
 
+    function getAmountOut(FormattedOffer memory offer) internal pure returns (uint256) {
+        return offer.amounts[offer.amounts.length - 1];
+    }
+
 }
