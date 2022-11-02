@@ -307,7 +307,17 @@
                 "knc_wethe": "0x518008472ab60b4450f9077ab6fcf72456613729",
                 "wethe_wavax": "0x1701a7e5034ed1e35c52245ab7c07dbdaf353de7",
                 "savax_usdt": "0x53cfb104bf1ccde49b7db7775d3213bf173a0e04",
-                "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9"
+                "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9", 
+                "wmemo_usdte": "0x024ba2110590dffa4d6b288761c5ee1e78e62cd4",
+                "mai_usdc": "0xf22369517804d2c12670cb4b1f1605ceb616cc36",
+                "wavax_usdc": "0x1314eebfaeb680ae522853fe313f4e631562f989",
+                "usdce_wavax_4": "0x7cc5be39ce2edde09998cf1431121541edfff4ca",
+                "usdce_wavax_100": "0x7c3a827894b1e09abbbf29264ab32eb28862ed5c",
+                "wavax_daie": "0xafd37d91117a4eb2197a508463c622be0893d5b9",
+                "wbtce_wavax": "0x93e8b3e3d177a99741432a835125797eb54561ee",
+                "mim_wavax": "0x8146cb2342c48c88c128f7c45009677962b1193e",
+                "wmemo_usdce": "0xfd52a99ce53553f73f6dc217e9b8b5785c387037",
+                "usdc_yyjoe": "0x69f35dab4699a969414ff9ea9649c9f818eba617"
             }
         }
     }, 
