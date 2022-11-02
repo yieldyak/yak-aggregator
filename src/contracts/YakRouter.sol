@@ -19,17 +19,18 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "./lib/BytesManipulation.sol";
 import "./interface/IYakRouter.sol";
 import "./interface/IAdapter.sol";
 import "./interface/IERC20.sol";
 import "./interface/IWETH.sol";
 import "./lib/Maintainable.sol";
 import "./lib/SafeERC20.sol";
+import "./lib/YakViewUtils.sol";
 
 
 contract YakRouter is Maintainable, IYakRouter {
     using SafeERC20 for IERC20;
+    using OfferUtils for Offer;
 
     address public immutable WNATIVE;
     address public constant NATIVE = address(0);
@@ -139,68 +140,7 @@ contract YakRouter is Maintainable, IYakRouter {
             }
         }
     }
-
-    /**
-     * Makes a deep copy of Offer struct
-     */
-    function _cloneOffer(Offer memory _queries) internal pure returns (Offer memory) {
-        return Offer(_queries.amounts, _queries.adapters, _queries.path, _queries.gasEstimate);
-    }
-
-    /**
-     * Appends Query elements to Offer struct
-     */
-    function _addQuery(
-        Offer memory _queries,
-        uint256 _amount,
-        address _adapter,
-        address _tokenOut,
-        uint256 _gasEstimate
-    ) internal pure {
-        _queries.path = BytesManipulation.mergeBytes(_queries.path, BytesManipulation.toBytes(_tokenOut));
-        _queries.amounts = BytesManipulation.mergeBytes(_queries.amounts, BytesManipulation.toBytes(_amount));
-        _queries.adapters = BytesManipulation.mergeBytes(_queries.adapters, BytesManipulation.toBytes(_adapter));
-        _queries.gasEstimate += _gasEstimate;
-    }
-
-    /**
-     * Converts byte-arrays to an array of integers
-     */
-    function _formatAmounts(bytes memory _amounts) internal pure returns (uint256[] memory) {
-        // Format amounts
-        uint256 chunks = _amounts.length / 32;
-        uint256[] memory amountsFormatted = new uint256[](chunks);
-        for (uint256 i = 0; i < chunks; i++) {
-            amountsFormatted[i] = BytesManipulation.bytesToUint256(i * 32 + 32, _amounts);
-        }
-        return amountsFormatted;
-    }
-
-    /**
-     * Converts byte-array to an array of addresses
-     */
-    function _formatAddresses(bytes memory _addresses) internal pure returns (address[] memory) {
-        uint256 chunks = _addresses.length / 32;
-        address[] memory addressesFormatted = new address[](chunks);
-        for (uint256 i = 0; i < chunks; i++) {
-            addressesFormatted[i] = BytesManipulation.bytesToAddress(i * 32 + 32, _addresses);
-        }
-        return addressesFormatted;
-    }
-
-    /**
-     * Formats elements in the Offer object from byte-arrays to integers and addresses
-     */
-    function _formatOffer(Offer memory _queries) internal pure returns (FormattedOffer memory) {
-        return
-            FormattedOffer(
-                _formatAmounts(_queries.amounts),
-                _formatAddresses(_queries.adapters),
-                _formatAddresses(_queries.path),
-                _queries.gasEstimate
-            );
-    }
-
+    
     // -- QUERIES --
 
     /**
@@ -268,16 +208,14 @@ contract YakRouter is Maintainable, IYakRouter {
         uint256 _gasPrice
     ) override external view returns (FormattedOffer memory) {
         require(_maxSteps > 0 && _maxSteps < 5, "YakRouter: Invalid max-steps");
-        Offer memory queries;
-        queries.amounts = BytesManipulation.toBytes(_amountIn);
-        queries.path = BytesManipulation.toBytes(_tokenIn);
+        Offer memory queries = OfferUtils.newOffer(_amountIn, _tokenIn);
         uint256 gasPriceInExitTkn = _gasPrice > 0 ? getGasPriceInExitTkn(_gasPrice, _tokenOut) : 0;
         queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, gasPriceInExitTkn);
         if (queries.adapters.length == 0) {
             queries.amounts = "";
             queries.path = "";
         }
-        return _formatOffer(queries);
+        return queries.format();
     }
 
     // Find the market price between gas-asset(native) and token-out and express gas price in token-out
@@ -300,16 +238,14 @@ contract YakRouter is Maintainable, IYakRouter {
         uint256 _maxSteps
     ) override public view returns (FormattedOffer memory) {
         require(_maxSteps > 0 && _maxSteps < 5, "YakRouter: Invalid max-steps");
-        Offer memory queries;
-        queries.amounts = BytesManipulation.toBytes(_amountIn);
-        queries.path = BytesManipulation.toBytes(_tokenIn);
+        Offer memory queries = OfferUtils.newOffer(_amountIn, _tokenIn);
         queries = _findBestPath(_amountIn, _tokenIn, _tokenOut, _maxSteps, queries, 0);
         // If no paths are found return empty struct
         if (queries.adapters.length == 0) {
             queries.amounts = "";
             queries.path = "";
         }
-        return _formatOffer(queries);
+        return queries.format();
     }
 
     function _findBestPath(
@@ -320,7 +256,7 @@ contract YakRouter is Maintainable, IYakRouter {
         Offer memory _queries,
         uint256 _tknOutPriceNwei
     ) internal view returns (Offer memory) {
-        Offer memory bestOption = _cloneOffer(_queries);
+        Offer memory bestOption = _queries.clone();
         uint256 bestAmountOut;
         uint256 gasEstimate;
         bool withGas = _tknOutPriceNwei != 0;
@@ -332,7 +268,7 @@ contract YakRouter is Maintainable, IYakRouter {
             if (withGas) {
                 gasEstimate = IAdapter(queryDirect.adapter).swapGasEstimate();
             }
-            _addQuery(bestOption, queryDirect.amountOut, queryDirect.adapter, queryDirect.tokenOut, gasEstimate);
+            bestOption.addToTail(queryDirect.amountOut, queryDirect.adapter, queryDirect.tokenOut, gasEstimate);
             bestAmountOut = queryDirect.amountOut;
         }
         // Only check the rest if they would go beyond step limit (Need at least 2 more steps)
@@ -348,11 +284,11 @@ contract YakRouter is Maintainable, IYakRouter {
                     continue;
                 }
                 // Explore options that connect the current path to the tokenOut
-                Offer memory newOffer = _cloneOffer(_queries);
+                Offer memory newOffer = _queries.clone();
                 if (withGas) {
                     gasEstimate = IAdapter(bestSwap.adapter).swapGasEstimate();
                 }
-                _addQuery(newOffer, bestSwap.amountOut, bestSwap.adapter, bestSwap.tokenOut, gasEstimate);
+                newOffer.addToTail(bestSwap.amountOut, bestSwap.adapter, bestSwap.tokenOut, gasEstimate);
                 newOffer = _findBestPath(
                     bestSwap.amountOut,
                     TRUSTED_TOKENS[i],
@@ -361,8 +297,8 @@ contract YakRouter is Maintainable, IYakRouter {
                     newOffer,
                     _tknOutPriceNwei
                 ); // Recursive step
-                address tokenOut = BytesManipulation.bytesToAddress(newOffer.path.length, newOffer.path);
-                uint256 amountOut = BytesManipulation.bytesToUint256(newOffer.amounts.length, newOffer.amounts);
+                address tokenOut = newOffer.getTokenOut();
+                uint256 amountOut = newOffer.getAmountOut();
                 // Check that the last token in the path is the tokenOut and update the new best option if neccesary
                 if (_tokenOut == tokenOut && amountOut > bestAmountOut) {
                     if (newOffer.gasEstimate > bestOption.gasEstimate) {

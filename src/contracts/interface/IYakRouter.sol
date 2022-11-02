@@ -19,6 +19,31 @@
 pragma solidity ^0.8.0;
 
 
+struct Query {
+    address adapter;
+    address tokenIn;
+    address tokenOut;
+    uint256 amountOut;
+}
+struct Offer {
+    bytes amounts;
+    bytes adapters;
+    bytes path;
+    uint256 gasEstimate;
+}
+struct FormattedOffer {
+    uint256[] amounts;
+    address[] adapters;
+    address[] path;
+    uint256 gasEstimate;
+}
+struct Trade {
+    uint256 amountIn;
+    uint256 amountOut;
+    address[] path;
+    address[] adapters;
+}
+
 interface IYakRouter {
 
     event Recovered(address indexed _asset, uint256 amount);
@@ -27,31 +52,6 @@ interface IYakRouter {
     event UpdatedMinFee(uint256 _oldMinFee, uint256 _newMinFee);
     event UpdatedFeeClaimer(address _oldFeeClaimer, address _newFeeClaimer);
     event YakSwap(address indexed _tokenIn, address indexed _tokenOut, uint256 _amountIn, uint256 _amountOut);
-
-    struct Query {
-        address adapter;
-        address tokenIn;
-        address tokenOut;
-        uint256 amountOut;
-    }
-    struct Offer {
-        bytes amounts;
-        bytes adapters;
-        bytes path;
-        uint256 gasEstimate;
-    }
-    struct FormattedOffer {
-        uint256[] amounts;
-        address[] adapters;
-        address[] path;
-        uint256 gasEstimate;
-    }
-    struct Trade {
-        uint256 amountIn;
-        uint256 amountOut;
-        address[] path;
-        address[] adapters;
-    }
 
     // admin
     function setTrustedTokens(address[] memory _trustedTokens) external;

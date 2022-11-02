@@ -21,14 +21,6 @@ module.exports.deployUniV2Contract = (
     )
 }
 
-module.exports.deployBytesManipulation = (networkName) => {
-    const tags = ['library', 'bytesManipulation', 'router']
-    const name = 'BytesManipulation'
-    const contractName = 'BytesManipulation'
-    const args = []
-    return deployContract(networkName, tags, name, contractName, args)
-}
-
 module.exports.deployRouter = (networkName) => {
     const deployOptions = require('../misc/deployOptions')[networkName]
     const exportEnv = async ({ getNamedAccounts, deployments }) => {
@@ -38,7 +30,6 @@ module.exports.deployRouter = (networkName) => {
 
         const feeClaimer = deployer
         const { adapterWhitelist, hopTokens, wnative } = deployOptions
-        const BytesManipulation = await deployments.get('BytesManipulation')
         const adapters = await Promise.all(adapterWhitelist.map(a => deployments.get(a)))
             .then(a => a.map(_a => _a.address))
         const deployArgs = [
@@ -51,12 +42,7 @@ module.exports.deployRouter = (networkName) => {
 
         const name = 'YakRouter'
         const contractName = 'YakRouter'
-        const optionalArgs = {
-            libraries: {
-                'BytesManipulation': BytesManipulation.address
-            }, 
-            gas: 4000000
-        }
+        const optionalArgs = { gas: 4000000 }
         const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
         await deployFn({ getNamedAccounts, deployments })
     }
