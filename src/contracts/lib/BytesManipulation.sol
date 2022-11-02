@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./BytesToTypes.sol";
+import "./TypeConversion.sol";
 
 library BytesManipulation {
+    using TypeConversion for bytes;
+
     function toBytes(uint256 x) internal pure returns (bytes memory b) {
         b = new bytes(32);
         assembly {
@@ -47,10 +49,10 @@ library BytesManipulation {
     }
 
     function bytesToAddress(uint256 _offst, bytes memory _input) internal pure returns (address) {
-        return BytesToTypes.bytesToAddress(_offst, _input);
+        return _input.toAddress(_offst);
     }
 
     function bytesToUint256(uint256 _offst, bytes memory _input) internal pure returns (uint256) {
-        return BytesToTypes.bytesToUint256(_offst, _input);
+        return _input.toUint(_offst);
     }
 }
