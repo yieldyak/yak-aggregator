@@ -62,7 +62,7 @@ contract YakWrapRouter is Maintainable {
                 wrappedToken
             );
             if (wrappedAmountOut > bestOffer.getAmountOut()) {
-                offer.addToHead(
+                offer.addToTail(
                     wrappedAmountOut, 
                     wrapper, 
                     wrappedToken, 
