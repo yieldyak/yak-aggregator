@@ -24,15 +24,27 @@ import "../YakAdapter.sol";
 
 import "hardhat/console.sol";
 
-
 interface IQBook {
     function makerMarkets(address make, address take) external view returns (address);
+
     function takerMarkets(address take, address make) external view returns (address);
-    function quote(address _from, address _to, uint256 _amount) external view returns (uint256);
-    function swap(address _from, address _to, uint256 _amount) external;
+
+    function quote(
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external view returns (uint256);
+
+    function swap(
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external;
 }
 
 interface IMarket {
+    function takeVault() external view returns (address);
+
     function swap(address _receiver) external returns (uint256 makeOut);
 }
 
@@ -66,9 +78,10 @@ contract QBookAdapter is YakAdapter {
     ) internal override {
         address market = IQBook(qbook).takerMarkets(_tokenIn, _tokenOut);
         require(market != address(0), "QBookAdapter: Market not found");
-        IERC20(_tokenIn).safeTransfer(market, _amountIn);
+        address vault = IMarket(market).takeVault();
+        IERC20(_tokenIn).safeTransfer(vault, _amountIn);
         console.log("QBookAdapter: Swapping %s %s for %s", _amountIn, _tokenIn, _tokenOut);
+        console.log("QBookAdapter: Using market %s with vault %s", market, vault);
         IMarket(market).swap(_to); // parent fn checks amountOut is sufficient
     }
-
 }
