@@ -309,6 +309,13 @@
                 "savax_usdt": "0x53cfb104bf1ccde49b7db7775d3213bf173a0e04",
                 "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9"
             }
+        }, 
+        "qbook": {
+            "router": "0x4A2b4c681cdc1e878B3b31493667F652377E7Bad", 
+            "markets": {
+                "usdc_usdce": "0xcCfAd04Abc3a259c376690E5Ff933C8e6e54f721", 
+                "usdce_usdc": "0x4f5dd09d1f366e966373758aed05d3d586b53a93"
+            }
         }
     }, 
     "dogechain": {
