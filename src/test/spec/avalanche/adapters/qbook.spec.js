@@ -1,7 +1,7 @@
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { qbook } = addresses.avalanche
 
-describe.only('YakAdapter - QBook', () => {
+describe('YakAdapter - QBook', () => {
     
     let testEnv
     let tkns
