@@ -1,7 +1,7 @@
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { qbook } = addresses.avalanche
 
-describe('YakAdapter - QBook', () => {
+describe.only('YakAdapter - QBook', () => {
     
     let testEnv
     let tkns
@@ -14,7 +14,7 @@ describe('YakAdapter - QBook', () => {
         tkns = testEnv.supportedTkns
 
         const contractName = 'QBookAdapter'
-        const adapterArgs = [ 'QBookV1Adapter', 140_000, qbook.router ]
+        const adapterArgs = [ 'QBookV1Adapter', 240_000, qbook.router ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
     })
 

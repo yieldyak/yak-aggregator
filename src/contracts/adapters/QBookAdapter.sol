@@ -22,7 +22,6 @@ import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
-import "hardhat/console.sol";
 
 interface IQBook {
     function makerMarkets(address make, address take) external view returns (address);
@@ -78,10 +77,7 @@ contract QBookAdapter is YakAdapter {
     ) internal override {
         address market = IQBook(qbook).takerMarkets(_tokenIn, _tokenOut);
         require(market != address(0), "QBookAdapter: Market not found");
-        address vault = IMarket(market).takeVault();
-        IERC20(_tokenIn).safeTransfer(vault, _amountIn);
-        console.log("QBookAdapter: Swapping %s %s for %s", _amountIn, _tokenIn, _tokenOut);
-        console.log("QBookAdapter: Using market %s with vault %s", market, vault);
+        IERC20(_tokenIn).safeTransfer(IMarket(market).takeVault(), _amountIn);
         IMarket(market).swap(_to); // parent fn checks amountOut is sufficient
     }
 }

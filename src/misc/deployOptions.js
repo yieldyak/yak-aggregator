@@ -32,6 +32,7 @@ module.exports = {
             'GeodeWPAdapter',
             'ArableAdapter',
             'GmxAdapter',
+            'QBookV1Adapter',
             
             'MiniYakAdapter',
             'SAvaxAdapter',
