@@ -8,3 +8,4 @@ artifacts
 cache
 .env
 out
+.vscode
