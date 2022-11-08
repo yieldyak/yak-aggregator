@@ -30,7 +30,6 @@ module.exports = {
             'KyberElasticAdapter',
             'WoofiUSDCAdapter',
             'GeodeWPAdapter',
-            'ArableAdapter',
             'GmxAdapter',
             
             'MiniYakAdapter',
