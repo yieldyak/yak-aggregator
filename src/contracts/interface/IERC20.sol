@@ -38,4 +38,6 @@ interface IERC20 {
     function swap(address, uint256) external; // Only Avalanche bridge tokens
 
     function swapSupply(address) external view returns (uint256); // Only Avalanche bridge tokens
+
+    function totalSupply() external view returns (uint256);
 }
