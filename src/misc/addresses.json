@@ -309,6 +309,9 @@
                 "savax_usdt": "0x53cfb104bf1ccde49b7db7775d3213bf173a0e04",
                 "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9"
             }
+        }, 
+        "liquidityBook": {
+            "router": "0xE3Ffc583dC176575eEA7FD9dF2A7c65F7E23f4C3" 
         }
     }, 
     "dogechain": {
@@ -369,6 +372,16 @@
         }, 
         "velodrome": {
             "factory": "0x25CbdDb98b35ab1FF77413456B31EC81A6B6B746"
+        }
+    }, 
+    "fuji": {
+        "assets": {
+            "USDC": "0xB6076C93701D6a07266c31066B298AeC6dd65c2d",
+            "WAVAX": "0xd00ae08403B9bbb9124bB305C09058E32C39A48c",
+            "USDT": "0xAb231A5744C8E6c45481754928cCfFFFD4aa0732"
+        },
+        "liquidityBook": {
+            "router": "0x0C344c52841d3F8d488E1CcDBafB42CE2C7fdFA9"
         }
     }
 }

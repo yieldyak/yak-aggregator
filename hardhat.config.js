@@ -17,6 +17,7 @@ require('./src/tasks/find-best-path')
 require('./src/tasks/list-adapters')
 
 const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')
+const FUJI_RPC = getEnvValSafe('FUJI_RPC')
 const ARBITRUM_RPC = getEnvValSafe('ARBITRUM_RPC')
 const OPTIMISM_RPC = getEnvValSafe('OPTIMISM_RPC')
 const AURORA_RPC = getEnvValSafe('AURORA_RPC')
@@ -76,6 +77,11 @@ module.exports = {
       gasPrice: 225000000000,
       url: AVALANCHE_RPC,
       accounts: [ AVALANCHE_PK_DEPLOYER ]
+    },
+    fuji: {
+      chainId: 43113,
+      url: FUJI_RPC,
+      accounts: [ AVALANCHE_PK_DEPLOYER ],
     },
     arbitrum: {
       chainId: 42161,

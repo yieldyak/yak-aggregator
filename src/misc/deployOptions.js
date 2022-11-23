@@ -26,7 +26,8 @@ module.exports = {
             'CurveMoreAdapter',
             'CurveRenAdapter',
             'CurveYUSDAdapter',
-      
+            
+            'LiquidityBookAdapter',
             'KyberElasticAdapter',
             'WoofiUSDCAdapter',
             'GeodeWPAdapter',
