@@ -296,19 +296,28 @@
         "kyberElastic": {
             "quoter": "0x14ec368E625b1d7a0cC5A9E381794CF56d6224EA",
             "pools": {
+                "knc_wethe": "0x518008472ab60b4450f9077ab6fcf72456613729",
+                "savax_usdt": "0x53cfb104bf1ccde49b7db7775d3213bf173a0e04",
                 "savax_wavax": "0x897a83cf016f33fb061e756e4ca89baa9f17990a",
-                "yusd_usdc": "0x42845783dee627f47b40b5ad7f1c5147c052a21c",
-                "yusd_savax": "0xdf9aa2156be229783e8b18c38e51b0c01778c9ca",
-                "usdce_usdc": "0x2b80f8fe0064112e7d53880025e7731e246303bc",
-                "usdce_usdte": "0x0c3b6ee14cf0eddab91276e7ee71280f6ff61128",
-                "usdt_usdte": "0x2d9361f4110e7bf8b8f39559a61c2d2777d14002",
                 "usdc_daie": "0xd0a06776de66a53e94601c7200f00b6584c1861e",
+                "usdt_usdte": "0x2d9361f4110e7bf8b8f39559a61c2d2777d14002",
                 "usdt_daie": "0x2304fa3abcb57fe2957cf449f67e03ed5c7205e2",
                 "usdt_usdc": "0xa83e7eebcf91097d116feacfc0d53ea5e4d03fa7",
-                "knc_wethe": "0x518008472ab60b4450f9077ab6fcf72456613729",
+                "usdce_usdc": "0x2b80f8fe0064112e7d53880025e7731e246303bc",
+                "usdce_usdte": "0x0c3b6ee14cf0eddab91276e7ee71280f6ff61128",
+                "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9", 
                 "wethe_wavax": "0x1701a7e5034ed1e35c52245ab7c07dbdaf353de7",
-                "savax_usdt": "0x53cfb104bf1ccde49b7db7775d3213bf173a0e04",
-                "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9"
+                "yusd_savax": "0xdf9aa2156be229783e8b18c38e51b0c01778c9ca",
+                "yusd_usdc": "0x42845783dee627f47b40b5ad7f1c5147c052a21c",
+                
+                "mai_usdc": "0xF22369517804d2C12670CB4B1f1605CeB616Cc36",
+                "mim_wavax": "0x93E8b3e3d177A99741432A835125797eB54561EE",
+                "usdce_wavax": "0x7CC5BE39CE2EddE09998cF1431121541EdfFF4cA",
+                "wavax_usdc": "0xF80C6F350cCf61034d37b7d7A4fB72fA40737551",
+                "wavax_daie": "0xAFd37d91117A4EB2197a508463C622be0893D5b9",
+                "wbtce_wavax": "0x93e8b3e3d177a99741432a835125797eb54561ee",
+                "wmemo_usdte": "0x024ba2110590dfFa4d6b288761c5eE1E78E62Cd4",
+                
             }
         }, 
         "liquidityBook": {
