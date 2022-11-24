@@ -310,13 +310,18 @@
                 "yusd_savax": "0xdf9aa2156be229783e8b18c38e51b0c01778c9ca",
                 "yusd_usdc": "0x42845783dee627f47b40b5ad7f1c5147c052a21c",
                 
+                "knc_linke": "0x6Fd1e887499950032D9Ec503287eAc3402be3819",
+                "knc_mai": "0xDb7edEf774625b2b19B6846713f96821720c7164",
                 "mai_usdc": "0xF22369517804d2C12670CB4B1f1605CeB616Cc36",
                 "mim_wavax": "0x93E8b3e3d177A99741432A835125797eB54561EE",
                 "usdce_wavax": "0x7CC5BE39CE2EddE09998cF1431121541EdfFF4cA",
                 "wavax_usdc": "0xF80C6F350cCf61034d37b7d7A4fB72fA40737551",
                 "wavax_daie": "0xAFd37d91117A4EB2197a508463C622be0893D5b9",
+                "wavax_yak": "0xdC0FAd0E63EC6c698B9f178ACCDE577015f88D7C",
                 "wbtce_wavax": "0x93e8b3e3d177a99741432a835125797eb54561ee",
                 "wmemo_usdte": "0x024ba2110590dfFa4d6b288761c5eE1E78E62Cd4",
+                "wmemo_usdce": "0xFD52a99Ce53553f73f6dC217e9B8b5785C387037",
+                "wmemo_usdc": "0x47c6a9d36de86767460b02b3654692d85686163b"
                 
             }
         }, 
