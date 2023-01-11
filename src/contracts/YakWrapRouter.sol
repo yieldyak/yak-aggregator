@@ -23,8 +23,6 @@ import "./interface/IWrapper.sol";
 import "./lib/Maintainable.sol";
 import "./lib/YakViewUtils.sol";
 
-import "hardhat/console.sol";
-
 contract YakWrapRouter is Maintainable {
     using FormattedOfferUtils for FormattedOffer;
 
@@ -45,23 +43,21 @@ contract YakWrapRouter is Maintainable {
         uint256 maxSteps,
         uint256 gasPrice
     ) external view returns (FormattedOffer memory bestOffer) {
-        address[] memory tokensOut = IWrapper(wrapper).getTokensIn();
+        address[] memory wrapperTokenIn = IWrapper(wrapper).getTokensIn();
         address wrappedToken = IWrapper(wrapper).getWrappedToken();
         uint256 gasEstimate = IWrapper(wrapper).swapGasEstimate();
 
-        for (uint256 i; i < tokensOut.length; ++i) {
-            console.log("tokenIn %s", tokenIn);
-            console.log("tokensOut[i] %s", tokensOut[i]);
+        for (uint256 i; i < wrapperTokenIn.length; ++i) {
             FormattedOffer memory offer = router.findBestPathWithGas(
                 amountIn,
                 tokenIn,
-                tokensOut[i],
+                wrapperTokenIn[i],
                 maxSteps,
                 gasPrice
             );
             uint256 wrappedAmountOut = IWrapper(wrapper).query(
                 offer.amounts[offer.amounts.length - 1],
-                tokensOut[i],
+                wrapperTokenIn[i],
                 wrappedToken
             );
 
@@ -79,22 +75,21 @@ contract YakWrapRouter is Maintainable {
         uint256 maxSteps,
         uint256 gasPrice
     ) external view returns (FormattedOffer memory bestOffer) {
-        address[] memory tokensIn = IWrapper(wrapper).getTokensOut();
+        address[] memory wrapperTokenOut = IWrapper(wrapper).getTokensOut();
         address wrappedToken = IWrapper(wrapper).getWrappedToken();
         uint256 gasEstimate = IWrapper(wrapper).swapGasEstimate();
 
-        for (uint256 i; i < tokensIn.length; ++i) {
-            console.log("tokenIn %s", tokenOut);
-            console.log("tokenOuts[i] %s", tokensIn[i]);
-            uint256 unwrappedAmount = IWrapper(wrapper).query(amountIn, wrappedToken, tokensIn[i]);
+        for (uint256 i; i < wrapperTokenOut.length; ++i) {
+            uint256 unwrappedAmount = IWrapper(wrapper).query(amountIn, wrappedToken, wrapperTokenOut[i]);
             FormattedOffer memory offer = router.findBestPathWithGas(
                 unwrappedAmount,
-                tokensIn[i],
+                wrapperTokenOut[i],
                 tokenOut,
                 maxSteps,
                 gasPrice
             );
-            if (i == 0 || unwrappedAmount > bestOffer.getAmountOut()) {
+
+            if (i == 0 || offer.getAmountOut() > bestOffer.getAmountOut()) {
                 offer.addToHead(unwrappedAmount, wrapper, wrappedToken, gasEstimate);
                 bestOffer = offer;
             }

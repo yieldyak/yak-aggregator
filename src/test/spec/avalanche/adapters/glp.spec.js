@@ -17,11 +17,6 @@ describe("YakAdapter - Glp", () => {
     const contractName = "GlpWrapper";
     const adapterArgs = ["GlpWrapper", 1_100_000, GmxRewardRouter];
     ate = await testEnv.setAdapterEnv(contractName, adapterArgs);
-    await ethers.provider.send("hardhat_setStorageAt", [
-      "0xe1ae4d4b06A5Fe1fc288f6B4CD72f9F8323B107F",
-      "0x5",
-      "0x0000000000000000000000000000000000000000000000000000000000000000",
-    ]);
     testEnv.updateTrader();
   });
 

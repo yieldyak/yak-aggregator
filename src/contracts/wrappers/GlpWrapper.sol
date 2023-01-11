@@ -95,9 +95,8 @@ contract GlpWrapper is YakWrapper {
     function _quoteSellGLP(address _tokenOut, uint256 _amountIn) internal view returns (uint256 amountOut) {
         uint256 aumInUsdg = IGlpManager(glpManager).getAumInUsdg(false);
         uint256 glpSupply = IERC20(GLP).totalSupply();
-        uint256 price = IGmxVault(vault).getMaxPrice(_tokenOut);
         uint256 usdgAmount = (_amountIn * aumInUsdg) / glpSupply;
-        uint256 redemptionAmount = (usdgAmount * PRICE_PRECISION) / price;
+        uint256 redemptionAmount = IGmxVault(vault).getRedemptionAmount(_tokenOut, usdgAmount);
         uint256 feeBasisPoints = IGmxVaultUtils(vaultUtils).getSellUsdgFeeBasisPoints(_tokenOut, usdgAmount);
         amountOut = (redemptionAmount * (BASIS_POINTS_DIVISOR - feeBasisPoints)) / BASIS_POINTS_DIVISOR;
     }

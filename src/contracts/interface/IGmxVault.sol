@@ -86,4 +86,6 @@ interface IGmxVault {
         address _tokenDiv,
         address _tokenMul
     ) external view returns (uint256);
+
+    function getRedemptionAmount(address _token, uint256 _usdgAmount) external view returns (uint256);
 }
