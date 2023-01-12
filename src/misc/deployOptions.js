@@ -29,7 +29,7 @@ module.exports = {
             
             'LiquidityBookAdapter',
             'KyberElasticAdapter',
-            'WoofiUSDCAdapter',
+            'WoofiV2Adapter',
             'GeodeWPAdapter',
             'GmxAdapter',
             
