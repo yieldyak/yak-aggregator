@@ -23,7 +23,7 @@ function getRouterAddressForNetworkId(networkId) {
 }
 
 function getRouterDeployment(networkId) {
-    const path = `../deployments/${networkId}/YakRouterV0.json`
+    const path = `../deployments/${networkId}/YakRouter.json`
     try {
         return require(path)
     } catch {

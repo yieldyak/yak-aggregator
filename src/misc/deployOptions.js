@@ -9,9 +9,6 @@ module.exports = {
             'TraderJoeAdapter',
             'PangolinAdapter',
             'SushiswapAdapter',
-            'KyberAdapter',
-            'ElkAdapter',
-            'SwapsicleAdapter',
       
             'SynapseAdapter',
             'AxialAS4DAdapter',
@@ -20,11 +17,8 @@ module.exports = {
             'CurveAtricryptoAdapter',
             'Curve3poolV2Adapter',
             'Curve3poolfAdapter',
-            'CurveDeUSDCAdapter',
             'CurveAaveAdapter',
             'CurveUSDCAdapter',
-            'CurveMoreAdapter',
-            'CurveRenAdapter',
             'CurveYUSDAdapter',
             
             'LiquidityBookAdapter',
@@ -33,7 +27,6 @@ module.exports = {
             'GeodeWPAdapter',
             'GmxAdapter',
             
-            'MiniYakAdapter',
             'SAvaxAdapter',
             'WAvaxAdapter',
         ],
@@ -43,7 +36,6 @@ module.exports = {
             ava.assets.USDTe,
             ava.assets.USDC,
             ava.assets.USDCe,
-            ava.assets.MIM,
             ava.assets.WBTCe,
             ava.assets.DAIe,
             ava.assets.USDt,
