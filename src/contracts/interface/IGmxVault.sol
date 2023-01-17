@@ -16,6 +16,10 @@ interface IGmxVaultUtils {
         address,
         uint256
     ) external view returns (uint256);
+
+    function getBuyUsdgFeeBasisPoints(address _token, uint256 _usdgAmount) external view returns (uint256);
+
+    function getSellUsdgFeeBasisPoints(address _token, uint256 _usdgAmount) external view returns (uint256);
 }
 
 interface IGmxVault {
@@ -72,4 +76,16 @@ interface IGmxVault {
     function setBufferAmount(address, uint256) external;
 
     function gov() external view returns (address);
+
+    function getMaxPrice(address _token) external view returns (uint256);
+
+    function getMinPrice(address _token) external view returns (uint256);
+
+    function adjustForDecimals(
+        uint256 _amount,
+        address _tokenDiv,
+        address _tokenMul
+    ) external view returns (uint256);
+
+    function getRedemptionAmount(address _token, uint256 _usdgAmount) external view returns (uint256);
 }
