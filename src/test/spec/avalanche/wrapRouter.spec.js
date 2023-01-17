@@ -52,11 +52,11 @@ describe("YakWrapRouter", () => {
   describe("Find best path", async () => {
     it("For wrap", async () => {
       const amountIn = 10000e6;
-      await wrapRouter.findBestPathAndWrap(amountIn, tkns.USDCe.address, adapter, 2, 2000);
+      await wrapRouter.findBestPathAndWrap(amountIn, tkns.USDCe.address, adapter, 2);
     });
     it("For unwrap ", async () => {
       const amountIn = ethers.utils.parseEther("100000");
-      await wrapRouter.unwrapAndFindBestPath(amountIn, tkns.USDCe.address, adapter, 2, 2000);
+      await wrapRouter.unwrapAndFindBestPath(amountIn, tkns.USDCe.address, adapter, 2);
     });
   });
 

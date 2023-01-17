@@ -40,20 +40,18 @@ contract YakWrapRouter is Maintainable {
         uint256 amountIn,
         address tokenIn,
         address wrapper,
-        uint256 maxSteps,
-        uint256 gasPrice
+        uint256 maxSteps
     ) external view returns (FormattedOffer memory bestOffer) {
         address[] memory wrapperTokenIn = IWrapper(wrapper).getTokensIn();
         address wrappedToken = IWrapper(wrapper).getWrappedToken();
         uint256 gasEstimate = IWrapper(wrapper).swapGasEstimate();
 
         for (uint256 i; i < wrapperTokenIn.length; ++i) {
-            FormattedOffer memory offer = router.findBestPathWithGas(
+            FormattedOffer memory offer = router.findBestPath(
                 amountIn,
                 tokenIn,
                 wrapperTokenIn[i],
-                maxSteps,
-                gasPrice
+                maxSteps
             );
             uint256 wrappedAmountOut = IWrapper(wrapper).query(
                 offer.amounts[offer.amounts.length - 1],
@@ -72,8 +70,7 @@ contract YakWrapRouter is Maintainable {
         uint256 amountIn,
         address tokenOut,
         address wrapper,
-        uint256 maxSteps,
-        uint256 gasPrice
+        uint256 maxSteps
     ) external view returns (FormattedOffer memory bestOffer) {
         address[] memory wrapperTokenOut = IWrapper(wrapper).getTokensOut();
         address wrappedToken = IWrapper(wrapper).getWrappedToken();
@@ -81,12 +78,11 @@ contract YakWrapRouter is Maintainable {
 
         for (uint256 i; i < wrapperTokenOut.length; ++i) {
             uint256 unwrappedAmount = IWrapper(wrapper).query(amountIn, wrappedToken, wrapperTokenOut[i]);
-            FormattedOffer memory offer = router.findBestPathWithGas(
+            FormattedOffer memory offer = router.findBestPath(
                 unwrappedAmount,
                 wrapperTokenOut[i],
                 tokenOut,
-                maxSteps,
-                gasPrice
+                maxSteps
             );
 
             if (i == 0 || offer.getAmountOut() > bestOffer.getAmountOut()) {
