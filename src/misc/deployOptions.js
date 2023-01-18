@@ -30,6 +30,13 @@ module.exports = {
             'SAvaxAdapter',
             'WAvaxAdapter',
         ],
+        minimalAdapterWhitelist: [
+            'WAvaxAdapter',
+            'TraderJoeAdapter',            
+            'LiquidityBookAdapter',
+            'KyberElasticAdapter',
+            'GmxAdapter',
+        ],
         hopTokens: [
             ava.assets.WAVAX,
             ava.assets.WETHe,

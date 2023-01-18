@@ -11,7 +11,7 @@ describe("YakWrapRouter", () => {
 
   before(async () => {
     const networkName = "avalanche";
-    const forkBlockNumber = 23919178;
+    const forkBlockNumber = 25104796;
     testEnv = await setTestEnv(networkName, forkBlockNumber);
     tkns = testEnv.supportedTkns;
 
@@ -37,14 +37,12 @@ describe("YakWrapRouter", () => {
     await startImpersonatingAccount(routerOwnerAddress);
     const router = await ethers.getContractAt("src/contracts/YakRouter.sol:YakRouter", yakRouter);
     await router.connect(routerOwner).setAdapters([
-      // "0xb2a58c5e5399368716067BE72D3548F0927f0fE4",
-      "0xE5a6a4279D1517231a84Fae629E433b312fe89D7",
-      "0x281a2D66A979cce3E474715bDfa02bfE954E5f35",
-      "0x6da140B4004D1EcCfc5FffEb010Bb7A58575b446",
-      // "0x7F8B47Ff174Eaf96960a050B220a907dFa3feD5b",
-      //"0x491dc06178CAF5b962DB53576a8A1456a8476232",
-      "0xDB66686Ac8bEA67400CF9E5DD6c8849575B90148",
-      // "0x3614657EDc3cb90BA420E5f4F61679777e4974E3",
+      "0x5C4d23fd18Fc4128f77426F42237acFcE618D0b1", // WAVAX
+      "0xDB66686Ac8bEA67400CF9E5DD6c8849575B90148", // TraderJoe
+      "0xb2a58c5e5399368716067BE72D3548F0927f0fE4", // LiquidityBook
+      "0x281a2D66A979cce3E474715bDfa02bfE954E5f35", // Kyber
+      // "0x443A28Ae2dc8E1d71327B2C6eEDF03BE8077538d", // WoofiV2
+      "0x7F8B47Ff174Eaf96960a050B220a907dFa3feD5b", // GMX
     ]);
     await stopImpersonatingAccount(routerOwnerAddress);
   });
