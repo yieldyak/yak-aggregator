@@ -1,5 +1,5 @@
-const { setTestEnv, addresses } = require("../../utils/test-env");
-const { deployContract } = require("../../helpers");
+const { setTestEnv, addresses } = require("../../../utils/test-env");
+const { deployContract } = require("../../../helpers");
 const { GmxRewardRouter } = addresses.avalanche.other;
 
 describe("YakWrapRouter", () => {
