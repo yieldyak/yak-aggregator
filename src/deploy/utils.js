@@ -59,9 +59,7 @@ module.exports.deployYakWrapRouter = (networkName, routerName) => {
         if (!deployOptions)
             throw new Error(`Can't find deployOptions for network: "${networkName}"`)
 
-        console.log(routerName);
         router = await deployments.get(routerName)
-        console.log(router.address);
         const deployArgs = [
             router.address
         ]
