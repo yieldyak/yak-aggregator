@@ -25,7 +25,7 @@
         },
         "uniV3": {
             "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984", 
-            "quoter": "0x7637Aaeb5BD58269B782726680d83f72C651aE74"
+            "quoter": "0xc80f61d1bdAbD8f5285117e1558fDDf8C64870FE"
         }, 
         "gmx": {
             "vault": "0x489ee077994B6658eAfA855C308275EAd8097C4A"
@@ -38,10 +38,12 @@
             }
         }, 
         "curve": {
-            "atricrypto": "0x960ea3e3C7FB317332d990873d354E18d7645590",
-            "atwostable": "0x7f90122BF0700F9E7e1F688fe926940E8839F353", 
+            "tricrypto": "0x960ea3e3C7FB317332d990873d354E18d7645590",
+            "twostable": "0x7f90122BF0700F9E7e1F688fe926940E8839F353", 
             "meta_frax": "0xf07d553B195080F84F582e88ecdD54bAa122b279",
-            "meta_mim": "0x30dF229cefa463e991e29D42DB0bae2e122B2AC7"
+            "meta_mim": "0x30dF229cefa463e991e29D42DB0bae2e122B2AC7", 
+            "vst_frax": "0x59bF0545FCa0E5Ad48E13DA269faCD2E8C886Ba4", 
+            "frax_bp": "0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5"
         }, 
         "saddle": {
             "arbusd": "0xBea9F78090bDB9e662d8CB301A00ad09A5b756e9",
@@ -62,6 +64,40 @@
                     "usdc_dodo": "0x6a58c68FF5C4e4D90EB6561449CC74A64F818dA5"
                 }
             }
+        },
+        "kyberPools": {
+            "mai_usdc": "0x6a4d5f8385ff6e7fc4ebf6f726e12a958daa1cba"
+        },
+        "kyberElastic": {
+            "quoter": "0xf2acd5F10E16BCd2b436701647513bB6C20cF62F",
+            "pools": {
+                "usdt_usdc_8": "0x087abaab9cd85025a8b3916948c69fe173c837ea",
+                "usdt_usdc_10": "0xbf0aa7eef5b94fe11d4d0a72be9d29882415e3bb",
+                "wsteth_eth": "0x114de2affc6a335433dbe9d3d51a8f31a5591fdf",
+                "wsteth_usdc": "0x7acbea3b8ab7cdf4a595c6ed81e7d3e26038d494",
+                "dai_usdc_8": "0xd5b03a99441b088df2923f9e266c906971af2ded",
+                "dai_usdc_10": "0xd98fca6160c5265c1da4ba709d686b85f490a21d",
+                "wbtc_eth": "0x2a83e1aa650b364ac88b39f1f67a34abcca8e6f2",
+                "ageur_usdc": "0xf9d234bad87825aa8906826f0a68d4c5bbbb1461",
+                "eth_usdc_40": "0x26333db71b82e2df33d1c11158470b73e3d27072",
+                "eth_usdc_100": "0x8285530c639b9aee36557312facd2f7d6c797c18",
+                "dai_usdt_8": "0x1e662bfc7595565215a322575d0d9693f17df2e4",
+                "dai_usdt_10": "0x30e4bd4a5b02f73a6863f499c2fba257025e827b",
+                "umami_eth": "0xae338fe2521c609437ab996f187819ab59082f94",
+                "mai_usdc": "0x9497954d3d99b458808b7e9e3349edb3f193464d",
+                "eth_dai": "0xc1f8fe4afed59e461cbea887c3a578076ffb707f",
+                "eth_gmx": "0x6ce912d22a9763226ae90126edf2f53bda429e2d",
+                "eth_knc": "0x8d1a0676f7f3c4d55c59a963ee710540e6a3deba",
+                "eth_usdt": "0xc7ff48e5a7e6a14bc4d7dca1c3e4b38321121d0b",
+                "knc_link": "0x369f3f702d449f1e5e741643b1b90a8bf175f839",
+                "knc_mai": "0x35758351bdbb30b0704e472ec36e6887ac0d794e",
+                "ldo_knc": "0x8a33c7e7fa8969909654cca6f8190beda84eb023",
+                "ldo_usdc": "0xb100ba0b98b6d997fbf95c0c051ae66d79bd07b3"
+            }
+        }, 
+        "other": {
+            "woofiV2Pool": "0xeFF23B4bE1091b53205E35f3AfCD9C7182bf3062", 
+            "lb_router": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B"
         }
     },
     "aurora": {

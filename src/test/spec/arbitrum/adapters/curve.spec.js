@@ -25,11 +25,11 @@ describe('YakAdapter - Curve', function() {
         testEnv.updateTrader()
     })
 
-    describe('aTwoStable', async () => {
+    describe('TwoStable', async () => {
 
         before(async () => {
             const contractName = 'CurvePlain128Adapter'
-            const adapterArgs = [ 'CurveAtwostable', curve.atwostable, 260_000 ]
+            const adapterArgs = [ 'CurveTwostable', curve.twostable, 260_000 ]
             ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
         })
 
@@ -77,11 +77,11 @@ describe('YakAdapter - Curve', function() {
 
     })
 
-    describe('aTriCrypto', async () => {
+    describe('TriCrypto', async () => {
 
         before(async () => {
-            const contractName = 'CurvePlainV2Adapter'
-            const adapterArgs = [ 'CurveAtricrypto', curve.atricrypto, 660_000 ]
+            const contractName = 'CurvePlain256Adapter'
+            const adapterArgs = [ 'CurveTricrypto', curve.tricrypto, 660_000 ]
             ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
         })
 
