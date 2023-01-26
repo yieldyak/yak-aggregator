@@ -1,13 +1,12 @@
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
 const { setTestEnv, addresses } = require("../../../utils/test-env");
-const { deployContract } = require("../../../helpers");
 const { GmxRewardRouter } = addresses.avalanche.other;
 
-describe("YakWrapRouter", () => {
+describe("GlpWrapper", () => {
   let testEnv;
   let tkns;
   let ate; // adapter-test-env
-  let wrapRouter;
-  let adapter;
 
   before(async () => {
     const networkName = "avalanche";
@@ -18,64 +17,50 @@ describe("YakWrapRouter", () => {
     const contractName = "GlpWrapper";
     const adapterArgs = ["GlpWrapper", 1_100_000, GmxRewardRouter];
     ate = await testEnv.setAdapterEnv(contractName, adapterArgs);
-    adapter = ate.Adapter.address;
-
-    const yakRouter = "0xC4729E56b831d74bBc18797e0e17A295fA77488c";
-    const routerArgs = [yakRouter];
-    wrapRouter = await deployContract("YakWrapRouter", { args: routerArgs, deployer: testEnv.deployer });
-    await ate.Adapter.setWhitelistedTokens([
-      tkns.WAVAX.address,
-      tkns.WETHe.address,
-      tkns.BTCb.address,
-      tkns.WBTCe.address,
-      tkns.USDCe.address,
-      tkns.USDC.address,
-    ]);
-
-    const routerOwnerAddress = "0xd22044706DeA3c342f68396bEDBCf6a2536d951D";
-    const routerOwner = await getSignerForAddress(routerOwnerAddress);
-    await startImpersonatingAccount(routerOwnerAddress);
-    const router = await ethers.getContractAt("src/contracts/YakRouter.sol:YakRouter", yakRouter);
-    await router.connect(routerOwner).setAdapters([
-      "0x5C4d23fd18Fc4128f77426F42237acFcE618D0b1", // WAVAX
-      "0xDB66686Ac8bEA67400CF9E5DD6c8849575B90148", // TraderJoe
-      "0xb2a58c5e5399368716067BE72D3548F0927f0fE4", // LiquidityBook
-      "0x281a2D66A979cce3E474715bDfa02bfE954E5f35", // Kyber
-      // "0x443A28Ae2dc8E1d71327B2C6eEDF03BE8077538d", // WoofiV2
-      "0x7F8B47Ff174Eaf96960a050B220a907dFa3feD5b", // GMX
-    ]);
-    await stopImpersonatingAccount(routerOwnerAddress);
+    testEnv.updateTrader();
   });
 
-  describe("Find best path", async () => {
-    it("For wrap", async () => {
-      const amountIn = 10000e6;
-      await wrapRouter.findBestPathAndWrap(amountIn, tkns.USDCe.address, adapter, 2, 2000);
-    });
-    it("For unwrap ", async () => {
-      const amountIn = ethers.utils.parseEther("100000");
-      await wrapRouter.unwrapAndFindBestPath(amountIn, tkns.USDCe.address, adapter, 2, 2000);
+  describe("Query is correct", async () => {
+    it("1 WAVAX -> fsGLP", async () => {
+      await ate.queryMatches(
+        ethers.utils.parseEther("1"),
+        tkns.WAVAX.address,
+        tkns.sGLP.address,
+        "22856918361992666713"
+      );
     });
   });
 
-  async function startImpersonatingAccount(address) {
-    await hre.network.provider.request({
-      method: "hardhat_impersonateAccount",
-      params: [address],
+  describe("Swapping matches query", async () => {
+    it("100 WAVAX -> fsGLP", async () => {
+      expect(await tkns.fsGLP.balanceOf(testEnv.trader.address)).eq(0);
+      const amountIn = ethers.utils.parseEther("100");
+      const queryDy = await ate.query(amountIn, tkns.WAVAX.address, tkns.sGLP.address);
+      await ate.mintAndSwap(amountIn, queryDy, tkns.WAVAX, tkns.sGLP);
+      expect(await tkns.fsGLP.balanceOf(testEnv.trader.address)).eq(queryDy);
     });
-  }
 
-  async function stopImpersonatingAccount(address) {
-    await hre.network.provider.request({
-      method: "hardhat_stopImpersonatingAccount",
-      params: [address],
+    it("100 fsGLP -> WAVAX", async () => {
+      await tkns.sGLP
+        .connect(testEnv.trader)
+        .transfer(ate.Adapter.address, await tkns.fsGLP.balanceOf(testEnv.trader.address));
+      expect(await tkns.fsGLP.balanceOf(ate.Adapter.address)).gt(0);
+      const balanceBefore = await tkns.WAVAX.balanceOf(testEnv.trader.address);
+      const amountIn = ethers.utils.parseEther("100");
+      const queryDy = await ate.query(amountIn, tkns.sGLP.address, tkns.WAVAX.address);
+      await ate.Adapter.connect(testEnv.trader).swap(
+        amountIn,
+        queryDy,
+        tkns.sGLP.address,
+        tkns.WAVAX.address,
+        testEnv.trader.address
+      );
+      expect(await tkns.WAVAX.balanceOf(testEnv.trader.address)).eq(queryDy.add(balanceBefore));
     });
-  }
+  });
 
-  async function getSignerForAddress(address) {
-    await startImpersonatingAccount(address);
-    let signer = await ethers.getSigner(address);
-    await stopImpersonatingAccount(address);
-    return signer;
-  }
+  it("Query returns zero if tokens not found", async () => {
+    const supportedTkn = tkns.sGLP;
+    ate.checkQueryReturnsZeroForUnsupportedTkns(supportedTkn);
+  });
 });
