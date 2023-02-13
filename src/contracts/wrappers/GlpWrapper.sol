@@ -13,7 +13,7 @@ contract GlpWrapper is YakWrapper {
 
     address internal constant GLP = 0x01234181085565ed162a948b6a5e88758CD7c7b8;
     address internal constant fsGLP = 0x9e295B5B976a184B14aD8cd72413aD846C299660;
-    address internal constant sGLP = 0x0b82a1aD2138E9f62454ac41b702B64e0b73d57b;
+    address internal constant sGLP = 0xaE64d55a6f09E4263421737397D1fdFA71896a69;
 
     uint256 public constant BASIS_POINTS_DIVISOR = 1e4;
     uint256 public constant PRICE_PRECISION = 1e30;
@@ -116,8 +116,7 @@ contract GlpWrapper is YakWrapper {
         address _toToken,
         address _to
     ) external override {
-        address toToken = _toToken == sGLP ? fsGLP : _toToken;
-        uint256 toBalanceBefore = IERC20(toToken).balanceOf(_to);
+        uint256 toBalanceBefore = IERC20(_toToken).balanceOf(_to);
         if (_toToken == sGLP) {
             IERC20(_fromToken).approve(glpManager, _amountIn);
             uint256 amount = IGmxRewardRouter(rewardRouter).mintAndStakeGlp(_fromToken, _amountIn, 0, _amountOut);
@@ -125,8 +124,8 @@ contract GlpWrapper is YakWrapper {
         } else {
             IGmxRewardRouter(rewardRouter).unstakeAndRedeemGlp(_toToken, _amountIn, _amountOut, _to);
         }
-        uint256 diff = IERC20(toToken).balanceOf(_to) - toBalanceBefore;
+        uint256 diff = IERC20(_toToken).balanceOf(_to) - toBalanceBefore;
         require(diff >= _amountOut, "Insufficient amount-out");
-        emit YakAdapterSwap(_fromToken, toToken, _amountIn, _amountOut);
+        emit YakAdapterSwap(_fromToken, _toToken, _amountIn, _amountOut);
     }
 }
