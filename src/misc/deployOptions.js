@@ -1,7 +1,8 @@
 const { 
     avalanche: ava, 
     dogechain: dog, 
-    arbitrum: arb
+    arbitrum: arb,
+    optimism: opt
 } = require('./addresses.json')
 
 module.exports = {
@@ -86,5 +87,39 @@ module.exports = {
             arb.assets.DAI,
         ], 
         wnative: arb.assets.WETH
+    },
+    "optimism": {
+        adapterWhitelist: [
+            'BeethovenxAdapter',
+            'CurveMetaSUSDCRVAdapter',
+            'CurveSethAdapter',
+            'Curve3stableAdapter',
+            'CurveWstethAdapter',
+            
+            'SaddleFraxBPAdapter',
+            'SaddleMetaFraxAdapter',
+            'SaddleMetaSUSDAdapter',
+            'SaddleOptUsdAdapter',
+            
+            'KyberElasticAdapter',
+            'ZipswapAdapter',
+            'UniswapV3Adapter',
+            'VelodromeAdapter',
+            'WoofiV2Adapter',
+        ],
+        hopTokens: [
+            opt.assets.WETH,
+            opt.assets.WBTC,
+            opt.assets.USDC,
+            opt.assets.USDT,
+            opt.assets.DAI,
+            opt.assets.OP, 
+            opt.assets.wstETH,
+            opt.assets.sETH, 
+            // opt.assets.MAI, 
+            // opt.assets.KNC, 
+            // opt.assets.BOB, 
+        ], 
+        wnative: opt.assets.WETH
     }
 }

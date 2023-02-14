@@ -393,37 +393,81 @@
             "USDC": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
             "USDT": "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
             "DAI": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
-            "OP": "0x4200000000000000000000000000000000000042"
+            "OP": "0x4200000000000000000000000000000000000042", 
+            "wstETH": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
+            "sETH": "0xE405de8F52ba7559f9df3C368500B6E6ae6Cee49",
+            "MAI": "0xdFA46478F9e5EA86d57387849598dbFB2e964b02",
+            "KNC": "0xa00E3A3511aAC35cA78530c85007AFCd31753819",
+            "BOB": "0xB0B195aEFA3650A6908f15CdaC7D92F8a5791B0B"
         },
-        "curvePools": {
-            "curve": {
+        "curve": {
+            "plain128": {
                 "tripool": "0x1337BedC9D22ecbe766dF105c9623922A27963EC"
+            },
+            "plain128_native": {
+                "wsteth_eth": "0xB90B9B1F91a01Ea22A182CD84C1E22222e39B415",
+                "seth_eth": "0x7Bc5728BC2b59B45a58d9A576E2Ffc5f0505B35E"
+            },
+            "metav2": {
+                "susd_3crv": "0x061b87122Ed14b9526A813209C8a59a633257bAb"
             }
-        }, 
+        },
         "univ2Routers": {
             "zipswap": "0xE6Df0BB08e5A97b40B21950a0A51b94c4DbA0Ff6"
         }, 
         "univ2Factories": {
             "zipswap": "0x8BCeDD62DD46F1A76F8A1633d4f5B76e0CDa521E"
         }, 
-        "balancerV2": {
-            "beethovenx": {
-                "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
-                "pools": {
-                    "happyroad": "0x39965c9dAb5448482Cf7e002F583c812Ceb53046",
-                    "lennon": "0x5028497af0c9a54ea8C6D42a054c0341B9fc6168",
-                    "op8track": "0x7Ef99013E446dDCe2486b8E04735b7019a115e6F",
-                    "love": "0xd6E5824b54f64CE6f1161210bc17eeBfFC77E031",
-                    "sexyusds": "0x6a06E2a5cb13fcd54b28F3f90144e64952a3A0b4"
-                }
+        "beethovenx": {
+            "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+            "pools": {
+                "happyroad": "0x39965c9dAb5448482Cf7e002F583c812Ceb53046",
+                "lennon": "0x5028497af0c9a54ea8C6D42a054c0341B9fc6168",
+                "op8track": "0x7Ef99013E446dDCe2486b8E04735b7019a115e6F",
+                "bb-yellow": "0x981fb05b738e981ac532a99e77170ecb4bc27aef",
+                "bb-happy": "0xb0de49429fbb80c635432bbad0b3965b28560177",
+                "bbt-love": "0xd6e5824b54f64ce6f1161210bc17eebffc77e031",
+                "BPT-WSTETH-USDC": "0x899f737750db562b88c1e412ee1902980d3a4844"
             }
         },
         "uniV3": {
-            "quoter": "0x7637Aaeb5BD58269B782726680d83f72C651aE74",
+            "quoter": "0xc80f61d1bdAbD8f5285117e1558fDDf8C64870FE",
             "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984"
+        },
+        "kyberElastic": {
+            "quoter": "0xf2acd5F10E16BCd2b436701647513bB6C20cF62F",
+            "pools": {
+                "wstETH-ETH": "0xda74db17023750d02b83be2559a4eaa013b65c54",
+                "wstETH-USDC": "0x5fc53f707c7aacd460a1cd564c06e0f07610fcb7",
+                "USDC-MAI": "0x9ee23e9ea484d1206dfe2707ac24861cc32111a3",
+                "USDC-USDT": "0x7e29ccaa4bf2894aca02c77e6b99cafc1d24b2f5",
+                "ETH-sETH": "0x92eae0b63fdc34ad8a1f3176a59a61e2209dd71d",
+                "USDC-sUSD": "0x32d84fe7ec28e18db25dea34eb88f6e6002cc6f6",
+                "OP-USDC": "0x787a828969391ce4bccd7fdc8a0743f9cc9470f5",
+                "USDC-DAI": "0x427464d9434f99a3d942c60210ee2376166975ce",
+                "ETH-USDC": "0xf9d5940c2313636546ab9852354860dce275dbad",
+                "wstETH-WBTC": "0x58de6a101b30926144bf6832287713dd60f481d3",
+                "wstETH-MAI": "0x2a68e3830071d65b07fb3a1fd59543e0839d504d",
+                "wstETH-BOB": "0x773932fe4d3959e69c5522582d587baed294e698",
+                "ETH-BOB": "0x6cea6745e35e9f9b0aaca15a700897fbeca50625",
+                "ETH-OP": "0xe159ce9220613f539d2d9f2b4a47224f418a43aa",
+                "ETH-KNC": "0x28bc0a25dc9581cfd9920ad0d273c006270e00fa",
+                "SNX-KNC": "0xdcc97c90dce69407ebfc20a79f75bae4640f7565",
+                "OP-KNC": "0xdbaf3a3e610ee2dfadd2b02fc0f46633da8d8853",
+                "KNC-MAI": "0x5047a457901c03afe24da1ccbfde1c767dcd071f"
+            }
         }, 
         "velodrome": {
             "factory": "0x25CbdDb98b35ab1FF77413456B31EC81A6B6B746"
+        }, 
+        "woofi": {
+            "woofiV2Pool": "0xd1778F9DF3eee5473A9640f13682e3846f61fEbC"
+        }, 
+        "saddle": {
+            "frax_usdc_bp": "0xF6C2e0aDc659007Ba7c48446F5A4e4E94dfe08b5",
+            "opt_usd": "0x5847f8177221268d279Cf377D0E01aB3FD993628",
+            "susd_meta_fraxbp": "0x250184dDDEC6d38E28ac12B481c9016867226E9D",
+            "frax_meta_optusd": "0xc55E8C79e5A6c3216D4023769559D06fa9A7732e"
         }
     }, 
     "fuji": {

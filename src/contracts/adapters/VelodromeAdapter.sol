@@ -85,6 +85,14 @@ contract VelodromeAdapter is YakAdapter {
         );
     }
 
+    function _getAmoutOutSafe(address pair, uint amountIn, address tokenIn) internal view returns (uint) {
+        try IPair(pair).getAmountOut(amountIn, tokenIn) returns (uint amountOut) {
+            return amountOut;
+        } catch {
+            return 0;
+        }
+    }
+
     function getQuoteAndPair(
         uint256 _amountIn,
         address _tokenIn,
@@ -94,11 +102,11 @@ contract VelodromeAdapter is YakAdapter {
         uint256 amountStable;
         uint256 amountVolatile;
         if (IPairFactory(FACTORY).isPair(pairStable)) {
-            amountStable = IPair(pairStable).getAmountOut(_amountIn, _tokenIn);
+            amountStable = _getAmoutOutSafe(pairStable, _amountIn, _tokenIn);
         }
         address pairVolatile = pairFor(_tokenIn, _tokenOut, false);
         if (IPairFactory(FACTORY).isPair(pairVolatile)) {
-            amountVolatile = IPair(pairVolatile).getAmountOut(_amountIn, _tokenIn);
+            amountVolatile = _getAmoutOutSafe(pairVolatile, _amountIn, _tokenIn);
         }
         (amountOut, pair) = amountStable > amountVolatile ? (amountStable, pairStable) : (amountVolatile, pairVolatile);
     }
