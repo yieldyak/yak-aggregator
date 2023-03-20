@@ -80,6 +80,7 @@ module.exports = {
             'OreoswapAdapter',
             'SwapfishAdapter',
             'CamelotAdapter',
+            'WETHAdapter',
         ],
         hopTokens: [
             arb.assets.WETH,
