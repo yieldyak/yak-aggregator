@@ -78,6 +78,10 @@ module.exports = {
             'LiquidityBookAdapter',
             'KyberElasticAdapter',
             'WoofiV2Adapter',
+            'OreoswapAdapter',
+            'SwapfishAdapter',
+            'CamelotAdapter',
+            'WETHAdapter',
         ],
         hopTokens: [
             arb.assets.WETH,
