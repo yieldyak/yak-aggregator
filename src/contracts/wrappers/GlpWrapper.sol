@@ -11,14 +11,12 @@ import "../lib/SafeERC20.sol";
 contract GlpWrapper is YakWrapper {
     using SafeERC20 for IERC20;
 
-    address internal constant GLP = 0x01234181085565ed162a948b6a5e88758CD7c7b8;
-    address internal constant fsGLP = 0x9e295B5B976a184B14aD8cd72413aD846C299660;
-    address internal constant sGLP = 0xaE64d55a6f09E4263421737397D1fdFA71896a69;
-
     uint256 public constant BASIS_POINTS_DIVISOR = 1e4;
     uint256 public constant PRICE_PRECISION = 1e30;
 
-    address public immutable usdg;
+    address public immutable USDG;
+    address public immutable GLP;
+    address public immutable sGLP;
     address public immutable vault;
     address public immutable rewardRouter;
     address public immutable glpManager;
@@ -30,15 +28,19 @@ contract GlpWrapper is YakWrapper {
     constructor(
         string memory _name,
         uint256 _gasEstimate,
-        address _gmxRewardRouter
+        address _gmxRewardRouter,
+        address _glp,
+        address _sGlp
     ) YakWrapper(_name, _gasEstimate) {
         address gmxGLPManager = IGmxRewardRouter(_gmxRewardRouter).glpManager();
         address gmxVault = IGlpManager(gmxGLPManager).vault();
-        usdg = IGmxVault(gmxVault).usdg();
+        USDG = IGmxVault(gmxVault).usdg();
         vaultUtils = address(IGmxVault(gmxVault).vaultUtils());
         rewardRouter = _gmxRewardRouter;
         vault = gmxVault;
         glpManager = gmxGLPManager;
+        GLP = _glp;
+        sGLP = _sGlp;
     }
 
     function setWhitelistedTokens(address[] memory tokens) public onlyMaintainer {
@@ -59,7 +61,7 @@ contract GlpWrapper is YakWrapper {
         return whitelistedTokens;
     }
 
-    function getWrappedToken() external pure override returns (address) {
+    function getWrappedToken() external view override returns (address) {
         return sGLP;
     }
 
@@ -85,11 +87,11 @@ contract GlpWrapper is YakWrapper {
         address _tokenIn
     ) internal view returns (uint256 amountOut) {
         amountOut = (_amountIn * _price) / PRICE_PRECISION;
-        amountOut = IGmxVault(vault).adjustForDecimals(amountOut, _tokenIn, usdg);
+        amountOut = IGmxVault(vault).adjustForDecimals(amountOut, _tokenIn, USDG);
         uint256 feeBasisPoints = IGmxVaultUtils(vaultUtils).getBuyUsdgFeeBasisPoints(_tokenIn, amountOut);
         uint256 amountAfterFees = (_amountIn * (BASIS_POINTS_DIVISOR - feeBasisPoints)) / BASIS_POINTS_DIVISOR;
         amountOut = (amountAfterFees * _price) / PRICE_PRECISION;
-        amountOut = IGmxVault(vault).adjustForDecimals(amountOut, _tokenIn, usdg);
+        amountOut = IGmxVault(vault).adjustForDecimals(amountOut, _tokenIn, USDG);
     }
 
     function _quoteSellGLP(address _tokenOut, uint256 _amountIn) internal view returns (uint256 amountOut) {

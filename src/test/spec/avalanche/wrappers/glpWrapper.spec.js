@@ -2,6 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { setTestEnv, addresses } = require("../../../utils/test-env");
 const { GmxRewardRouter } = addresses.avalanche.other;
+const { GLP, sGLP } = addresses.avalanche.assets;
 
 describe("GlpWrapper", () => {
   let testEnv;
@@ -15,7 +16,7 @@ describe("GlpWrapper", () => {
     tkns = testEnv.supportedTkns;
 
     const contractName = "GlpWrapper";
-    const adapterArgs = ["GlpWrapper", 1_100_000, GmxRewardRouter];
+    const adapterArgs = ["GlpWrapper", 1_100_000, GmxRewardRouter, GLP, sGLP];
     ate = await testEnv.setAdapterEnv(contractName, adapterArgs);
     testEnv.updateTrader();
   });

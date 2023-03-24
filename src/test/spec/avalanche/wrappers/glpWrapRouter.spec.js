@@ -1,6 +1,7 @@
 const { setTestEnv, addresses } = require("../../../utils/test-env");
 const { deployContract } = require("../../../helpers");
 const { GmxRewardRouter } = addresses.avalanche.other;
+const { GLP, sGLP } = addresses.avalanche.assets;
 
 describe("GLP Wrap Router", () => {
   let testEnv;
@@ -11,12 +12,12 @@ describe("GLP Wrap Router", () => {
 
   before(async () => {
     const networkName = "avalanche";
-    const forkBlockNumber = 25104796;
+    const forkBlockNumber = 27124901;
     testEnv = await setTestEnv(networkName, forkBlockNumber);
     tkns = testEnv.supportedTkns;
 
     const contractName = "GlpWrapper";
-    const adapterArgs = ["GlpWrapper", 1_100_000, GmxRewardRouter];
+    const adapterArgs = ["GlpWrapper", 1_100_000, GmxRewardRouter, GLP, sGLP];
     ate = await testEnv.setAdapterEnv(contractName, adapterArgs);
     adapter = ate.Adapter.address;
 
@@ -41,16 +42,18 @@ describe("GLP Wrap Router", () => {
       "0xDB66686Ac8bEA67400CF9E5DD6c8849575B90148", // TraderJoe
       "0xb2a58c5e5399368716067BE72D3548F0927f0fE4", // LiquidityBook
       "0x281a2D66A979cce3E474715bDfa02bfE954E5f35", // Kyber
-      // "0x443A28Ae2dc8E1d71327B2C6eEDF03BE8077538d", // WoofiV2
+      "0x6da140B4004D1EcCfc5FffEb010Bb7A58575b446", // Platypus
       "0x7F8B47Ff174Eaf96960a050B220a907dFa3feD5b", // GMX
+      "0xaFb5aE9934266a131F44F2A80c783d6a827A3d1a", // Synapse
+      "0x443A28Ae2dc8E1d71327B2C6eEDF03BE8077538d", // Woofi
     ]);
     await stopImpersonatingAccount(routerOwnerAddress);
   });
 
   describe("Find best path", async () => {
     it("For wrap", async () => {
-      const amountIn = 10000e6;
-      await wrapRouter.findBestPathAndWrap(amountIn, tkns.USDCe.address, adapter, 2, 2000);
+      const amountIn = ethers.utils.parseEther("1000");
+      await wrapRouter.findBestPathAndWrap(amountIn, tkns.WAVAX.address, adapter, 2, 2000);
     });
     it("For unwrap ", async () => {
       const amountIn = ethers.utils.parseEther("100000");
