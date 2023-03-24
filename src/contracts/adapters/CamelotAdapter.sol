@@ -18,84 +18,60 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
-import "../interface/ICurvePlain256.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
-contract CurvePlain256Adapter is YakAdapter {
+interface IFactory {
+    function getPair(address,address) external view returns (address);
+}
+
+interface IPair {
+    function getAmountOut(uint256, address) external view returns (uint256);
+    function swap(
+        uint256 amount0Out,
+        uint256 amount1Out,
+        address to,
+        bytes calldata data,
+        address referrer
+    ) external;
+}
+
+contract CamelotAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
-    address public immutable POOL;
-    mapping(address => uint256) public tokenIndex;
-    mapping(address => bool) public isPoolToken;
+    address immutable FACTORY;
+    address referrer;
 
     constructor(
         string memory _name,
-        address _pool,
+        address _factory,
         uint256 _swapGasEstimate
     ) YakAdapter(_name, _swapGasEstimate) {
-        name = _name;
-        POOL = _pool;
-        _setPoolTokens(_pool);
-        setSwapGasEstimate(_swapGasEstimate);
+        FACTORY = _factory;
     }
 
-    function _setPoolTokens(address _pool) internal {
-        for (uint256 i = 0; true; i++) {
-            address token = _getCoinByIndexSafe(_pool, i);
-            if (token == address(0)) break;
-            _addToken(_pool, token, i);
-        }
-    }
+    function setReferrer(address _referrer) public onlyMaintainer {
+        referrer = _referrer;
+    } 
 
-    function _getCoinByIndexSafe(address _pool, uint256 _index) internal view returns (address token) {
-        try ICurvePlain256(_pool).coins(_index) returns (address _token) {
-            token = _token;
-        } catch {}
-    }
-
-    function _addToken(
-        address _pool,
-        address _token,
-        uint256 _index
-    ) internal {
-        IERC20(_token).safeApprove(_pool, UINT_MAX);
-        tokenIndex[_token] = _index;
-        isPoolToken[_token] = true;
+    function getQuoteAndPair(
+        uint256 _amountIn,
+        address _tokenIn,
+        address _tokenOut
+    ) internal view returns (uint256 amountOut, address pair) {
+        pair = IFactory(FACTORY).getPair(_tokenIn, _tokenOut);
+        if (pair != address(0))
+            amountOut = IPair(pair).getAmountOut(_amountIn, _tokenIn);
     }
 
     function _query(
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
-    ) internal view override returns (uint256) {
-        if (!_validArgs(_amountIn, _tokenIn, _tokenOut)) return 0;
-        uint256 amountOut = _getDySafe(_amountIn, _tokenIn, _tokenOut);
-        // Account for possible rounding error
-        return amountOut > 0 ? amountOut - 1 : 0;
-    }
-
-    function _validArgs(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (bool) {
-        return _amountIn != 0 && _tokenIn != _tokenOut && isPoolToken[_tokenIn] && isPoolToken[_tokenOut];
-    }
-
-    function _getDySafe(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (uint256) {
-        try ICurvePlain256(POOL).get_dy(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
-            uint256 amountOut
-        ) {
-            return amountOut;
-        } catch {
-            return 0;
-        }
+    ) internal view override returns (uint256 amountOut) {
+        if (_tokenIn != _tokenOut && _amountIn != 0)
+            (amountOut, ) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
     }
 
     function _swap(
@@ -103,10 +79,14 @@ contract CurvePlain256Adapter is YakAdapter {
         uint256 _amountOut,
         address _tokenIn,
         address _tokenOut,
-        address _to
+        address to
     ) internal override {
-        ICurvePlain256(POOL).exchange(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
-        // Confidently transfer amount-out
-        _returnTo(_tokenOut, _amountOut, _to);
+        (uint256 amountOut, address pair) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
+        require(amountOut >= _amountOut, "Insufficent amount out");
+        (uint256 amount0Out, uint256 amount1Out) = (_tokenIn < _tokenOut)
+            ? (uint256(0), amountOut)
+            : (amountOut, uint256(0));
+        IERC20(_tokenIn).safeTransfer(pair, _amountIn);
+        IPair(pair).swap(amount0Out, amount1Out, to, new bytes(0), referrer);
     }
 }

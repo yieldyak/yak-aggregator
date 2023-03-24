@@ -1,6 +1,7 @@
 const { 
     avalanche: ava, 
-    dogechain: dog
+    dogechain: dog, 
+    arbitrum: arb
 } = require('./addresses.json')
 
 module.exports = {
@@ -56,5 +57,38 @@ module.exports = {
             dog.assets.WWDOGE,
         ], 
         wnative: dog.assets.WWDOGE
+    },
+    "arbitrum": {
+        adapterWhitelist: [
+            'BalancerV2Adapter',
+            'Curve3cryptoAdapter',
+            'Curve2stableAdapter',
+            'CurveFraxVstAdapter',
+            'CurveFraxBpAdapter',
+            'CurveMetaAdapter',
+            'DodoV1Adapter',
+            'DodoV2Adapter',
+            'GmxAdapter',
+            'SaddleArbUsdAdapter',
+            'SaddleArbUsdV2Adapter',
+            'SushiswapAdapter',
+            'SwaprAdapter',
+            'UniswapV3Adapter',
+            'LiquidityBookAdapter',
+            'KyberElasticAdapter',
+            'WoofiV2Adapter',
+            'OreoswapAdapter',
+            'SwapfishAdapter',
+            'CamelotAdapter',
+            'WETHAdapter',
+        ],
+        hopTokens: [
+            arb.assets.WETH,
+            arb.assets.WBTC,
+            arb.assets.USDC,
+            arb.assets.USDT,
+            arb.assets.DAI,
+        ], 
+        wnative: arb.assets.WETH
     }
 }

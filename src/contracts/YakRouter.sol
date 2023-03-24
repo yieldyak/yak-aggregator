@@ -79,7 +79,7 @@ contract YakRouter is Maintainable {
         address _feeClaimer,
         address _wrapped_native
     ) {
-        _setAllowanceForWrapping(_wrapped_native);
+        setAllowanceForWrapping(_wrapped_native);
         setTrustedTokens(_trustedTokens);
         setFeeClaimer(_feeClaimer);
         setAdapters(_adapters);
@@ -88,7 +88,7 @@ contract YakRouter is Maintainable {
 
     // -- SETTERS --
 
-    function _setAllowanceForWrapping(address _wnative) internal {
+    function setAllowanceForWrapping(address _wnative) public onlyMaintainer {
         IERC20(_wnative).safeApprove(_wnative, type(uint256).max);
     }
 
@@ -171,6 +171,13 @@ contract YakRouter is Maintainable {
                 IERC20(_token).safeTransfer(_to, _amount);
             }
         }
+    }
+
+    function _transferFrom(address token, address _from, address _to, uint _amount) internal {
+        if (_from != address(this))
+            IERC20(token).safeTransferFrom(_from, _to, _amount);
+        else
+            IERC20(token).safeTransfer(_to, _amount);
     }
 
     /**
@@ -426,11 +433,11 @@ contract YakRouter is Maintainable {
         if (_fee > 0 || MIN_FEE > 0) {
             // Transfer fees to the claimer account and decrease initial amount
             amounts[0] = _applyFee(_trade.amountIn, _fee);
-            IERC20(_trade.path[0]).safeTransferFrom(_from, FEE_CLAIMER, _trade.amountIn - amounts[0]);
+            _transferFrom(_trade.path[0], _from, FEE_CLAIMER, _trade.amountIn - amounts[0]);
         } else {
             amounts[0] = _trade.amountIn;
         }
-        IERC20(_trade.path[0]).safeTransferFrom(_from, _trade.adapters[0], amounts[0]);
+        _transferFrom(_trade.path[0], _from, _trade.adapters[0], amounts[0]);
         // Get amounts that will be swapped
         for (uint256 i = 0; i < _trade.adapters.length; i++) {
             amounts[i + 1] = IAdapter(_trade.adapters[i]).query(amounts[i], _trade.path[i], _trade.path[i + 1]);
