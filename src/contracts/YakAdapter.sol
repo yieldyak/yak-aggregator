@@ -19,7 +19,6 @@
 pragma solidity ^0.8.0;
 
 import "./interface/IERC20.sol";
-import "./interface/IWETH.sol";
 import "./lib/SafeERC20.sol";
 import "./lib/Maintainable.sol";
 

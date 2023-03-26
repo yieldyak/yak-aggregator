@@ -28,7 +28,7 @@
     "ethereum-waffle": "^3.3.0",
     "ethereumjs-util": "^7.0.10",
     "ethers": "^5.1.3",
-    "hardhat": "^2.2.0",
+    "hardhat": "^2.12.7",
     "hardhat-abi-exporter": "^2.2.1",
     "hardhat-contract-sizer": "^2.0.3",
     "hardhat-deploy": "^0.7.10",

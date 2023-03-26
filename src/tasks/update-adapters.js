@@ -73,8 +73,14 @@ function findDiff(actual, desired) {
 
 async function getAdapterWhitelist(deployments, networkId) {
     const whitelistNamed = getAdapterWhitelistNamed(networkId)
-    return Promise.all(whitelistNamed.map(a => deployments.get(a)))
-      .then(a => a.map(_a => _a.address))
+    return Promise.all(whitelistNamed.map(adapterName => {
+        return deployments.get(adapterName).then(deployment => {
+            if (deployment)
+                return deployment.address
+            else
+                throw new Error(`No deployment for ${adapterName}`)
+        })
+    }))
 }
 
 function getAdapterWhitelistNamed(networkId) {

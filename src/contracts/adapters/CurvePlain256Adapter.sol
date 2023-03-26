@@ -23,7 +23,7 @@ import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
-contract CurvePlainV2Adapter is YakAdapter {
+contract CurvePlain256Adapter is YakAdapter {
     using SafeERC20 for IERC20;
 
     address public immutable POOL;

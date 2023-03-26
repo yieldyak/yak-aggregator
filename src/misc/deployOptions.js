@@ -1,6 +1,8 @@
 const { 
     avalanche: ava, 
-    dogechain: dog
+    dogechain: dog, 
+    arbitrum: arb,
+    optimism: opt
 } = require('./addresses.json')
 
 module.exports = {
@@ -63,5 +65,72 @@ module.exports = {
             dog.assets.WWDOGE,
         ], 
         wnative: dog.assets.WWDOGE
+    },
+    "arbitrum": {
+        adapterWhitelist: [
+            'BalancerV2Adapter',
+            'Curve3cryptoAdapter',
+            'Curve2stableAdapter',
+            'CurveFraxVstAdapter',
+            'CurveFraxBpAdapter',
+            'CurveMetaAdapter',
+            'DodoV1Adapter',
+            'DodoV2Adapter',
+            'GmxAdapter',
+            'SaddleArbUsdAdapter',
+            'SaddleArbUsdV2Adapter',
+            'SushiswapAdapter',
+            'SwaprAdapter',
+            'UniswapV3Adapter',
+            'LiquidityBookAdapter',
+            'KyberElasticAdapter',
+            'WoofiV2Adapter',
+            'OreoswapAdapter',
+            'SwapfishAdapter',
+            'CamelotAdapter',
+            'WETHAdapter',
+        ],
+        hopTokens: [
+            arb.assets.WETH,
+            arb.assets.WBTC,
+            arb.assets.USDC,
+            arb.assets.USDT,
+            arb.assets.DAI,
+        ], 
+        wnative: arb.assets.WETH
+    },
+    "optimism": {
+        adapterWhitelist: [
+            'BeethovenxAdapter',
+            'CurveMetaSUSDCRVAdapter',
+            'CurveSethAdapter',
+            'Curve3stableAdapter',
+            'CurveWstethAdapter',
+            
+            'SaddleFraxBPAdapter',
+            'SaddleMetaFraxAdapter',
+            'SaddleMetaSUSDAdapter',
+            'SaddleOptUsdAdapter',
+            
+            'KyberElasticAdapter',
+            'ZipswapAdapter',
+            'UniswapV3Adapter',
+            'VelodromeAdapter',
+            'WoofiV2Adapter',
+        ],
+        hopTokens: [
+            opt.assets.WETH,
+            opt.assets.WBTC,
+            opt.assets.USDC,
+            opt.assets.USDT,
+            opt.assets.DAI,
+            opt.assets.OP, 
+            opt.assets.wstETH,
+            opt.assets.sETH, 
+            // opt.assets.MAI, 
+            // opt.assets.KNC, 
+            // opt.assets.BOB, 
+        ], 
+        wnative: opt.assets.WETH
     }
 }
