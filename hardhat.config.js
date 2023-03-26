@@ -14,6 +14,7 @@ require('./src/tasks/update-hop-tokens')
 require('./src/tasks/update-adapters')
 require('./src/tasks/verify-contract')
 require('./src/tasks/find-best-path')
+require('./src/tasks/find-best-path-wrapped')
 require('./src/tasks/list-adapters')
 
 const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')
@@ -43,7 +44,7 @@ module.exports = {
     spec: ['test/*.spec.js']
   },
   solidity: {
-      version: "0.8.0", 
+      version: "0.8.4", 
       settings: {
         optimizer: {
           enabled: true,

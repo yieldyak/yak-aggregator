@@ -21,12 +21,60 @@ module.exports.deployUniV2Contract = (
     )
 }
 
-module.exports.deployBytesManipulation = (networkName) => {
-    const tags = ['library', 'bytesManipulation', 'router']
-    const name = 'BytesManipulation'
-    const contractName = 'BytesManipulation'
-    const args = []
-    return deployContract(networkName, tags, name, contractName, args)
+module.exports.deployMinimalRouter = (networkName) => {
+    const deployOptions = require('../misc/deployOptions')[networkName]
+    const exportEnv = async ({ getNamedAccounts, deployments }) => {
+        const { deployer } = await getNamedAccounts()
+        if (!deployOptions)
+            throw new Error(`Can't find deployOptions for network: "${networkName}"`)
+
+        const feeClaimer = deployer
+        const { minimalAdapterWhitelist, hopTokens, wnative } = deployOptions
+        const adapters = await Promise.all(minimalAdapterWhitelist.map(a => deployments.get(a)))
+            .then(a => a.map(_a => _a.address))
+        const deployArgs = [
+            adapters, 
+            hopTokens, 
+            feeClaimer, 
+            wnative,
+        ]
+        console.log('YakRouter deployment arguments: ', deployArgs)
+
+        const name = 'MinimalYakRouter'
+        const contractName = 'YakRouter'
+        const optionalArgs = { gas: 4000000 }
+        const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
+        await deployFn({ getNamedAccounts, deployments })
+    }
+    exportEnv.tags = [ 'router', networkName ]
+    exportEnv.dependencies = deployOptions.minimalAdapterWhitelist
+    
+    return exportEnv
+}
+
+module.exports.deployYakWrapRouter = (networkName, routerName) => {
+    const deployOptions = require('../misc/deployOptions')[networkName]
+    const exportEnv = async ({ getNamedAccounts, deployments }) => {
+        const { deployer } = await getNamedAccounts()
+        if (!deployOptions)
+            throw new Error(`Can't find deployOptions for network: "${networkName}"`)
+
+        router = await deployments.get(routerName)
+        const deployArgs = [
+            router.address
+        ]
+        console.log('YakWrapRouter deployment arguments: ', deployArgs)
+
+        const name = 'YakWrapRouter'
+        const contractName = 'YakWrapRouter'
+        const optionalArgs = { gas: 4000000 }
+        const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
+        await deployFn({ getNamedAccounts, deployments })
+    }
+    exportEnv.tags = [ 'wrapRouter', networkName ]
+    exportEnv.dependencies = [deployments.get(routerName).address]
+    
+    return exportEnv
 }
 
 module.exports.deployRouter = (networkName) => {
@@ -38,7 +86,6 @@ module.exports.deployRouter = (networkName) => {
 
         const feeClaimer = deployer
         const { adapterWhitelist, hopTokens, wnative } = deployOptions
-        const BytesManipulation = await deployments.get('BytesManipulation')
         const adapters = await Promise.all(adapterWhitelist.map(a => deployments.get(a)))
             .then(a => a.map(_a => _a.address))
         const deployArgs = [
@@ -51,12 +98,7 @@ module.exports.deployRouter = (networkName) => {
 
         const name = 'YakRouter'
         const contractName = 'YakRouter'
-        const optionalArgs = {
-            libraries: {
-                'BytesManipulation': BytesManipulation.address
-            }, 
-            gas: 4000000
-        }
+        const optionalArgs = { gas: 4000000 }
         const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
         await deployFn({ getNamedAccounts, deployments })
     }
@@ -70,6 +112,13 @@ module.exports.deployAdapter = _deployAdapter
 
 function _deployAdapter(networkName, tags, name, contractName, args) {
     tags = [ 'adapter', ...tags ]
+    return deployContract(networkName, tags, name, contractName, args)
+}
+
+module.exports.deployWrapper = _deployWrapper
+
+function _deployWrapper(networkName, tags, name, contractName, args) {
+    tags = [ 'wrapper', ...tags ]
     return deployContract(networkName, tags, name, contractName, args)
 }
 

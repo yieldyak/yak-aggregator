@@ -5,6 +5,7 @@ playground
 artifacts
 .DS_Store
 .scripts
+.vscode
 cache
 .env
 out
