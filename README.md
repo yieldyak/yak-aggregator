@@ -18,6 +18,8 @@ YakRouter is the user-facing interface to check prices and make trades. See exam
 | Chain      | Address |
 | ----------- | ----------- |
 | Avalanche   | [`0xC4729E56b831d74bBc18797e0e17A295fA77488c`](https://snowtrace.io/address/0xc4729e56b831d74bbc18797e0e17a295fa77488c) |
+| Arbitrum   | [`0xb32C79a25291265eF240Eb32E9faBbc6DcEE3cE3`](https://arbiscan.io/address/0xb32C79a25291265eF240Eb32E9faBbc6DcEE3cE3) |
+| Optimism   | [`0xCd887F78c77b36B0b541E77AfD6F91C0253182A2`](https://optimistic.etherscan.io/address/0xCd887F78c77b36B0b541E77AfD6F91C0253182A2) |
 
 #### **findBestPathWithGas**
 
