@@ -102,7 +102,7 @@ module.exports.deployRouter = (networkName) => {
         const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
         await deployFn({ getNamedAccounts, deployments })
     }
-    exportEnv.tags = [ 'router', networkName ]
+    exportEnv.tags = ['router', networkName, concatTags('router', networkName)]
     exportEnv.dependencies = deployOptions.adapterWhitelist
     
     return exportEnv
@@ -111,14 +111,22 @@ module.exports.deployRouter = (networkName) => {
 module.exports.deployAdapter = _deployAdapter
 
 function _deployAdapter(networkName, tags, name, contractName, args) {
-    tags = [ 'adapter', ...tags ]
+    tags = [ 
+        'adapter', 
+        ...tags,
+        ...tags.map(t => concatTags(t, 'adapter', networkName))
+    ]
     return deployContract(networkName, tags, name, contractName, args)
 }
 
 module.exports.deployWrapper = _deployWrapper
 
 function _deployWrapper(networkName, tags, name, contractName, args) {
-    tags = [ 'wrapper', ...tags ]
+    tags = [ 
+        'wrapper', 
+        ...tags,
+        ...tags.map(t => concatTags(t, 'wrapper', networkName))
+    ]
     return deployContract(networkName, tags, name, contractName, args)
 }
 
@@ -149,4 +157,8 @@ function _deployContract(name, contractName, args, optionalArgs={}) {
             log(`- Deployment skipped, using previous deployment at: ${deployResult.address}`)
         }
     }
+}
+
+function concatTags(...tags) {
+    return tags.join('_')
 }
