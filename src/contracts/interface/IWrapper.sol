@@ -7,4 +7,5 @@ interface IWrapper is IAdapter {
     function getTokensIn() external view returns (address[] memory);
     function getTokensOut() external view returns (address[] memory);
     function getWrappedToken() external view returns (address);
+    function isWhitelisted(address token) external view returns (bool);
 }

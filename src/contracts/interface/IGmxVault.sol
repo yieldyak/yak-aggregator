@@ -65,6 +65,8 @@ interface IGmxVault {
         bool
     ) external view returns (uint256);
 
+    function mintBurnFeeBasisPoints() external view returns (uint256);
+
     function stableSwapFeeBasisPoints() external view returns (uint256);
 
     function swapFeeBasisPoints() external view returns (uint256);

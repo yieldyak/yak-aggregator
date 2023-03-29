@@ -8,8 +8,13 @@ import "../interface/IGmxRewardRouter.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 
-contract GlpWrapper is YakWrapper {
+contract GlpWrapperFeeSelection is YakWrapper {
     using SafeERC20 for IERC20;
+
+    struct Fee {
+        address token;
+        uint256 basisPoints;
+    }
 
     uint256 public constant BASIS_POINTS_DIVISOR = 1e4;
     uint256 public constant PRICE_PRECISION = 1e30;
@@ -22,12 +27,21 @@ contract GlpWrapper is YakWrapper {
     address public immutable glpManager;
     address public immutable vaultUtils;
 
-    mapping(address => bool) public isWhitelisted;
     address[] public whitelistedTokens;
+    uint256 public feeUsdgAmount;
+    uint256 public inOutCount;
+    mapping(address => bool) public isWhitelisted;
 
-    constructor(string memory _name, uint256 _gasEstimate, address _gmxRewardRouter, address _glp, address _sGlp)
-        YakWrapper(_name, _gasEstimate)
-    {
+    constructor(
+        string memory _name,
+        uint256 _gasEstimate,
+        address _gmxRewardRouter,
+        address[] memory _whiteListedTokens,
+        uint256 _feeUsdgAmount,
+        uint256 _inOutCount,
+        address _glp,
+        address _sGlp
+    ) YakWrapper(_name, _gasEstimate) {
         address gmxGLPManager = IGmxRewardRouter(_gmxRewardRouter).glpManager();
         address gmxVault = IGlpManager(gmxGLPManager).vault();
         USDG = IGmxVault(gmxVault).usdg();
@@ -39,6 +53,9 @@ contract GlpWrapper is YakWrapper {
         vaultUtils = utils;
 
         rewardRouter = _gmxRewardRouter;
+        setWhitelistedTokens(_whiteListedTokens);
+        feeUsdgAmount = _feeUsdgAmount;
+        inOutCount = _inOutCount;
         vault = gmxVault;
         glpManager = gmxGLPManager;
         GLP = _glp;
@@ -55,16 +72,59 @@ contract GlpWrapper is YakWrapper {
         }
     }
 
-    function getTokensIn() external view override returns (address[] memory) {
-        return whitelistedTokens;
-    }
-
-    function getTokensOut() external view override returns (address[] memory) {
-        return whitelistedTokens;
+    function updateFeeSelectionProperties(uint256 _usdgAmount, uint256 _inOutCount) public onlyMaintainer {
+        feeUsdgAmount = _usdgAmount > 0 ? _usdgAmount : feeUsdgAmount;
+        inOutCount = _inOutCount > 0 ? _inOutCount : inOutCount;
     }
 
     function getWrappedToken() external view override returns (address) {
         return sGLP;
+    }
+
+    function getTokensIn() external view override returns (address[] memory) {
+        Fee[] memory fees = _getFees(true);
+        return extractLowestFees(fees);
+    }
+
+    function getTokensOut() external view override returns (address[] memory) {
+        Fee[] memory fees = _getFees(false);
+        return extractLowestFees(fees);
+    }
+
+    function extractLowestFees(Fee[] memory fees) internal view returns (address[] memory tokensIn) {
+        tokensIn = new address[](fees.length >= inOutCount ? inOutCount : fees.length);
+        for (uint256 i; i < tokensIn.length; i++) {
+            tokensIn[i] = fees[i].token;
+        }
+    }
+
+    function _getFees(bool _buyGLP) internal view returns (Fee[] memory) {
+        uint256 length = whitelistedTokens.length;
+        uint256 mintBurnFeeBps = IGmxVault(vault).mintBurnFeeBasisPoints();
+        uint256 taxBps = IGmxVault(vault).taxBasisPoints();
+        Fee[] memory fees = new Fee[](length);
+        for (uint256 i; i < length; i++) {
+            address token = whitelistedTokens[i];
+            fees[i] = Fee({
+                token: token,
+                basisPoints: IGmxVault(vault).getFeeBasisPoints(token, feeUsdgAmount, mintBurnFeeBps, taxBps, _buyGLP)
+            });
+        }
+        return sort(fees);
+    }
+
+    function sort(Fee[] memory _fees) internal pure returns (Fee[] memory) {
+        uint256 length = _fees.length;
+        for (uint256 i = 1; i < length; i++) {
+            Fee memory current = _fees[i];
+            int256 j = int256(i - 1);
+            while ((j >= 0) && (_fees[uint256(j)].basisPoints > current.basisPoints)) {
+                _fees[uint256(j + 1)] = _fees[uint256(j)];
+                j--;
+            }
+            _fees[uint256(j + 1)] = current;
+        }
+        return _fees;
     }
 
     function _query(uint256 _amountIn, address _tokenIn, address _tokenOut)

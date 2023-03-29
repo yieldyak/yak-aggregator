@@ -44,8 +44,6 @@ describe("GLP Wrap Router", () => {
       "0x281a2D66A979cce3E474715bDfa02bfE954E5f35", // Kyber
       "0x6da140B4004D1EcCfc5FffEb010Bb7A58575b446", // Platypus
       "0x7F8B47Ff174Eaf96960a050B220a907dFa3feD5b", // GMX
-      "0xaFb5aE9934266a131F44F2A80c783d6a827A3d1a", // Synapse
-      "0x443A28Ae2dc8E1d71327B2C6eEDF03BE8077538d", // Woofi
     ]);
     await stopImpersonatingAccount(routerOwnerAddress);
   });
