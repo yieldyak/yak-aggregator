@@ -11,6 +11,7 @@ module.exports = {
             'TraderJoeAdapter',
             'PangolinAdapter',
             'SushiswapAdapter',
+            'GlacierAdapter',
       
             'SynapseAdapter',
             'AxialAS4DAdapter',
