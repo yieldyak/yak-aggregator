@@ -52,7 +52,7 @@ module.exports.deployMinimalRouter = (networkName) => {
     return exportEnv
 }
 
-module.exports.deployYakWrapRouter = (networkName, routerName) => {
+module.exports.deployYakWrapRouter = (networkName, routerDeploymentName) => {
     const deployOptions = require('../misc/deployOptions')[networkName]
     const exportEnv = async ({ getNamedAccounts, deployments }) => {
         const { deployer } = await getNamedAccounts()
@@ -72,7 +72,7 @@ module.exports.deployYakWrapRouter = (networkName, routerName) => {
         await deployFn({ getNamedAccounts, deployments })
     }
     exportEnv.tags = [ 'wrapRouter', networkName ]
-    exportEnv.dependencies = [deployments.get(routerName).address]
+    exportEnv.dependencies = [routerDeploymentName]
     
     return exportEnv
 }
