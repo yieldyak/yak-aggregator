@@ -13,7 +13,8 @@
             "WBTC": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
             "WETH": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1", 
             "STG": "0x6694340fc020c5E6B96567843da2df01b2CE1eb6", 
-            "USDs": "0xD74f5255D557944cf7Dd0E45FF521520002D5748"
+            "USDs": "0xD74f5255D557944cf7Dd0E45FF521520002D5748",
+            "ARB": "0x912CE59144191C1204E64559FE8253a0e49E6548"
         },
         "sushiswap": {
             "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", 
@@ -21,7 +22,8 @@
         },
         "camelot": {
             "router": "0xc873fEcbd354f5A56E00E710B90EF4201db2448d", 
-            "factory": "0x6EcCab422D763aC031210895C81787E87B43A652"
+            "factory": "0x6EcCab422D763aC031210895C81787E87B43A652", 
+            "algebraFactory": "0xd490F2F6990C0291597fd1247651b4E0dCF684Dd"
         },
         "swapfish": {
             "router": "0xcDAeC65495Fa5c0545c5a405224214e3594f30d8", 
@@ -109,7 +111,8 @@
         }, 
         "other": {
             "woofiV2Pool": "0xeFF23B4bE1091b53205E35f3AfCD9C7182bf3062", 
-            "lb_router": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B"
+            "lb_router": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
+            "algebraQuoter": "0x11E68A3CE9A5A0F95ca9c4B0B8F17849752e24DD"
         }
     },
     "aurora": {

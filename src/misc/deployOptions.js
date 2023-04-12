@@ -90,6 +90,7 @@ module.exports = {
             'SwapfishAdapter',
             'CamelotAdapter',
             'WETHAdapter',
+            'CamelotAlgebraAdapter',
         ],
         hopTokens: [
             arb.assets.WETH,
