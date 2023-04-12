@@ -108,7 +108,11 @@
                 "ldo_knc": "0x8a33c7e7fa8969909654cca6f8190beda84eb023",
                 "ldo_usdc": "0xb100ba0b98b6d997fbf95c0c051ae66d79bd07b3"
             }
-        }, 
+        },
+        "liquidityBook": {
+            "routerV1": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B", 
+            "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e"
+        },
         "other": {
             "woofiV2Pool": "0xeFF23B4bE1091b53205E35f3AfCD9C7182bf3062", 
             "lb_router": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
@@ -383,7 +387,8 @@
             }
         }, 
         "liquidityBook": {
-            "router": "0xE3Ffc583dC176575eEA7FD9dF2A7c65F7E23f4C3" 
+            "routerV1": "0xE3Ffc583dC176575eEA7FD9dF2A7c65F7E23f4C3", 
+            "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e"
         }
     }, 
     "dogechain": {
