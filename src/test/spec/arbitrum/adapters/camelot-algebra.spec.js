@@ -3,7 +3,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { camelot, other } = addresses.arbitrum
 
 
-describe.only('YakAdapter - CamelotAlgebra', function() {
+describe('YakAdapter - CamelotAlgebra', function() {
     
     let testEnv
     let tkns
@@ -43,9 +43,6 @@ describe.only('YakAdapter - CamelotAlgebra', function() {
         it('10 ARB -> WETH', async () => {
             await ate.checkSwapMatchesQuery('10', tkns.ARB, tkns.WETH)
         })
-        // it.only('1000000000 WETH -> ARB', async () => {
-        //     await ate.checkSwapMatchesQuery('1000000000', tkns.WETH, tkns.ARB)
-        // })
 
     })
 
