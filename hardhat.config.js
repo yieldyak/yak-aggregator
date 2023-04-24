@@ -6,8 +6,12 @@ require('hardhat-deploy-ethers');
 require('hardhat-abi-exporter');
 require("hardhat-gas-reporter");
 require('hardhat-log-remover');
-require("hardhat-tracer");
 require('hardhat-deploy');
+require("hardhat-tracer");
+require("@matterlabs/hardhat-zksync-deploy");
+require("@matterlabs/hardhat-zksync-solc");
+require("@matterlabs/hardhat-zksync-toolbox");
+
 
 // Tasks
 require('./src/tasks/update-hop-tokens')
@@ -23,11 +27,14 @@ const ARBITRUM_RPC = getEnvValSafe('ARBITRUM_RPC')
 const OPTIMISM_RPC = getEnvValSafe('OPTIMISM_RPC')
 const AURORA_RPC = getEnvValSafe('AURORA_RPC')
 const DOGECHAIN_RPC = getEnvValSafe('DOGECHAIN_RPC')
+const ZKSYNC_RPC = getEnvValSafe('ZKSYNC_RPC')
+const ETHEREUM_MAINNET_RPC = getEnvValSafe('ETHEREUM_MAINNET_RPC')
 const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
 const ARBITRUM_PK_DEPLOYER = getEnvValSafe('ARBITRUM_PK_DEPLOYER')
 const OPTIMISM_PK_DEPLOYER = getEnvValSafe('OPTIMISM_PK_DEPLOYER')
 const AURORA_PK_DEPLOYER = getEnvValSafe('AURORA_PK_DEPLOYER')
 const DOGECHAIN_PK_DEPLOYER = getEnvValSafe('DOGECHAIN_PK_DEPLOYER')
+const ZKSYNC_PK_DEPLOYER = getEnvValSafe("ZKSYNC_PK_DEPLOYER")
 const ETHERSCAN_API_KEY = getEnvValSafe('ETHERSCAN_API_KEY', false)
 
 function getEnvValSafe(key, required=true) {
@@ -52,6 +59,11 @@ module.exports = {
         }  
       }
   },
+  zksolc: {
+    version: "1.3.8",
+    compilerSource: "binary",
+    settings: {},
+  },
   namedAccounts: {
     deployer: {
       default: 0,
@@ -63,6 +75,7 @@ module.exports = {
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
+      zksync: false,
       chainId: 43114,
       forking: {
         url: AVALANCHE_RPC, 
@@ -74,36 +87,49 @@ module.exports = {
       }
     }, 
     avalanche: {
+      zksync: false,
       chainId: 43114,
       gasPrice: 225000000000,
       url: AVALANCHE_RPC,
       accounts: [ AVALANCHE_PK_DEPLOYER ]
     },
     fuji: {
+      zksync: false,
       chainId: 43113,
       url: FUJI_RPC,
       accounts: [ AVALANCHE_PK_DEPLOYER ],
     },
     arbitrum: {
+      zksync: false,
       chainId: 42161,
       url: ARBITRUM_RPC,
       accounts: [ ARBITRUM_PK_DEPLOYER ],
     },
     optimism: {
+      zksync: false,
       chainId: 10,
       url: OPTIMISM_RPC,
       accounts: [ OPTIMISM_PK_DEPLOYER ],
     },
     aurora: {
+      zksync: false,
       chainId: 1313161554,
       url: AURORA_RPC,
       accounts: [ AURORA_PK_DEPLOYER ],
     },
     dogechain: {
+      zksync: false,
       chainId: 2000,
       url: DOGECHAIN_RPC,
       accounts: [ DOGECHAIN_PK_DEPLOYER ],
     },
+    zksync: {
+      zksync: true,
+      chainId: 324,
+      url: ZKSYNC_RPC,
+      ethNetwork: ETHEREUM_MAINNET_RPC,
+      accounts: [ ZKSYNC_PK_DEPLOYER ],
+    }
   },
   paths: {
     deployments: './src/deployments',
