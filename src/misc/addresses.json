@@ -505,5 +505,23 @@
         "liquidityBook": {
             "router": "0x0C344c52841d3F8d488E1CcDBafB42CE2C7fdFA9"
         }
+    },
+    "zksync": {
+        "assets": {
+          "WETH": "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91",
+          "USDC": "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4",
+          "cBUSD": "0x2039bb4116B4EFc145Ec4f0e2eA75012D6C0f181",
+          "USD+": "0x8E86e46278518EFc1C5CEd245cBA2C7e3ef11557"
+        },
+        "syncSwap": {
+          "vault": "0x621425a1Ef6abE91058E9712575dcc4258F8d091",
+          "poolMaster": "0xbB05918E9B4bA9Fe2c8384d223f0844867909Ffb"
+        },
+        "velocore": {
+            "factory": "0xE140EaC2bB748c8F456719a457F26636617Bb0E9"
+        },
+        "mute": {
+            "factory": "0x40be1cBa6C5B47cDF9da7f963B6F761F4C60627D"
+        }
     }
 }
