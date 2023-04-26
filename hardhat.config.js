@@ -11,6 +11,7 @@ require("hardhat-tracer");
 require("@matterlabs/hardhat-zksync-deploy");
 require("@matterlabs/hardhat-zksync-solc");
 require("@matterlabs/hardhat-zksync-toolbox");
+require("@matterlabs/hardhat-zksync-verify");
 
 
 // Tasks
@@ -28,6 +29,7 @@ const OPTIMISM_RPC = getEnvValSafe('OPTIMISM_RPC')
 const AURORA_RPC = getEnvValSafe('AURORA_RPC')
 const DOGECHAIN_RPC = getEnvValSafe('DOGECHAIN_RPC')
 const ZKSYNC_RPC = getEnvValSafe('ZKSYNC_RPC')
+const ZKSYNC_VERIFY_URL = getEnvValSafe('ZKSYNC_VERIFY_URL')
 const ETHEREUM_MAINNET_RPC = getEnvValSafe('ETHEREUM_MAINNET_RPC')
 const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
 const ARBITRUM_PK_DEPLOYER = getEnvValSafe('ARBITRUM_PK_DEPLOYER')
@@ -129,6 +131,7 @@ module.exports = {
       url: ZKSYNC_RPC,
       ethNetwork: ETHEREUM_MAINNET_RPC,
       accounts: [ ZKSYNC_PK_DEPLOYER ],
+      verifyURL: ZKSYNC_VERIFY_URL,
     }
   },
   paths: {
