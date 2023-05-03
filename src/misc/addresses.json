@@ -513,9 +513,13 @@
           "cBUSD": "0x2039bb4116B4EFc145Ec4f0e2eA75012D6C0f181",
           "USD+": "0x8E86e46278518EFc1C5CEd245cBA2C7e3ef11557"
         },
+        "univ2Factories": {
+            "space": "0x0700Fb51560CfC8F896B2c812499D17c5B0bF6A7"
+        }, 
         "syncSwap": {
           "vault": "0x621425a1Ef6abE91058E9712575dcc4258F8d091",
-          "poolMaster": "0xbB05918E9B4bA9Fe2c8384d223f0844867909Ffb"
+          "factory": "0xf2DAd89f2788a8CD54625C60b55cD3d2D0ACa7Cb",
+          "stableFactory": "0x5b9f21d407F35b10CbfDDca17D5D84b129356ea3"
         },
         "velocore": {
             "factory": "0xE140EaC2bB748c8F456719a457F26636617Bb0E9"

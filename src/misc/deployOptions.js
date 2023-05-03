@@ -142,11 +142,16 @@ module.exports = {
     "zksync": {
         adapterWhitelist: [
             'VelocoreAdapter',
-            'MuteAdapter'
+            'MuteAdapter',
+            'WETHAdapter',
+            'SyncSwapAdapter',
+            'SpaceAdapter'
         ],
         hopTokens: [
             zksync.assets.WETH,
-            zksync.assets.USDC
+            zksync.assets.USDC,
+            zksync.assets['USD+'],
+            zksync.assets.cBUSD
         ], 
         wnative: zksync.assets.WETH
     }
