@@ -127,12 +127,11 @@ contract GlpWrapperFeeSelection is YakWrapper {
         return _fees;
     }
 
-    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut)
-        internal
-        view
-        override
-        returns (uint256 amountOut)
-    {
+    function _query(
+        uint256 _amountIn,
+        address _tokenIn,
+        address _tokenOut
+    ) internal view override returns (uint256 amountOut) {
         return (_tokenOut == sGLP) ? _quoteBuyGLP(_tokenIn, _amountIn) : _quoteSellGLP(_tokenOut, _amountIn);
     }
 
@@ -144,11 +143,11 @@ contract GlpWrapperFeeSelection is YakWrapper {
         amountOut = aumInUsdg == 0 ? usdgAmount : (usdgAmount * glpSupply) / aumInUsdg;
     }
 
-    function _calculateBuyUsdg(uint256 _amountIn, uint256 _price, address _tokenIn)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
+    function _calculateBuyUsdg(
+        uint256 _amountIn,
+        uint256 _price,
+        address _tokenIn
+    ) internal view returns (uint256 amountOut) {
         amountOut = (_amountIn * _price) / PRICE_PRECISION;
         amountOut = IGmxVault(vault).adjustForDecimals(amountOut, _tokenIn, USDG);
         uint256 feeBasisPoints = _calculateBuyUsdgFeeBasisPoints(_tokenIn, amountOut);
@@ -170,35 +169,70 @@ contract GlpWrapperFeeSelection is YakWrapper {
         if (vaultUtils > address(0)) {
             return IGmxVaultUtils(vaultUtils).getBuyUsdgFeeBasisPoints(_tokenIn, _usdgAmount);
         }
-        return _calculateFeeBasisPoints(_tokenIn, _usdgAmount, true);
+        uint256 mintBurnFeeBps = IGmxVault(vault).mintBurnFeeBasisPoints();
+        uint256 taxBps = IGmxVault(vault).taxBasisPoints();
+        return IGmxVault(vault).getFeeBasisPoints(_tokenIn, _usdgAmount, mintBurnFeeBps, taxBps, true);
     }
 
     function _calculateSellUsdgFeeBasisPoints(address _tokenOut, uint256 _usdgAmount) internal view returns (uint256) {
         if (vaultUtils > address(0)) {
             return IGmxVaultUtils(vaultUtils).getSellUsdgFeeBasisPoints(_tokenOut, _usdgAmount);
         }
-        return _calculateFeeBasisPoints(_tokenOut, _usdgAmount, false);
+        uint feeBasisPoints = IGmxVault(vault).mintBurnFeeBasisPoints();
+        uint taxBasisPoints = IGmxVault(vault).taxBasisPoints();
+        if (!IGmxVault(vault).hasDynamicFees()) {
+            return feeBasisPoints;
+        }
+
+        uint256 initialAmount = IGmxVault(vault).usdgAmounts(_tokenOut) - _usdgAmount;
+        uint256 nextAmount = _usdgAmount > initialAmount ? 0 : initialAmount - _usdgAmount;
+
+        uint256 targetAmount = IGmxVault(vault).getTargetUsdgAmount(_tokenOut);
+        if (targetAmount == 0) {
+            return feeBasisPoints;
+        }
+
+        uint256 initialDiff = initialAmount > targetAmount
+            ? initialAmount - targetAmount
+            : targetAmount - initialAmount;
+        uint256 nextDiff = nextAmount > targetAmount ? nextAmount - targetAmount : targetAmount - nextAmount;
+
+        if (nextDiff < initialDiff) {
+            uint256 rebateBps = (taxBasisPoints * initialDiff) / targetAmount;
+            return rebateBps > feeBasisPoints ? 0 : feeBasisPoints - rebateBps;
+        }
+
+        uint256 averageDiff = (initialDiff + nextDiff) / 2;
+        if (averageDiff > targetAmount) {
+            averageDiff = targetAmount;
+        }
+        uint256 taxBps = (taxBasisPoints * averageDiff) / targetAmount;
+        return feeBasisPoints + taxBps;
     }
 
-    function _calculateFeeBasisPoints(address _token, uint256 _usdgAmount, bool _buyUsdg)
-        internal
-        view
-        returns (uint256 feeBasisPoints)
-    {
-        uint256 mintBurnFeeBps = IGmxVault(vault).mintBurnFeeBasisPoints();
-        uint256 taxBps = IGmxVault(vault).taxBasisPoints();
-        return IGmxVault(vault).getFeeBasisPoints(_token, _usdgAmount, mintBurnFeeBps, taxBps, _buyUsdg);
-    }
+    function _calculateFeeBasisPoints(
+        address _token,
+        uint256 _usdgAmount,
+        bool _buyUsdg
+    ) internal view returns (uint256 feeBasisPoints) {}
 
-    function _swap(uint256 _amountIn, uint256 _amountOut, address _tokenIn, address _tokenOut, address _to)
-        internal
-        override
-    {}
+    function calculateSellUsdgFeeBasisPoints(address _token, uint256 _usdgDelta) internal view returns (uint256) {}
 
-    function swap(uint256 _amountIn, uint256 _amountOut, address _fromToken, address _toToken, address _to)
-        external
-        override
-    {
+    function _swap(
+        uint256 _amountIn,
+        uint256 _amountOut,
+        address _tokenIn,
+        address _tokenOut,
+        address _to
+    ) internal override {}
+
+    function swap(
+        uint256 _amountIn,
+        uint256 _amountOut,
+        address _fromToken,
+        address _toToken,
+        address _to
+    ) external override {
         uint256 toBalanceBefore = IERC20(_toToken).balanceOf(_to);
         if (_toToken == sGLP) {
             IERC20(_fromToken).approve(glpManager, _amountIn);

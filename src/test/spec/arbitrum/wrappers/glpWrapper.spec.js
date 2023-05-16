@@ -33,21 +33,21 @@ describe("GlpWrapper", () => {
   });
 
   describe("Swapping matches query", async () => {
-    it("1 WETH -> sGLP", async () => {
+    it("80 WETH -> sGLP", async () => {
       expect(await tkns.sGLP.balanceOf(testEnv.trader.address)).eq(0);
-      const amountIn = ethers.utils.parseEther("1");
+      const amountIn = ethers.utils.parseEther("80");
       const queryDy = await ate.query(amountIn, tkns.WETH.address, tkns.sGLP.address);
       await ate.mintAndSwap(amountIn, queryDy, tkns.WETH, tkns.sGLP);
       expect(await tkns.sGLP.balanceOf(testEnv.trader.address)).eq(queryDy);
     });
 
-    it("100 sGLP -> WETH", async () => {
+    it("100000 sGLP -> WETH", async () => {
       await tkns.sGLP
         .connect(testEnv.trader)
         .transfer(ate.Adapter.address, await tkns.sGLP.balanceOf(testEnv.trader.address));
       expect(await tkns.sGLP.balanceOf(ate.Adapter.address)).gt(0);
       const balanceBefore = await tkns.WETH.balanceOf(testEnv.trader.address);
-      const amountIn = ethers.utils.parseEther("100");
+      const amountIn = ethers.utils.parseEther("100000");
       const queryDy = await ate.query(amountIn, tkns.sGLP.address, tkns.WETH.address);
       await ate.Adapter.connect(testEnv.trader).swap(
         amountIn,
