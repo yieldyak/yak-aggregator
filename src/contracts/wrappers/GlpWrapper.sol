@@ -99,8 +99,41 @@ contract GlpWrapper is YakWrapper {
         uint256 glpSupply = IERC20(GLP).totalSupply();
         uint256 usdgAmount = (_amountIn * aumInUsdg) / glpSupply;
         uint256 redemptionAmount = IGmxVault(vault).getRedemptionAmount(_tokenOut, usdgAmount);
-        uint256 feeBasisPoints = IGmxVaultUtils(vaultUtils).getSellUsdgFeeBasisPoints(_tokenOut, usdgAmount);
+        uint256 feeBasisPoints = calculateSellUsdgFeeBasisPoints(_tokenOut, usdgAmount);
         amountOut = (redemptionAmount * (BASIS_POINTS_DIVISOR - feeBasisPoints)) / BASIS_POINTS_DIVISOR;
+    }
+
+    function calculateSellUsdgFeeBasisPoints(address _token, uint256 _usdgDelta) internal view returns (uint256) {
+        uint feeBasisPoints = IGmxVault(vault).mintBurnFeeBasisPoints();
+        uint taxBasisPoints = IGmxVault(vault).taxBasisPoints();
+        if (!IGmxVault(vault).hasDynamicFees()) {
+            return feeBasisPoints;
+        }
+
+        uint256 initialAmount = IGmxVault(vault).usdgAmounts(_token) - _usdgDelta;
+        uint256 nextAmount = _usdgDelta > initialAmount ? 0 : initialAmount - _usdgDelta;
+
+        uint256 targetAmount = IGmxVault(vault).getTargetUsdgAmount(_token);
+        if (targetAmount == 0) {
+            return feeBasisPoints;
+        }
+
+        uint256 initialDiff = initialAmount > targetAmount
+            ? initialAmount - targetAmount
+            : targetAmount - initialAmount;
+        uint256 nextDiff = nextAmount > targetAmount ? nextAmount - targetAmount : targetAmount - nextAmount;
+
+        if (nextDiff < initialDiff) {
+            uint256 rebateBps = (taxBasisPoints * initialDiff) / targetAmount;
+            return rebateBps > feeBasisPoints ? 0 : feeBasisPoints - rebateBps;
+        }
+
+        uint256 averageDiff = (initialDiff + nextDiff) / 2;
+        if (averageDiff > targetAmount) {
+            averageDiff = targetAmount;
+        }
+        uint256 taxBps = (taxBasisPoints * averageDiff) / targetAmount;
+        return feeBasisPoints + taxBps;
     }
 
     function _swap(

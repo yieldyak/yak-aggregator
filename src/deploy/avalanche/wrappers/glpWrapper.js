@@ -7,7 +7,7 @@ const tags = [ 'gmx' ]
 const name = 'GlpWrapper'
 const contractName = 'GlpWrapper'
 
-const gasEstimate = 1_100_000
+const gasEstimate = 1_600_000
 const rewardRouter = GmxRewardRouter
 const args = [ name, gasEstimate, rewardRouter, GLP, sGLP ]
 
