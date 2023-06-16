@@ -41,6 +41,10 @@
             "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984", 
             "quoter": "0xc80f61d1bdAbD8f5285117e1558fDDf8C64870FE"
         }, 
+        "arbidex": {
+            "factory": "0x855F2c70cf5cb1D56C15ed309a4DfEfb88ED909E", 
+            "quoter": "0xc80f61d1bdAbD8f5285117e1558fDDf8C64870FE"
+        }, 
         "gmx": {
             "vault": "0x489ee077994B6658eAfA855C308275EAd8097C4A"
         }, 
