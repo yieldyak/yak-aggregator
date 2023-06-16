@@ -42,16 +42,13 @@ contract UniswapV3Adapter is UniswapV3likeAdapter {
         uint256 _swapGasEstimate,
         uint256 _quoterGasLimit,
         address _quoter,
-        address _factory
+        address _factory,
+        uint24[] memory _defaultFees
     ) UniswapV3likeAdapter(_name, _swapGasEstimate, _quoter, _quoterGasLimit) {
-        addDefaultFeeAmounts();
         FACTORY = _factory;
-    }
-
-    function addDefaultFeeAmounts() internal {
-        addFeeAmount(500);
-        addFeeAmount(3000);
-        addFeeAmount(10000);
+        for (uint i = 0; i < _defaultFees.length; i++) {
+            addFeeAmount(_defaultFees[i]);
+        }
     }
 
     function enableFeeAmounts(uint24[] calldata _amounts) external onlyMaintainer {
