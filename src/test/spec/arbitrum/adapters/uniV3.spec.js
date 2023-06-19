@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { setTestEnv, addresses } = require('../../../utils/test-env')
-const { uniV3 } = addresses.optimism
+const { uniV3 } = addresses.arbitrum
 
 
 describe('YakAdapter - UniswapV3', function() {
@@ -11,13 +11,13 @@ describe('YakAdapter - UniswapV3', function() {
     let ate // adapter-test-env
 
     before(async () => {
-        const networkName = 'optimism'
-        const forkBlockNumber = 12932984
+        const networkName = 'arbitrum'
+        const forkBlockNumber = 101695972
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
         const contractName = 'UniswapV3Adapter'
-        const gasEstimate = 251_000
+        const gasEstimate = 270_000
         const quoterGasLimit = gasEstimate
         const defaultFees = [500, 3_000, 10_000]
         const adapterArgs = [ 

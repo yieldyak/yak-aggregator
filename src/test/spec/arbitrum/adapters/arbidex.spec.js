@@ -1,31 +1,31 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { setTestEnv, addresses } = require('../../../utils/test-env')
-const { uniV3 } = addresses.optimism
+const { arbidex } = addresses.arbitrum
 
 
-describe('YakAdapter - UniswapV3', function() {
+describe('YakAdapter - ArbiDex', function() {
     
     let testEnv
     let tkns
     let ate // adapter-test-env
 
     before(async () => {
-        const networkName = 'optimism'
-        const forkBlockNumber = 12932984
+        const networkName = 'arbitrum'
+        const forkBlockNumber = 101695972
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
         const contractName = 'UniswapV3Adapter'
-        const gasEstimate = 251_000
+        const gasEstimate = 270_000
         const quoterGasLimit = gasEstimate
-        const defaultFees = [500, 3_000, 10_000]
+        const defaultFees = [80, 450, 2_500, 10_000]
         const adapterArgs = [ 
-            'UniswapV3Adapter', 
+            'ArbiDexAdapter', 
             gasEstimate,
             quoterGasLimit,
-            uniV3.quoter, 
-            uniV3.factory,
+            arbidex.quoter, 
+            arbidex.factory,
             defaultFees
         ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
@@ -40,8 +40,8 @@ describe('YakAdapter - UniswapV3', function() {
         it('100 DAI -> USDC', async () => {
             await ate.checkSwapMatchesQuery('100', tkns.DAI, tkns.USDC)
         })
-        it('100 DAI -> WETH', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.DAI, tkns.WETH)
+        it('100 USDC -> WETH', async () => {
+            await ate.checkSwapMatchesQuery('100', tkns.USDC, tkns.WETH)
         })
         it('100 USDC -> USDT', async () => {
             await ate.checkSwapMatchesQuery('100', tkns.USDC, tkns.USDT)
@@ -52,9 +52,6 @@ describe('YakAdapter - UniswapV3', function() {
         it('100 WETH -> WBTC', async () => {
             await ate.checkSwapMatchesQuery('100', tkns.WETH, tkns.WBTC)
         })
-        it('100 USDT -> WETH', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.USDT, tkns.WETH)
-        })
 
     })
 
@@ -64,8 +61,8 @@ describe('YakAdapter - UniswapV3', function() {
         const dx = ethers.utils.parseUnits('1', 18)
 
         const cAdapter = ate.Adapter
-        const cFactory = await ethers.getContractAt('IUniV3Factory', uniV3.factory)
-        const feeOptions = [500, 3000, 10000].map(f => ethers.BigNumber.from(f.toString()))
+        const cFactory = await ethers.getContractAt('IUniV3Factory', arbidex.factory)
+        const feeOptions = [80, 450, 2_500, 10_000].map(f => ethers.BigNumber.from(f.toString()))
 
         let bestQuote = ethers.constants.Zero
         for (let fee of feeOptions) {
@@ -109,7 +106,7 @@ describe('YakAdapter - UniswapV3', function() {
 
     it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
         const options = [
-            [ '100', tkns.DAI, tkns.USDT ],
+            [ '100', tkns.USDC, tkns.WETH ],
             [ '100', tkns.USDC, tkns.DAI ],
             [ '100', tkns.USDT, tkns.USDC ],
         ]
