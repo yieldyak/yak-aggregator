@@ -25,9 +25,10 @@ module.exports = {
             'CurveUSDCAdapter',
             'CurveYUSDAdapter',
             
+            'UniswapV3Adapter',
             'LiquidityBook2Adapter',
-            'LiquidityBookAdapter',
-            'KyberElasticAdapter',
+            // 'LiquidityBookAdapter',
+            // 'KyberElasticAdapter',
             'WoofiV2Adapter',
             'GeodeWPAdapter',
             'GmxAdapter',
