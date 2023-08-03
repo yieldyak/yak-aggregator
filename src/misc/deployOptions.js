@@ -12,7 +12,7 @@ module.exports = {
             'PangolinAdapter',
             'SushiswapAdapter',
             'GlacierAdapter',
-            'SolisnekAdapter',
+            // 'SolisnekAdapter',
       
             'SynapseAdapter',
             'AxialAS4DAdapter',
