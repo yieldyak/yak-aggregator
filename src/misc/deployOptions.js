@@ -91,7 +91,6 @@ module.exports = {
             'KyberElasticAdapter',
             'WoofiV2Adapter',
             'OreoswapAdapter',
-            'SwapfishAdapter',
             'CamelotAdapter',
             'WETHAdapter',
             'CamelotAlgebraAdapter',
