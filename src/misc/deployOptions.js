@@ -2,7 +2,8 @@ const {
     avalanche: ava, 
     dogechain: dog, 
     arbitrum: arb,
-    optimism: opt
+    optimism: opt,
+    base: base
 } = require('./addresses.json')
 
 module.exports = {
@@ -138,5 +139,22 @@ module.exports = {
             // opt.assets.BOB, 
         ], 
         wnative: opt.assets.WETH
+    },
+    "base": {
+        adapterWhitelist: [
+            'AlienBaseAdapter',
+            'BaseSwapAdapter',
+            'SwapBasedAdapter',
+            'UniswapV3Adapter',
+            'SushiV3Adapter'
+        ],
+        hopTokens: [
+            base.assets.ETH,
+            base.assets.axlUSDC,
+            base.assets.USDbC,
+            base.assets.DAI,
+            base.assets["USD+"]
+        ], 
+        wnative: base.assets.ETH
     }
 }

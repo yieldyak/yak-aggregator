@@ -23,11 +23,13 @@ const ARBITRUM_RPC = getEnvValSafe('ARBITRUM_RPC')
 const OPTIMISM_RPC = getEnvValSafe('OPTIMISM_RPC')
 const AURORA_RPC = getEnvValSafe('AURORA_RPC')
 const DOGECHAIN_RPC = getEnvValSafe('DOGECHAIN_RPC')
+const BASE_RPC = getEnvValSafe('BASE_RPC')
 const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
 const ARBITRUM_PK_DEPLOYER = getEnvValSafe('ARBITRUM_PK_DEPLOYER')
 const OPTIMISM_PK_DEPLOYER = getEnvValSafe('OPTIMISM_PK_DEPLOYER')
 const AURORA_PK_DEPLOYER = getEnvValSafe('AURORA_PK_DEPLOYER')
 const DOGECHAIN_PK_DEPLOYER = getEnvValSafe('DOGECHAIN_PK_DEPLOYER')
+const BASE_PK_DEPLOYER = getEnvValSafe('BASE_PK_DEPLOYER')
 const ETHERSCAN_API_KEY = getEnvValSafe('ETHERSCAN_API_KEY', false)
 
 function getEnvValSafe(key, required=true) {
@@ -103,6 +105,11 @@ module.exports = {
       chainId: 2000,
       url: DOGECHAIN_RPC,
       accounts: [ DOGECHAIN_PK_DEPLOYER ],
+    },
+    base: {
+      chainId: 8453,
+      url: BASE_RPC,
+      accounts: [ BASE_PK_DEPLOYER ],
     },
   },
   paths: {
