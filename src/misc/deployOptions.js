@@ -94,7 +94,7 @@ module.exports = {
             'CamelotAdapter',
             'WETHAdapter',
             'CamelotAlgebraAdapter',
-            'ArbiDexAdapter',
+            // 'ArbiDexAdapter',
         ],
         hopTokens: [
             arb.assets.WETH,
