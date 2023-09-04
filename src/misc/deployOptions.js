@@ -146,14 +146,16 @@ module.exports = {
             'BaseSwapAdapter',
             'SwapBasedAdapter',
             'UniswapV3Adapter',
-            'SushiV3Adapter'
+            'SushiV3Adapter',
+            'AerodromAdapter'
         ],
         hopTokens: [
             base.assets.ETH,
             base.assets.axlUSDC,
             base.assets.USDbC,
             base.assets.DAI,
-            base.assets["USD+"]
+            base.assets["USD+"],
+            base.assets["DAI+"]
         ], 
         wnative: base.assets.ETH
     }
