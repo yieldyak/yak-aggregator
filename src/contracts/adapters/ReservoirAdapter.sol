@@ -13,7 +13,7 @@ contract ReservoirAdapter is YakAdapter {
     constructor(
         string memory _name,
         address _factory,
-        uint256 _swapGasEstimate
+        uint256 _swapGasEstimate // we use the worse off i.e. the stable pair gas estimate
     ) YakAdapter(_name, _swapGasEstimate) {
         factory = IGenericFactory(_factory);
     }
@@ -42,6 +42,10 @@ contract ReservoirAdapter is YakAdapter {
         address _tokenOut,
         address to
     ) internal override {
+        // how do we determine which curve id to take?
 
+        // case 1: if there is a pair for a curveId but not for the other curveId
+
+        // case 2: if are pairs for both curveIds
     }
 }
