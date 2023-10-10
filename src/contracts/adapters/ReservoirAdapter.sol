@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import { YakAdapter } from "../YakAdapter.sol";
 import "../interface/IGenericFactory.sol";
 import { IQuoter } from "../interface/IReservoirQuoter.sol";
+import { IReservoirPair } from "../interface/IReservoirPair.sol";
 
 contract ReservoirAdapter is YakAdapter {
 
@@ -23,33 +24,43 @@ contract ReservoirAdapter is YakAdapter {
         quoter = IQuoter(_quoter);
     }
 
-    function _query(
+    function _queryWithCurveId(
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
-    ) internal view override returns (uint256 amountOut) {
+    ) internal view returns (uint256 amountOut, uint256 curveId) {
         if (_tokenIn == _tokenOut || _amountIn == 0) {
-            return 0;
+            return (0, 0);
         }
 
-        uint256 constantProductAmtOut;
         address[] memory path = new address[](2);
         path[0] = _tokenIn;
         path[1] = _tokenOut;
         uint256[] memory curveIds = new uint256[](1);
         curveIds[0] = 0;
+
+        uint256 constantProductAmtOut;
         // try get quote for constant product pair
         try quoter.getAmountsOut(_amountIn, path, curveIds) returns (uint256[] memory amtsOut) {
             constantProductAmtOut = amtsOut[0];
         } catch {}
 
-        uint256 stableAmtOut;
         curveIds[0] = 1;
+        uint256 stableAmtOut;
         // try get quote for stable pair
         try quoter.getAmountsOut(_amountIn, path, curveIds) returns (uint256[] memory amtsOut) {
+            stableAmtOut = amtsOut[0];
         } catch {}
 
-        return stableAmtOut > constantProductAmtOut ? stableAmtOut : constantProductAmtOut;
+        return stableAmtOut > constantProductAmtOut ? (stableAmtOut, 1) : (constantProductAmtOut, 0);
+    }
+
+    function _query(
+        uint256 _amountIn,
+        address _tokenIn,
+        address _tokenOut
+    ) internal view override returns (uint256 amountOut) {
+        (amountOut, ) = _queryWithCurveId(_amountIn, _tokenIn, _tokenOut);
     }
 
     function _swap(
@@ -59,9 +70,12 @@ contract ReservoirAdapter is YakAdapter {
         address _tokenOut,
         address to
     ) internal override {
+        (, uint256 curveId) = _queryWithCurveId(_amountIn, _tokenIn, _tokenOut);
 
-        // case 1: if there is a pair for a curveId but not for the other curveId
+        IReservoirPair pair = IReservoirPair(factory.getPair(_tokenIn, _tokenOut, curveId));
 
-        // case 2: if are pairs for both curveIds
+        // TODO: to account for the sign
+        uint256 actualAmountOut = pair.swap(int256(_amountIn), true, to, "");
+        require(actualAmountOut >= _amountOut);
     }
 }
