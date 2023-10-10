@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import { YakAdapter } from "../YakAdapter.sol";
+import { YakAdapter, IERC20, SafeERC20 } from "../YakAdapter.sol";
 import "../interface/IGenericFactory.sol";
 import { IQuoter } from "../interface/IReservoirQuoter.sol";
 import { IReservoirPair } from "../interface/IReservoirPair.sol";
 
 contract ReservoirAdapter is YakAdapter {
+    using SafeERC20 for IERC20;
 
     uint256 internal constant FEE_ACCURACY = 1_000_000;
 
@@ -70,12 +71,13 @@ contract ReservoirAdapter is YakAdapter {
         address _tokenOut,
         address to
     ) internal override {
-        (, uint256 curveId) = _queryWithCurveId(_amountIn, _tokenIn, _tokenOut);
+        (uint256 amountOut, uint256 curveId) = _queryWithCurveId(_amountIn, _tokenIn, _tokenOut);
+        require(amountOut >= _amountOut, "Insufficient amount out");
 
-        IReservoirPair pair = IReservoirPair(factory.getPair(_tokenIn, _tokenOut, curveId));
+        address pair = factory.getPair(_tokenIn, _tokenOut, curveId);
 
+        IERC20(_tokenIn).safeTransfer(pair, _amountIn);
         // TODO: to account for the sign
-        uint256 actualAmountOut = pair.swap(int256(_amountIn), true, to, "");
-        require(actualAmountOut >= _amountOut);
+        IReservoirPair(pair).swap(int256(_amountIn), true, to, new bytes(0));
     }
 }
