@@ -71,7 +71,7 @@ contract ReservoirAdapter is YakAdapter {
         address to
     ) internal override {
         (uint256 amountOut, uint256 curveId) = _queryWithCurveId(_amountIn, _tokenIn, _tokenOut);
-        require(amountOut >= _amountOut, "Insufficient amount out");
+        require(amountOut >= _amountOut, "ResAdap: Insufficient amount out");
 
         address pair = factory.getPair(_tokenIn, _tokenOut, curveId);
         address token0 = IReservoirPair(pair).token0();

@@ -1,7 +1,6 @@
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { reservoir } = addresses.avalanche
 
-
 describe('YakAdapter - Reservoir', () => {
 
     let testEnv
@@ -31,10 +30,10 @@ describe('YakAdapter - Reservoir', () => {
 
     describe('Swapping matches query', async () => {
 
-        it('100 USDT -> USDC', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.USDT, tkns.USDC)
+        it('100 USDt -> USDC', async () => {
+            await ate.checkSwapMatchesQuery('100', tkns.USDt, tkns.USDC)
         })
-        it('10 USDC -> BTC.b', async () => {
+        it('1 USDC -> BTC.b', async () => {
             await ate.checkSwapMatchesQuery('10', tkns.USDC, tkns.BTCb)
         })
 
