@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { YakAdapter, IERC20, SafeERC20 } from "../YakAdapter.sol";
-import "../interface/IGenericFactory.sol";
+import { IGenericFactory } from "../interface/IGenericFactory.sol";
 import { IQuoter } from "../interface/IReservoirQuoter.sol";
 import { IReservoirPair } from "../interface/IReservoirPair.sol";
 
@@ -12,7 +12,6 @@ contract ReservoirAdapter is YakAdapter {
     uint256 internal constant FEE_ACCURACY = 1_000_000;
 
     IGenericFactory public immutable factory;
-
     IQuoter public immutable quoter;
 
     constructor(
@@ -75,9 +74,14 @@ contract ReservoirAdapter is YakAdapter {
         require(amountOut >= _amountOut, "Insufficient amount out");
 
         address pair = factory.getPair(_tokenIn, _tokenOut, curveId);
+        address token0 = IReservoirPair(pair).token0();
 
         IERC20(_tokenIn).safeTransfer(pair, _amountIn);
-        // TODO: to account for the sign
-        IReservoirPair(pair).swap(int256(_amountIn), true, to, new bytes(0));
+        IReservoirPair(pair).swap(
+            _tokenIn == token0 ? int256(_amountIn) : -int256(_amountIn),
+            true,
+            to,
+            new bytes(0)
+        );
     }
 }

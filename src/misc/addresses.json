@@ -398,6 +398,10 @@
         "uniV3": {
             "quoter": "0xc15804984E3e77B7f8A60E4553e2289c5fdeAe8B",
             "factory": "0x740b1c1de25031C31FF4fC9A62f554A55cdC1baD"
+        },
+        "reservoir": {
+            "quoter": "0x95222f1dba54b87F1d71186775a38Ffae9fBFDd1",
+            "factory": "0xDd723D9273642D82c5761a4467fD5265d94a22da"
         }
     }, 
     "dogechain": {
