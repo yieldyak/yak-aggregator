@@ -33,14 +33,20 @@ contract ReservoirAdapter is YakAdapter {
         }
 
         uint256 constantProductAmtOut;
+        address[] memory path = new address[](2);
+        path[0] = _tokenIn;
+        path[1] = _tokenOut;
+        uint256[] memory curveIds = new uint256[](1);
+        curveIds[0] = 0;
         // try get quote for constant product pair
-        try quoter.getAmountsOut(_amountIn, [_tokenIn, _tokenOut], [0]) returns (uint256[] amtsOut) {
+        try quoter.getAmountsOut(_amountIn, path, curveIds) returns (uint256[] memory amtsOut) {
             constantProductAmtOut = amtsOut[0];
         } catch {}
 
         uint256 stableAmtOut;
+        curveIds[0] = 1;
         // try get quote for stable pair
-        try quoter.getAmountsOut(_amountIn, [_tokenIn, _tokenOut], [1]) returns (uint256[] amtsOut) {
+        try quoter.getAmountsOut(_amountIn, path, curveIds) returns (uint256[] memory amtsOut) {
         } catch {}
 
         return stableAmtOut > constantProductAmtOut ? stableAmtOut : constantProductAmtOut;
