@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "../YakAdapter.sol";
+import { YakAdapter } from "../YakAdapter.sol";
 import "../interface/IGenericFactory.sol";
+import { IQuoter } from "../interface/IReservoirQuoter.sol";
 
 contract ReservoirAdapter is YakAdapter {
 
@@ -10,12 +11,16 @@ contract ReservoirAdapter is YakAdapter {
 
     IGenericFactory public immutable factory;
 
+    IQuoter public immutable quoter;
+
     constructor(
         string memory _name,
         address _factory,
+        address _quoter,
         uint256 _swapGasEstimate // we use the worse off i.e. the stable pair gas estimate
     ) YakAdapter(_name, _swapGasEstimate) {
         factory = IGenericFactory(_factory);
+        quoter = IQuoter(_quoter);
     }
 
     function _query(
@@ -26,13 +31,19 @@ contract ReservoirAdapter is YakAdapter {
         if (_tokenIn == _tokenOut || _amountIn == 0) {
             return 0;
         }
-        address cpPair = factory.getPair(_tokenIn, _tokenOut, 0);
-        address stablePair = factory.getPair(_tokenIn, _tokenOut, 1);
 
-        if (cpPair == address(0)) { }
-        if (stablePair == address(0)) { }
+        uint256 constantProductAmtOut;
+        // try get quote for constant product pair
+        try quoter.getAmountsOut(_amountIn, [_tokenIn, _tokenOut], [0]) returns (uint256[] amtsOut) {
+            constantProductAmtOut = amtsOut[0];
+        } catch {}
 
+        uint256 stableAmtOut;
+        // try get quote for stable pair
+        try quoter.getAmountsOut(_amountIn, [_tokenIn, _tokenOut], [1]) returns (uint256[] amtsOut) {
+        } catch {}
 
+        return stableAmtOut > constantProductAmtOut ? stableAmtOut : constantProductAmtOut;
     }
 
     function _swap(
@@ -42,7 +53,6 @@ contract ReservoirAdapter is YakAdapter {
         address _tokenOut,
         address to
     ) internal override {
-        // how do we determine which curve id to take?
 
         // case 1: if there is a pair for a curveId but not for the other curveId
 
