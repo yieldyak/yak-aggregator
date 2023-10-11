@@ -8,7 +8,7 @@ const contractName = 'ReservoirAdapter'
 const factory = reservoir.factory
 const quoter = reservoir.quoter
 
-const gasEstimate = 340_000
+const gasEstimate = 350_000
 const args = [ name, factory, quoter, gasEstimate ]
 
 module.exports = deployAdapter(networkName, tags, name, contractName, args)

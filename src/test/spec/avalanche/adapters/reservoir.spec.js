@@ -14,7 +14,7 @@ describe('YakAdapter - Reservoir', () => {
         tkns = testEnv.supportedTkns
 
         const contractName = 'ReservoirAdapter'
-        const gasEstimate = 340_000
+        const gasEstimate = 350_000
         const adapterArgs = [
             contractName,
             reservoir.factory,
