@@ -16,7 +16,7 @@ module.exports = {
       
             'SynapseAdapter',
             'AxialAS4DAdapter',
-            'PlatypusAdapter',
+            // 'PlatypusAdapter',
             
             'CurveAtricryptoAdapter',
             'Curve3poolV2Adapter',
