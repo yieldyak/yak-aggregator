@@ -93,7 +93,7 @@ module.exports = {
             'OreoswapAdapter',
             'CamelotAdapter',
             'WETHAdapter',
-            'CamelotAlgebraAdapter',
+            // 'CamelotAlgebraAdapter',
             // 'ArbiDexAdapter',
         ],
         hopTokens: [
