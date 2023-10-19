@@ -75,7 +75,6 @@ module.exports = {
     }, 
     avalanche: {
       chainId: 43114,
-      gasPrice: 225000000000,
       url: AVALANCHE_RPC,
       accounts: [ AVALANCHE_PK_DEPLOYER ]
     },
