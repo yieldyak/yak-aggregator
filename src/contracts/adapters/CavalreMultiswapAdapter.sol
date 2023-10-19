@@ -195,7 +195,7 @@ contract CavalreMultiswapAdapter is YakAdapter {
         }
 
         // Compute receiveAmount
-        if (receiveToken == address(this)) {
+        if (receiveToken == address(_poolState.token)) {
             receiveAmount = poolOut - feeAmount;
         } else {
             AssetState storage assetOut = pool.asset(receiveToken);
