@@ -18,11 +18,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 import "../YakAdapter.sol";
-import "../interface/IBaseMultiswapPool.sol";
+import "../interface/ICavalReMultiswapBasePool.sol";
 import "../interface/IMinimalSwapInfoPool.sol";
 import "../lib/FixedPointMathLib.sol";
 
-contract CavalreMultiswapAdapter is YakAdapter {
+contract CavalReMultiswapAdapter is YakAdapter {
     using SafeERC20 for IERC20;
     using FixedPointMathLib for uint256;
     using FixedPointMathLib for int256;
@@ -41,7 +41,7 @@ contract CavalreMultiswapAdapter is YakAdapter {
     function addPools(address[] memory _pools) public onlyMaintainer {
         for (uint128 i = 0; i < _pools.length; i++) {
             address poolAddress = _pools[i];
-            IBaseMultiswapPool pool = IBaseMultiswapPool(poolAddress);
+            IBaseMultiswapPool pool = ICavalReMultiswapBasePool(poolAddress);
             AssetState[] memory assets = pool.assets();
             for (uint128 j = 0; j < assets.length; j++) {
                 address token = address(assets[j].token);
