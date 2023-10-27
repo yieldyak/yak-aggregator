@@ -41,7 +41,7 @@ contract CavalReMultiswapAdapter is YakAdapter {
     function addPools(address[] memory _pools) public onlyMaintainer {
         for (uint128 i = 0; i < _pools.length; i++) {
             address poolAddress = _pools[i];
-            IBaseMultiswapPool pool = ICavalReMultiswapBasePool(poolAddress);
+            ICavalReMultiswapBasePool pool = ICavalReMultiswapBasePool(poolAddress);
             AssetState[] memory assets = pool.assets();
             for (uint128 j = 0; j < assets.length; j++) {
                 address token = address(assets[j].token);
@@ -59,7 +59,7 @@ contract CavalReMultiswapAdapter is YakAdapter {
     function removePools(address[] memory _pools) public onlyMaintainer {
         for (uint256 i = 0; i < _pools.length; i++) {
             address poolAddress = _pools[i];
-            IBaseMultiswapPool pool = IBaseMultiswapPool(poolAddress);
+            ICavalReMultiswapBasePool pool = ICavalReMultiswapBasePool(poolAddress);
             AssetState[] memory assets = pool.assets();
             for (uint128 j = 0; j < assets.length; j++) {
                 address token = address(assets[j].token);
@@ -118,7 +118,7 @@ contract CavalReMultiswapAdapter is YakAdapter {
 
         require(poolAddress != address(0), "Undefined pool");
 
-        (uint256 receiveAmount, ) = IBaseMultiswapPool(poolAddress).swap(_tokenIn, _tokenOut, _amountIn, _amountOut);
+        (uint256 receiveAmount, ) = ICavalReMultiswapBasePool(poolAddress).swap(_tokenIn, _tokenOut, _amountIn, _amountOut);
         IERC20(_tokenOut).safeTransfer(to, receiveAmount);
     }
 
@@ -135,7 +135,7 @@ contract CavalReMultiswapAdapter is YakAdapter {
             if (pool == address(0)) {
                 continue;
             }
-            IBaseMultiswapPool poolContract = IBaseMultiswapPool(pool);
+            ICavalReMultiswapBasePool poolContract = ICavalReMultiswapBasePool(pool);
             if (poolContract.paused()) {
                 continue;
             }
@@ -165,7 +165,7 @@ contract CavalReMultiswapAdapter is YakAdapter {
         address receiveToken,
         address poolAddress
     ) internal view returns (uint256 receiveAmount, uint256 feeAmount) {
-        IBaseMultiswapPool pool = IBaseMultiswapPool(poolAddress);
+        ICavalReMultiswapBasePool pool = ICavalReMultiswapBasePool(poolAddress);
         PoolState storage _poolState = pool.info();
         // Compute fee
         uint256 fee = pool.asset(receiveToken).fee;
@@ -214,7 +214,7 @@ contract CavalReMultiswapAdapter is YakAdapter {
         uint256[] memory allocations,
         address poolAddress
     ) internal view returns (uint256[] memory receiveAmounts, uint256 feeAmount) {
-        IBaseMultiswapPool pool = IBaseMultiswapPool(poolAddress);
+        ICavalReMultiswapBasePool pool = ICavalReMultiswapBasePool(poolAddress);
         PoolState storage _poolState = pool.info();
         receiveAmounts = new uint256[](receiveTokens.length);
 
