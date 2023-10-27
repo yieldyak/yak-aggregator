@@ -29,7 +29,7 @@ struct AssetState {
     uint256 lastUpdated;
 }
 
-interface IBaseMultiswapPool {
+interface ICavalReMultiswapBasePool {
 
     function info() external view returns (PoolState memory);
 
