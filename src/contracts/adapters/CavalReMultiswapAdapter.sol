@@ -42,13 +42,13 @@ contract CavalReMultiswapAdapter is YakAdapter {
         for (uint128 i = 0; i < _pools.length; i++) {
             address poolAddress = _pools[i];
             ICavalReMultiswapBasePool pool = ICavalReMultiswapBasePool(poolAddress);
-            AssetState[] memory assets = pool.assets();
+            address[] memory assets = pool.assetAddresses();
             for (uint128 j = 0; j < assets.length; j++) {
-                address token = address(assets[j].token);
+                address token = assets[j];
                 poolToTokenIndex[poolAddress][token] = j;
                 for (uint128 k = 0; k < assets.length; k++) {
                     if (j != k) {
-                        tokensToPools[token][address(assets[k].token)].push(pool);
+                        tokensToPools[token][assets[k]].push(pool);
                         _approveIfNeeded(token, UINT_MAX, poolAddress);
                     }
                 }
@@ -60,18 +60,18 @@ contract CavalReMultiswapAdapter is YakAdapter {
         for (uint256 i = 0; i < _pools.length; i++) {
             address poolAddress = _pools[i];
             ICavalReMultiswapBasePool pool = ICavalReMultiswapBasePool(poolAddress);
-            AssetState[] memory assets = pool.assets();
+            address[] memory assets = pool.assetAddresses();
             for (uint128 j = 0; j < assets.length; j++) {
-                address token = address(assets[j].token);
+                address token = assets[j];
                 for (uint128 k = 0; k < assets.length; k++) {
                     if (j != k) {
-                        address[] memory currentPools = tokensToPools[token][address(assets[k].token)];
+                        address[] memory currentPools = tokensToPools[token][assets[k]];
                         for (uint128 l = 0; l < currentPools.length; l++) {
                             if (currentPools[l] == poolAddress) {
                                 delete currentPools[l];
                             }
                         }
-                        tokensToPools[token][address(assets[k].token)] = currentPools;
+                        tokensToPools[token][assets[k]] = currentPools;
                     }
                 }
             }
@@ -118,7 +118,12 @@ contract CavalReMultiswapAdapter is YakAdapter {
 
         require(poolAddress != address(0), "Undefined pool");
 
-        (uint256 receiveAmount, ) = ICavalReMultiswapBasePool(poolAddress).swap(_tokenIn, _tokenOut, _amountIn, _amountOut);
+        (uint256 receiveAmount, ) = ICavalReMultiswapBasePool(poolAddress).swap(
+            _tokenIn,
+            _tokenOut,
+            _amountIn,
+            _amountOut
+        );
         IERC20(_tokenOut).safeTransfer(to, receiveAmount);
     }
 
@@ -155,135 +160,6 @@ contract CavalReMultiswapAdapter is YakAdapter {
         address _pool
     ) internal view returns (uint256 amountOut) {
         //use _querySimpleSwap for now and possibly add logic for other pools later
-        (uint256 receiveAmount, ) = _querySimpleSwap(_tokenIn, _amountIn, _tokenOut, _pool);
-        return receiveAmount;
-    }
-
-    function _querySimpleSwap(
-        address payToken,
-        uint256 amount,
-        address receiveToken,
-        address poolAddress
-    ) internal view returns (uint256 receiveAmount, uint256 feeAmount) {
-        ICavalReMultiswapBasePool pool = ICavalReMultiswapBasePool(poolAddress);
-        PoolState storage _poolState = pool.info();
-        // Compute fee
-        uint256 fee = pool.asset(receiveToken).fee;
-
-        // Compute scaledValueIn
-        uint256 scaledValueIn;
-        uint256 poolOut;
-        {
-            AssetState storage assetIn = pool.asset(payToken);
-            uint256 amount_ = amount * assetIn.conversion; // Convert to canonical
-            scaledValueIn = assetIn.scale.fullMulDiv(amount_, assetIn.balance + amount_);
-        }
-
-        uint256 lastPoolBalance = _poolState.balance;
-        uint256 scaledPoolOut = scaledValueIn.mulWadUp(fee);
-        if (payToken == address(_poolState.token)) {
-            uint256 poolIn = amount;
-            poolOut = fee.fullMulDiv(
-                scaledValueIn.mulWadUp(lastPoolBalance - poolIn) + _poolState.scale.mulWadUp(poolIn),
-                _poolState.scale - scaledPoolOut
-            );
-            scaledValueIn += _poolState.scale.fullMulDiv(poolIn, lastPoolBalance + poolOut - poolIn);
-            feeAmount = poolOut;
-        } else {
-            poolOut = lastPoolBalance.fullMulDiv(scaledPoolOut, _poolState.scale - scaledPoolOut);
-            feeAmount = poolOut.fullMulDiv(fee, scaledValueIn);
-        }
-
-        // Compute receiveAmount
-        if (receiveToken == address(_poolState.token)) {
-            receiveAmount = poolOut - feeAmount;
-        } else {
-            AssetState storage assetOut = pool.asset(receiveToken);
-            receiveAmount =
-                assetOut.balance.fullMulDiv(scaledValueIn, assetOut.scale + scaledValueIn) /
-                assetOut.conversion; // Convert from canonical
-        }
-
-        return (receiveAmount, feeAmount);
-    }
-
-    function _queryMultiswap(
-        address[] memory payTokens,
-        uint256[] memory amounts,
-        address[] memory receiveTokens,
-        uint256[] memory allocations,
-        address poolAddress
-    ) internal view returns (uint256[] memory receiveAmounts, uint256 feeAmount) {
-        ICavalReMultiswapBasePool pool = ICavalReMultiswapBasePool(poolAddress);
-        PoolState storage _poolState = pool.info();
-        receiveAmounts = new uint256[](receiveTokens.length);
-
-        {
-            // Compute fee
-            uint256 fee;
-            {
-                for (uint256 i; i < receiveTokens.length; i++) {
-                    fee += allocations[i].mulWadUp(pool.asset(receiveTokens[i]).fee);
-                }
-            }
-
-            // Compute scaledValueIn
-            uint256 scaledValueIn;
-            uint256 poolOut;
-            {
-                // Contribution from assets only
-                for (uint256 i; i < payTokens.length; i++) {
-                    address token_ = payTokens[i];
-                    if (token_ != address(this)) {
-                        AssetState storage assetIn = pool.asset(token_);
-                        uint256 amount_ = amounts[i] * assetIn.conversion; // Convert to canonical
-                        scaledValueIn += assetIn.scale.fullMulDiv(amount_, assetIn.balance + amount_);
-                    }
-                }
-
-                uint256 poolAlloc = fee;
-                if (receiveTokens[0] == address(_poolState.token)) {
-                    poolAlloc += allocations[0].mulWadUp(1e18 - fee);
-                }
-                uint256 lastPoolBalance = _poolState.balance;
-                uint256 scaledPoolOut = scaledValueIn.mulWadUp(poolAlloc);
-                if (payTokens[0] == address(_poolState.token)) {
-                    uint256 poolIn = amounts[0];
-                    poolOut = poolAlloc.fullMulDiv(
-                        scaledValueIn.mulWadUp(lastPoolBalance - poolIn) + _poolState.scale.mulWadUp(poolIn),
-                        _poolState.scale - scaledPoolOut
-                    );
-                    scaledValueIn += _poolState.scale.fullMulDiv(poolIn, lastPoolBalance + poolOut - poolIn);
-                    feeAmount = poolOut;
-                } else {
-                    poolOut = lastPoolBalance.fullMulDiv(scaledPoolOut, _poolState.scale - scaledPoolOut);
-                    if (poolAlloc > 0) {
-                        feeAmount = poolOut.fullMulDiv(fee, poolAlloc);
-                    }
-                }
-            }
-
-            // Compute receiveAmounts
-            {
-                uint256 scaledValueOut;
-
-                address receiveToken;
-                uint256 allocation;
-                for (uint256 i; i < receiveTokens.length; i++) {
-                    receiveToken = receiveTokens[i];
-                    allocation = allocations[i].mulWadUp(1e18 - fee);
-                    scaledValueOut = scaledValueIn.mulWadUp(allocation);
-                    if (receiveToken == address(this)) {
-                        receiveAmounts[i] = poolOut - feeAmount;
-                    } else {
-                        AssetState storage assetOut = pool.asset(receiveToken);
-                        receiveAmounts[i] =
-                            assetOut.balance.fullMulDiv(scaledValueOut, assetOut.scale + scaledValueOut) /
-                            assetOut.conversion; // Convert from canonical
-                    }
-                }
-            }
-        }
-        return (receiveAmounts, feeAmount);
+        (amountOut, ) = ICavalReMultiswapBasePool(_pool).quoteSwap(_tokenIn, _tokenOut, _amountIn);
     }
 }
