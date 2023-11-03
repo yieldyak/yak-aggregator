@@ -20,12 +20,9 @@ pragma solidity ^0.8.0;
 import "../YakAdapter.sol";
 import "../interface/ICavalReMultiswapBasePool.sol";
 import "../interface/IMinimalSwapInfoPool.sol";
-import "../lib/FixedPointMathLib.sol";
 
 contract CavalReMultiswapAdapter is YakAdapter {
     using SafeERC20 for IERC20;
-    using FixedPointMathLib for uint256;
-    using FixedPointMathLib for int256;
 
     mapping(address => mapping(address => uint128)) internal poolToTokenIndex;
     mapping(address => mapping(address => address[])) internal tokensToPools;
