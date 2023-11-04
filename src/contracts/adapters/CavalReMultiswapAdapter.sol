@@ -24,7 +24,6 @@ import "../interface/IMinimalSwapInfoPool.sol";
 contract CavalReMultiswapAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
-    mapping(address => mapping(address => uint128)) internal poolToTokenIndex;
     mapping(address => mapping(address => address[])) internal tokensToPools;
 
     constructor(
@@ -42,7 +41,6 @@ contract CavalReMultiswapAdapter is YakAdapter {
             address[] memory assets = pool.assetAddresses();
             for (uint128 j = 0; j < assets.length; j++) {
                 address token = assets[j];
-                poolToTokenIndex[poolAddress][token] = j;
                 for (uint128 k = 0; k < assets.length; k++) {
                     if (j != k) {
                         tokensToPools[token][assets[k]].push(pool);
