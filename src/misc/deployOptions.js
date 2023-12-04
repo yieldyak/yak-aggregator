@@ -36,6 +36,7 @@ module.exports = {
             'SAvaxAdapter',
             'WAvaxAdapter',
             'WombatAdapter',
+            'ReservoirAdapter',
         ],
         minimalAdapterWhitelist: [
             'WAvaxAdapter',
