@@ -239,7 +239,8 @@
             "yyJOE": "0xe7462905B79370389e8180E300F58f63D35B725F",
             "fsGLP": "0x9e295B5B976a184B14aD8cd72413aD846C299660",
             "sGLP": "0xaE64d55a6f09E4263421737397D1fdFA71896a69",
-            "GLP": "0x01234181085565ed162a948b6a5e88758CD7c7b8"
+            "GLP": "0x01234181085565ed162a948b6a5e88758CD7c7b8",
+            "USDV": "0x323665443CEf804A3b5206103304BD4872EA4253"
         }, 
         "unilikeRouters": {
             "zero": "0x85995d5f8ee9645cA855e92de16FA62D26398060", 
@@ -342,6 +343,11 @@
             "tsd": "0x91BB10D68C72d64a7cE10482b453153eEa03322C",
             "btc": "0x39dE4e02F76Dbd4352Ec2c926D8d64Db8aBdf5b2", 
             "yyavax": "0x8b4a45da5b0705ae4f47ebefc180c099345cf57e"
+        },
+        "wombat": {
+            "main": "0xC9bFC3eFeFe4CF96877009F75a61F5c1937e5d1a",
+            "savax": "0xE3Abc29B035874a9f6dCDB06f8F20d9975069D87",
+            "usdv": "0x108c990c93Fa8E3cD88DDb13594D39f09D9B3C02"
         },
         "other": {
             "GmxVault": "0x9ab2De34A33fB459b538c43f251eB825645e8595",
