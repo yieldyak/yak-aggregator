@@ -27,7 +27,7 @@ import "../YakAdapter.sol";
 contract UniswapV2Adapter is YakAdapter {
     using SafeERC20 for IERC20;
 
-    uint256 internal constant FEE_DENOMINATOR = 1e3;
+    uint256 public immutable feeDenominator;
     uint256 public immutable feeCompliment;
     address public immutable factory;
 
@@ -35,9 +35,11 @@ contract UniswapV2Adapter is YakAdapter {
         string memory _name,
         address _factory,
         uint256 _fee,
+        uint256 _feeDenominator,
         uint256 _swapGasEstimate
     ) YakAdapter(_name, _swapGasEstimate) {
-        feeCompliment = FEE_DENOMINATOR - _fee;
+        feeDenominator = _feeDenominator;
+        feeCompliment = _feeDenominator - _fee;
         factory = _factory;
     }
 
@@ -49,7 +51,7 @@ contract UniswapV2Adapter is YakAdapter {
         // Based on https://github.com/Uniswap/uniswap-v2-periphery/blob/master/contracts/UniswapV2Router02.sol
         uint256 amountInWithFee = _amountIn * feeCompliment;
         uint256 numerator = amountInWithFee * _reserveOut;
-        uint256 denominator = _reserveIn * FEE_DENOMINATOR + amountInWithFee;
+        uint256 denominator = _reserveIn * feeDenominator + amountInWithFee;
         amountOut = numerator / denominator;
     }
 

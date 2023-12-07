@@ -5,5 +5,6 @@ const networkName = 'optimism'
 const name = 'ZipswapAdapter'
 const tags = [ 'zipswap' ]
 const fee = 3
+const feeDenominator = 1000
 
-module.exports = deployUniV2Contract(networkName, tags, name, factory, fee)
+module.exports = deployUniV2Contract(networkName, tags, name, factory, fee, feeDenominator)

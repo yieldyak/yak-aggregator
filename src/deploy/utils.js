@@ -7,6 +7,7 @@ module.exports.deployUniV2Contract = (
     name, 
     factory,
     fee,
+    feeDenominator
 ) => {
     const adapterType = 'univ2'
     const contractName = 'UniswapV2Adapter'
@@ -17,7 +18,7 @@ module.exports.deployUniV2Contract = (
         tags, 
         name, 
         contractName, 
-        [name, factory, fee, gasEstimate]
+        [name, factory, fee, feeDenominator, gasEstimate]
     )
 }
 
