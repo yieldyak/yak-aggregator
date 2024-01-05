@@ -408,6 +408,10 @@
         "reservoir": {
             "quoter": "0x95222f1dba54b87F1d71186775a38Ffae9fBFDd1",
             "factory": "0xDd723D9273642D82c5761a4467fD5265d94a22da"
+        },
+        "pharaoh": {
+            "quoter": "0xc7d4412aa74c655B2e6e71bB6790d24AC90E393C",
+            "factory": "0xAAA32926fcE6bE95ea2c51cB4Fcb60836D320C42"
         }
     }, 
     "dogechain": {
