@@ -2,7 +2,8 @@ const {
     avalanche: ava, 
     dogechain: dog, 
     arbitrum: arb,
-    optimism: opt
+    optimism: opt,
+    zksync: zksync,
 } = require('./addresses.json')
 
 module.exports = {
@@ -141,5 +142,21 @@ module.exports = {
             // opt.assets.BOB, 
         ], 
         wnative: opt.assets.WETH
+    },
+    "zksync": {
+        adapterWhitelist: [
+            'VelocoreAdapter',
+            'MuteAdapter',
+            'WETHAdapter',
+            'SyncSwapAdapter',
+            'SpaceAdapter'
+        ],
+        hopTokens: [
+            zksync.assets.WETH,
+            zksync.assets.USDC,
+            zksync.assets['USD+'],
+            zksync.assets.cBUSD
+        ], 
+        wnative: zksync.assets.WETH
     }
 }

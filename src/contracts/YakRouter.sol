@@ -124,7 +124,8 @@ contract YakRouter is Maintainable, Recoverable, IYakRouter {
     ) internal {
         if (address(this) != _to) {
             if (_token == NATIVE) {
-                payable(_to).transfer(_amount);
+                (bool success, )= _to.call{value: _amount}("");
+                require(success, "Transfer failed.");
             } else {
                 IERC20(_token).safeTransfer(_to, _amount);
             }

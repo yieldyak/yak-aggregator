@@ -3,10 +3,12 @@ package-lock.json
 node_modules
 playground
 artifacts
+artifacts-zk
 .DS_Store
 .scripts
 .vscode
 cache
+cache-zk
 .env
 out
 .vscode
