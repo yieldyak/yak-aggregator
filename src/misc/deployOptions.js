@@ -2,7 +2,8 @@ const {
     avalanche: ava, 
     dogechain: dog, 
     arbitrum: arb,
-    optimism: opt
+    optimism: opt,
+    mantle: mnt
 } = require('./addresses.json')
 
 module.exports = {
@@ -72,6 +73,24 @@ module.exports = {
             dog.assets.WWDOGE,
         ], 
         wnative: dog.assets.WWDOGE
+    },
+    "mantle": {
+        adapterWhitelist: [
+            'WMNTAdapter',
+            'MerchantMoeAdapter',
+            'AgniAdapter',
+            'FusionAdapter'
+        ],
+        hopTokens: [
+            mnt.assets.METH,
+            mnt.assets.WMNT,
+            mnt.assets.MUSD,
+            mnt.assets.USDC,
+            mnt.assets.USDT,
+            mnt.assets.WBTC,
+            mnt.assets.WETH,
+        ], 
+        wnative: mnt.assets.WMNT
     },
     "arbitrum": {
         adapterWhitelist: [

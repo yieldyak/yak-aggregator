@@ -20,7 +20,7 @@ pragma solidity ^0.8.0;
 
 import "./UniswapV3AdapterBase.sol";
 
-contract UniswapV3Adapter is UniswapV3AdapterBase {
+contract FusionAdapter is UniswapV3AdapterBase {
 
     constructor(
         string memory _name,
@@ -32,7 +32,7 @@ contract UniswapV3Adapter is UniswapV3AdapterBase {
     ) UniswapV3AdapterBase(_name, _swapGasEstimate, _quoterGasLimit, _quoter, _factory, _defaultFees) {
     }
 
-    function uniswapV3SwapCallback(
+    function fusionXV3SwapCallback (
         int256 amount0Delta,
         int256 amount1Delta,
         bytes calldata
