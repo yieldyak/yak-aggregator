@@ -7,7 +7,8 @@
             "FRAX": "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F",
             "MIM": "0xFEa7a6a0B346362BF88A9e4A88416B77a57D6c2A",
             "SUSHI": "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A",
-            "USDC": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+            "USDCe": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+            "USDC": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
             "USDT": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
             "UNI": "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0",
             "WBTC": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
@@ -116,6 +117,22 @@
         "liquidityBook": {
             "routerV1": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
             "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e"
+        },
+        "ramses": {
+            "quoter": "0x1553804c340ac418797A701e330578593C78A91E",
+            "factory": "0xAA2cd7477c451E703f3B9Ba5663334914763edF8"
+        },
+        "wombat": {
+            "main": "0xc6bc781E20f9323012F6e422bdf552Ff06bA6CD1",
+            "frxETH": "0x20D7ee728900848752FA280fAD51aF40c47302f1",
+            "frax_usdv": "0x3cc8c886575968642Cab9F430261c81C5b044d4b",
+            "fusdc": "0x956454C7BE9318863297309183C79b793D370401",
+            "frax_sfrax_usdc": "0xaBF19eAdb08693278FdbAD35Cb4E3c1D6484c8Bb",
+            "mpendle_pendle": "0xe7159f15e7b1d6045506B228A1ed2136dcc56F48"
+        },
+        "pancake": {
+            "quoter": "0xa7f586470CD7b70F9b5893eEe85C0b5354541A99",
+            "factoryV3": "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865"
         },
         "other": {
             "woofiV2Pool": "0xeFF23B4bE1091b53205E35f3AfCD9C7182bf3062",
