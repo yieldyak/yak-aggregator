@@ -434,6 +434,28 @@
             "algebraQuoter": "0x4a6c794192831fB9F4782E61Bec05d6C5cC9F3eA"
         }
     },
+    "mantle": {
+        "assets": {
+            "WETH": "0xdEAddEaDdeadDEadDEADDEAddEADDEAddead1111",
+            "WMNT": "0x78c1b0C915c4FAA5FffA6CAbf0219DA63d7f4cb8",
+            "USDT": "0x201EBa5CC46D216Ce6DC03F6a759e8E766e956aE",
+            "USDC": "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9",
+            "WBTC": "0xCAbAE6f6Ea1ecaB08Ad02fE02ce9A44F09aebfA2",
+            "METH": "0xcDA86A272531e8640cD7F1a92c01839911B90bb0",
+            "MUSD": "0xab575258d37EaA5C8956EfABe71F4eE8F6397cF3"
+        },
+        "unilikeFactories": {
+            "moe": "0x5bEf015CA9424A7C07B68490616a4C1F094BEdEc"
+        },
+        "agni": {
+            "quoter": "0xb67b78c846BB2863c38867554090Db12134F4119",
+            "factory": "0x25780dc8Fc3cfBD75F33bFDAB65e969b603b2035"
+        },
+        "fusion": {
+            "quoter": "0x4aacd032a541176CEeb39AB06d67637097819a35",
+            "factory": "0x530d2766D1988CC1c000C8b7d00334c14B69AD71"
+        }
+    },
     "optimism": {
         "assets": {
             "WETH": "0x4200000000000000000000000000000000000006",
