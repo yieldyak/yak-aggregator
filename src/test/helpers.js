@@ -1,12 +1,13 @@
 const { ethers, config } = require("hardhat")
-const fs = require('fs')
+const fs = require('fs');
+const { toBeHex } = require("ethers");
 
 const bigNumToBytes32 = (bn) => {
-    return ethers.utils.hexlify(ethers.utils.zeroPad(bn.toHexString(), 32))
+    return ethers.zeroPadValue(toBeHex(bn), 32)
 };
   
 const addressToBytes32 = (add) => {
-    return ethers.utils.hexlify(ethers.utils.zeroPad(add, 32))
+    return toBeHex(ethers.zeroPadValue(add, 32))
 };
 
 const setStorageAt = async (address, index, value) => {
@@ -18,7 +19,7 @@ const getERC20SlotByExecute = async (token, _signer) => {
     const holder = signer.address
     const tx = await signer.sendTransaction({
         data: `0x70a08231000000000000000000000000${holder.slice(2)}`, 
-        gasPrice: ethers.utils.parseUnits('225', 'gwei'),
+        gasPrice: ethers.parseUnits('225', 'gwei'),
         to: token, 
     })
     const result = await signer.provider.send('debug_traceTransaction', [tx.hash])
@@ -28,7 +29,7 @@ const getERC20SlotByExecute = async (token, _signer) => {
         // Find SLOAD operations containing the holder address
         const addressMatches = () => bytes32ToAddress(log.memory[0]) == holder.toLowerCase()
         if (log.op == 'SLOAD' && addressMatches()) {
-            const hash = ethers.utils.keccak256('0x' + log.memory[0] + log.memory[1])
+            const hash = ethers.keccak256('0x' + log.memory[0] + log.memory[1])
             const shash = hash.slice(2)
             // Return the slot if its hash with holder address is mapped to return value in storage and hash is on top of stack
             if (log.stack[log.stack.length-1] == shash && log.storage[shash] == result.returnValue) {
@@ -70,7 +71,7 @@ module.exports.makeAccountGen = async () => {
         for (let account of accounts) {
             if (process.argv.includes('--logs')) {
                 // Add a tag if tracer is enabled
-                hre.tracer.nameTags[account.address] = `Account#${counter}`
+                hre.tracer.nameTags[account.target] = `Account#${counter}`
             }
             yield account
         }
@@ -122,7 +123,7 @@ module.exports.getERC20Decimals = (provider, token) => {
 } 
 
 module.exports.topUpAccountWithToken = async (topper, recieverAddress, tokenAddress, amount, routerContract) => {
-    let topperBalance = await ethers.provider.getBalance(topper.address)
+    let topperBalance = await ethers.provider.getBalance(topper.target)
     const _WAVAX_ = '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7'
     return routerContract.connect(topper).swapAVAXForExactTokens(
         amount, 
@@ -143,9 +144,7 @@ module.exports.getTokenContract = _getTokenContract
 module.exports.setERC20Bal = async (_token, _holder, _amount) => {
     const [contract, storageSlot] = await getERC20Slot(_token)
     const key = addressToBytes32(_holder)
-    const index = ethers.utils.keccak256(
-        key + storageSlot.toString(16).padStart(64, '0')
-    ).replace(/0x0+/, "0x")  // Hardhat doesn't like leading zeroes
+    const index = ethers.solidityPackedKeccak256(["uint256", "uint256"], [_holder, storageSlot])
     await setStorageAt(contract, index, bigNumToBytes32(_amount))
 }
 

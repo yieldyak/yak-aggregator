@@ -1,5 +1,6 @@
 const { task } = require("hardhat/config");
 const prompt = require("prompt-sync")({ sigint: true });
+const { SafeManager } = require("../misc/SafeManager");
 
 task(
     "update-adapters",
@@ -9,7 +10,9 @@ task(
         const [ deployer ] = await hre.ethers.getSigners()
         const YakRouter = await getRouterContract(networkId)
         const adaptersWhitelist = await getAdapterWhitelist(hre.deployments, networkId)
-        await updateAdapters(YakRouter, deployer, adaptersWhitelist)
+        const safeManager = new SafeManager(deployer, hre.ethers)
+        await safeManager.initializeSafe(networkId)      
+        await updateAdapters(YakRouter, deployer, adaptersWhitelist, safeManager)
     }
 );
 
@@ -35,7 +38,7 @@ async function getRouterContractForAddress(routerAddress) {
     return ethers.getContractAt('YakRouter', routerAddress)
 }
 
-async function updateAdapters(yakRouter, deployerSigner, adaptersWhitelist) {
+async function updateAdapters(yakRouter, deployerSigner, adaptersWhitelist, safeManager) {
     let currentAdapters = await getAdaptersForRouter(yakRouter)
     let allAdaptersIncluded = haveSameElements(currentAdapters, adaptersWhitelist)   
     if (allAdaptersIncluded) {
@@ -44,10 +47,28 @@ async function updateAdapters(yakRouter, deployerSigner, adaptersWhitelist) {
     }
     showDiff(currentAdapters, adaptersWhitelist)   
     if (prompt("Proceed to set adapters? y/n") == 'y') {
-        await yakRouter
-            .connect(deployerSigner)
-            .setAdapters(adaptersWhitelist)
-            .then(finale)
+        if (safeManager.safeAvailable) {
+            const transaction = await yakRouter
+                .setAdapters
+                .populateTransaction(adaptersWhitelist)
+            console.log(transaction)
+            const safeTransactionData = [
+                {
+                  to: await yakRouter.getAddress(),
+                  value: "0",
+                  data: transaction.data,
+                },
+            ];
+            console.log(safeTransactionData)
+            // const safeTx = await safeManager.createSafeTransaction(safeTransactionData);
+            // const { safeSignature } = await safeManager.signTransaction(safeTx);
+            // await safeManager.proposeTransaction(safeTx, safeSignature);          
+        } else {
+            await yakRouter
+                .connect(deployerSigner)
+                .setAdapters(adaptersWhitelist)
+                .then(finale)
+        }
     }
 }
 
@@ -91,8 +112,8 @@ function getAdapterWhitelistNamed(networkId) {
 }
 
 async function getAdaptersForRouter(yakRouter) {
-    let adapterCount = await yakRouter.adaptersCount().then(r => r.toNumber())
-    return Promise.all([...Array(adapterCount).keys()].map(i => yakRouter.ADAPTERS(i)))
+    let adapterCount = await yakRouter.adaptersCount()
+    return Promise.all([...Array(Number(adapterCount)).keys()].map(i => yakRouter.ADAPTERS(i)))
 }
 
 async function finale(res) {

@@ -1,5 +1,6 @@
 const { task } = require("hardhat/config");
 const prompt = require("prompt-sync")({ sigint: true });
+const { SafeManager } = require("../misc/SafeManager");
 
 task(
     "update-hop-tokens",
@@ -9,7 +10,9 @@ task(
         const [ deployer ] = await hre.ethers.getSigners()
         const YakRouter = await getRouterContract(networkId)
         const hopTokensWhitelist = await getHopTokensWhitelist(networkId)
-        await updateHopTokens(YakRouter, deployer, hopTokensWhitelist)
+        const safeManager = new SafeManager(deployer, hre.ethers)
+        await safeManager.initializeSafe(networkId)      
+        await updateHopTokens(YakRouter, deployer, hopTokensWhitelist, safeManager)
     }
 );
 
@@ -35,7 +38,7 @@ async function getRouterContractForAddress(routerAddress) {
     return ethers.getContractAt('YakRouter', routerAddress)
 }
 
-async function updateHopTokens(yakRouter, deployerSigner, hopTokensWhitelist) {
+async function updateHopTokens(yakRouter, deployerSigner, hopTokensWhitelist, safeManager) {
     const currentHopTokens = await getTrustedTokensForRouter(yakRouter)
     const allIncluded = haveSameElements(currentHopTokens, hopTokensWhitelist)   
     if (allIncluded) {
@@ -44,10 +47,26 @@ async function updateHopTokens(yakRouter, deployerSigner, hopTokensWhitelist) {
     }
     showDiff(currentHopTokens, hopTokensWhitelist) 
     if (prompt("Proceed to set hop-tokens? y/n") == 'y') {
-        await yakRouter
+        if (safeManager.safeAvailable) {
+            const transaction = await yakRouter
+            .setTrustedTokens
+            .populateTransaction(hopTokensWhitelist)
+            const safeTransactionData = [
+                {
+                to: await yakRouter.getAddress(),
+                value: "0",
+                data: transaction.data,
+                },
+            ];
+            const safeTx = await safeManager.createSafeTransaction(safeTransactionData);
+            const { safeSignature } = await safeManager.signTransaction(safeTx);
+            await safeManager.proposeTransaction(safeTx, safeSignature);          
+        } else {
+            await yakRouter
             .connect(deployerSigner)
             .setTrustedTokens(hopTokensWhitelist)
             .then(finale)
+        }
     }
 }
 
@@ -79,8 +98,8 @@ function getHopTokensWhitelist(networkId) {
 }
 
 async function getTrustedTokensForRouter(yakRouter) {
-    let trustedTokensCount = await yakRouter.trustedTokensCount().then(r => r.toNumber())
-    return Promise.all([...Array(trustedTokensCount).keys()].map(i => yakRouter.TRUSTED_TOKENS(i)))
+    let trustedTokensCount = await yakRouter.trustedTokensCount()
+    return Promise.all([...Array(Number(trustedTokensCount)).keys()].map(i => yakRouter.TRUSTED_TOKENS(i)))
 }
 
 async function finale(res) {
