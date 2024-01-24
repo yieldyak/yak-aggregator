@@ -117,9 +117,13 @@ module.exports = {
             'WETHAdapter',
             // 'CamelotAlgebraAdapter',
             // 'ArbiDexAdapter',
-            'RamsesAdapter',
+            'RamsesV2Adapter',
             'PancakeV3Adapter',
-            'WombatAdapter'
+            'WombatAdapter',
+            'Curve2crvUsdFrax',
+            'Curve2crvUsdUsdc',
+            'Curve2crvUsdUsdce',
+            'Curve2crvUsdUsdt',
         ],
         hopTokens: [
             arb.assets.WETH,
