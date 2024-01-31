@@ -51,7 +51,6 @@ async function updateAdapters(yakRouter, deployerSigner, adaptersWhitelist, safe
             const transaction = await yakRouter
                 .setAdapters
                 .populateTransaction(adaptersWhitelist)
-            console.log(transaction)
             const safeTransactionData = [
                 {
                   to: await yakRouter.getAddress(),
@@ -59,10 +58,9 @@ async function updateAdapters(yakRouter, deployerSigner, adaptersWhitelist, safe
                   data: transaction.data,
                 },
             ];
-            console.log(safeTransactionData)
-            // const safeTx = await safeManager.createSafeTransaction(safeTransactionData);
-            // const { safeSignature } = await safeManager.signTransaction(safeTx);
-            // await safeManager.proposeTransaction(safeTx, safeSignature);          
+            const safeTx = await safeManager.createSafeTransaction(safeTransactionData);
+            const { safeSignature } = await safeManager.signTransaction(safeTx);
+            await safeManager.proposeTransaction(safeTx, safeSignature);          
         } else {
             await yakRouter
                 .connect(deployerSigner)
