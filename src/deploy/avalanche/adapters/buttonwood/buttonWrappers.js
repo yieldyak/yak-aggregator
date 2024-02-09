@@ -6,7 +6,7 @@ const tags = [ 'buttonwood', 'button-wrappers' ]
 const name = 'ButtonWrappersAdapter'
 const contractName = 'ButtonWrappersAdapter'
 
-const gasEstimate = 10
+const gasEstimate = 213_344
 const factory = ButtonTokenFactory
 const args = [ name, factory, gasEstimate ]
 

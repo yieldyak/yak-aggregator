@@ -58,7 +58,6 @@ contract ButtonWrappersAdapter is YakAdapter {
         address _tokenOut,
         address to
     ) internal override {
-        //        require(IERC20(_tokenIn).balanceOf(address(this))>=1,"boop");
         if (IButtonTokenFactory(factory).isInstance(_tokenIn)) {
             IButtonWrapper(_tokenIn).burnTo(to, _amountIn);
         } else {
