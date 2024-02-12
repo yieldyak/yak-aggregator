@@ -16,7 +16,7 @@ describe('YakAdapter - Curve', function() {
 
     before(async () => {
         const networkName = 'arbitrum'
-        const forkBlockNumber = 16485220
+        const forkBlockNumber = 157719900
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
     })
@@ -201,6 +201,54 @@ describe('YakAdapter - Curve', function() {
                 [ '1', tkns.USDT, tkns.MIM ], 
                 [ '1', tkns.FRAX, tkns.USDC ], 
                 [ '1', tkns.MIM, tkns.USDC ], 
+            ]
+            await ate.checkGasEstimateIsSensible(options)
+        })
+
+    })
+
+    describe('rteth', () => {
+
+        before(async () => {
+            const contractName = 'CurvePlain128Adapter'
+            const adapterArgs = [ 
+                'CurveRtEthAdapter', 
+                curve.rteth, 
+                250_000
+            ]
+            ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
+        })
+
+        describe('Swapping matches query', async () => {
+
+            it('1 RTETH -> WETH', async () => {
+                await ate.checkSwapMatchesQueryWithDust(
+                    '1', 
+                    tkns.RTETH, 
+                    tkns.WETH,
+                    MaxAdapterDust
+                )
+            })
+            it('1 WETH -> RTETH', async () => {
+                await ate.checkSwapMatchesQueryWithDust(
+                    '1', 
+                    tkns.WETH, 
+                    tkns.RTETH,
+                    MaxAdapterDust
+                )
+            })
+    
+        })
+    
+        it('Query returns zero if tokens not found', async () => {
+            const supportedTkn = tkns.WETH
+            ate.checkQueryReturnsZeroForUnsupportedTkns(supportedTkn)
+        })
+    
+        it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
+            const options = [
+                [ '1', tkns.RTETH, tkns.WETH ],
+                [ '1', tkns.WETH, tkns.RTETH ],
             ]
             await ate.checkGasEstimateIsSensible(options)
         })

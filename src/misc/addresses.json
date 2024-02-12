@@ -14,7 +14,8 @@
             "WETH": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1", 
             "STG": "0x6694340fc020c5E6B96567843da2df01b2CE1eb6", 
             "USDs": "0xD74f5255D557944cf7Dd0E45FF521520002D5748",
-            "ARB": "0x912CE59144191C1204E64559FE8253a0e49E6548"
+            "ARB": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+            "RTETH": "0xc15B9DB0ee5B1B7FB8800A644457207f482e260D"
         },
         "sushiswap": {
             "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", 
@@ -61,7 +62,8 @@
             "meta_frax": "0xf07d553B195080F84F582e88ecdD54bAa122b279",
             "meta_mim": "0x30dF229cefa463e991e29D42DB0bae2e122B2AC7", 
             "vst_frax": "0x59bF0545FCa0E5Ad48E13DA269faCD2E8C886Ba4", 
-            "frax_bp": "0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5"
+            "frax_bp": "0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5",
+            "rteth": "0x9f6AC103E5d22a7CE8F2CE90bC3991ee4EE4324e"
         }, 
         "saddle": {
             "arbusd": "0xBea9F78090bDB9e662d8CB301A00ad09A5b756e9",
