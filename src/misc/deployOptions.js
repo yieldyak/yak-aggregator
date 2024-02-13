@@ -39,6 +39,8 @@ module.exports = {
             'WombatAdapter',
             'ReservoirAdapter',
             'RamsesV2Adapter',
+            'ButtonWrappersAdapter',
+            'PoolsideV1Adapter'
         ],
         minimalAdapterWhitelist: [
             'WAvaxAdapter',
