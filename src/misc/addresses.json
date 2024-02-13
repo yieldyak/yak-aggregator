@@ -11,63 +11,63 @@
             "USDT": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
             "UNI": "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0",
             "WBTC": "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f",
-            "WETH": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1", 
-            "STG": "0x6694340fc020c5E6B96567843da2df01b2CE1eb6", 
+            "WETH": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+            "STG": "0x6694340fc020c5E6B96567843da2df01b2CE1eb6",
             "USDs": "0xD74f5255D557944cf7Dd0E45FF521520002D5748",
             "ARB": "0x912CE59144191C1204E64559FE8253a0e49E6548"
         },
         "sushiswap": {
-            "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", 
+            "router": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
             "factory": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4"
         },
         "camelot": {
-            "router": "0xc873fEcbd354f5A56E00E710B90EF4201db2448d", 
-            "factory": "0x6EcCab422D763aC031210895C81787E87B43A652", 
+            "router": "0xc873fEcbd354f5A56E00E710B90EF4201db2448d",
+            "factory": "0x6EcCab422D763aC031210895C81787E87B43A652",
             "algebraFactory": "0xd490F2F6990C0291597fd1247651b4E0dCF684Dd"
         },
         "swapfish": {
-            "router": "0xcDAeC65495Fa5c0545c5a405224214e3594f30d8", 
-            "factory": "0x20fAfD2B0Ba599416D75Eb54f48cda9812964f46"            
+            "router": "0xcDAeC65495Fa5c0545c5a405224214e3594f30d8",
+            "factory": "0x20fAfD2B0Ba599416D75Eb54f48cda9812964f46"
         },
         "oreoswap": {
-            "router": "0x38eEd6a71A4ddA9d7f776946e3cfa4ec43781AE6", 
-            "factory": "0x71539D09D3890195dDa87A6198B98B75211b72F3"            
+            "router": "0x38eEd6a71A4ddA9d7f776946e3cfa4ec43781AE6",
+            "factory": "0x71539D09D3890195dDa87A6198B98B75211b72F3"
         },
         "swapr": {
-            "router": "0x530476d5583724A89c8841eB6Da76E7Af4C0F17E", 
+            "router": "0x530476d5583724A89c8841eB6Da76E7Af4C0F17E",
             "factory": "0x359F20Ad0F42D75a5077e65F30274cABe6f4F01a"
         },
         "uniV3": {
-            "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984", 
+            "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
             "quoter": "0xc80f61d1bdAbD8f5285117e1558fDDf8C64870FE"
-        }, 
+        },
         "arbidex": {
-            "factory": "0x855F2c70cf5cb1D56C15ed309a4DfEfb88ED909E", 
+            "factory": "0x855F2c70cf5cb1D56C15ed309a4DfEfb88ED909E",
             "quoter": "0xc80f61d1bdAbD8f5285117e1558fDDf8C64870FE"
-        }, 
+        },
         "gmx": {
             "vault": "0x489ee077994B6658eAfA855C308275EAd8097C4A"
-        }, 
+        },
         "balancerV2": {
-            "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8", 
+            "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
             "pools": {
                 "3:USDC-3:WBTC-3:WETH": "0x64541216bAFFFEec8ea535BB71Fbc927831d0595",
                 "1:STG-1:USDC": "0x3a4c6D2404b5eb14915041e01F63200a82f4a343"
             }
-        }, 
+        },
         "curve": {
             "tricrypto": "0x960ea3e3C7FB317332d990873d354E18d7645590",
-            "twostable": "0x7f90122BF0700F9E7e1F688fe926940E8839F353", 
+            "twostable": "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
             "meta_frax": "0xf07d553B195080F84F582e88ecdD54bAa122b279",
-            "meta_mim": "0x30dF229cefa463e991e29D42DB0bae2e122B2AC7", 
-            "vst_frax": "0x59bF0545FCa0E5Ad48E13DA269faCD2E8C886Ba4", 
+            "meta_mim": "0x30dF229cefa463e991e29D42DB0bae2e122B2AC7",
+            "vst_frax": "0x59bF0545FCa0E5Ad48E13DA269faCD2E8C886Ba4",
             "frax_bp": "0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5"
-        }, 
+        },
         "saddle": {
             "arbusd": "0xBea9F78090bDB9e662d8CB301A00ad09A5b756e9",
             "arbusdV2": "0xfeEa4D1BacB0519E8f952460A70719944fe56Ee0",
             "meta_arbusdV2": "0x5dD186f8809147F96D3ffC4508F3C82694E58c9c"
-        }, 
+        },
         "dodo": {
             "v1": {
                 "helper": "0xA5F36E822540eFD11FcD77ec46626b916B217c3e",
@@ -76,7 +76,7 @@
                     "usdt_usdc": "0xe4B2Dfc82977dd2DCE7E8d37895a6A8F50CbB4fB",
                     "weth_usdc": "0xFE176A2b1e1F67250d2903B8d25f56C0DaBcd6b2"
                 }
-            }, 
+            },
             "v2": {
                 "pools": {
                     "usdc_dodo": "0x6a58c68FF5C4e4D90EB6561449CC74A64F818dA5"
@@ -114,11 +114,11 @@
             }
         },
         "liquidityBook": {
-            "routerV1": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B", 
+            "routerV1": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
             "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e"
         },
         "other": {
-            "woofiV2Pool": "0xeFF23B4bE1091b53205E35f3AfCD9C7182bf3062", 
+            "woofiV2Pool": "0xeFF23B4bE1091b53205E35f3AfCD9C7182bf3062",
             "lb_router": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
             "algebraQuoter": "0x11E68A3CE9A5A0F95ca9c4B0B8F17849752e24DD"
         }
@@ -130,40 +130,40 @@
             "DAI": "0xe3520349F477A5F6EB06107066048508498A291b",
             "wETH": "0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB",
             "wBTC": "0xF4eB217Ba2454613b15dBdea6e5f22276410e89e",
-            "NEAR": "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d", 
-            "FRAX": "0xDA2585430fEf327aD8ee44Af8F1f989a2A91A3d2", 
+            "NEAR": "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d",
+            "FRAX": "0xDA2585430fEf327aD8ee44Af8F1f989a2A91A3d2",
             "BUSD": "0x5C92A4A7f59A9484AFD79DbE251AD2380E589783",
             "UST": "0x5ce9F0B6AFb36135b5ddBF11705cEB65E634A9dC",
             "DODO": "0xe301eD8C7630C9678c39E4E45193D1e7Dfb914f7"
-        }, 
+        },
         "unilikeRouters": {
             "auroraswap": "0xA1B1742e9c32C7cAa9726d8204bD5715e3419861",
             "trisolaris": "0x2CB45Edb4517d5947aFdE3BEAbF95A582506858B",
             "wannaswap": "0xa3a1eF5Ae6561572023363862e238aFA84C72ef5",
             "pad": "0xBaE0d7DFcd03C90EBCe003C58332c1346A72836A"
-        }, 
+        },
         "unilikeFactories": {
             "auroraswap": "0xC5E1DaeC2ad401eBEBdd3E32516d90Ab251A3aA3",
             "trisolaris": "0xc66F594268041dB60507F00703b152492fb176E7",
             "wannaswap": "0x7928D4FeA7b2c90C732c10aFF59cf403f0C38246",
             "pad": "0x34484b4E416f5d4B45D4Add0B6eF6Ca08FcED8f1"
-        }, 
+        },
         "curvePools": {
             "curve": {
                 "tripool": "0xbF7E49483881C76487b0989CD7d9A8239B20CA41"
-            }, 
+            },
             "rose": {
-                "tripool": "0xc90dB0d8713414d78523436dC347419164544A3f", 
+                "tripool": "0xc90dB0d8713414d78523436dC347419164544A3f",
                 "frax": "0xa34315F1ef49392387Dd143f4578083A9Bd33E94",
                 "busd": "0xD6cb7Bb7D63f636d1cA72A1D3ed6f7F67678068a",
                 "ust": "0x8fe44f5cce02D5BE44e3446bBc2e8132958d22B8"
             }
-        }, 
+        },
         "dodo": {
             "v1": {
                 "helper": "0x72d220cE168C4f361dD4deE5D826a01AD8598f6C",
                 "usdtusdc": "0x6790424249CAd1bCe244B55afBb240703f5265F6"
-            }, 
+            },
             "v2": {
                 "nearusdc": "0xb17B9aeDe663D382Fa14e4B7A7f2Be0cb4967AE8",
                 "nearweth": "0xedE8950332E6B618C53E7506bca92012702CA697",
@@ -173,26 +173,26 @@
     },
     "avalanche": {
         "assets": {
-            "DAI": "0xbA7dEebBFC5fA1100Fb055a87773e1E99Cd3507a", 
-            "WAVAX": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7", 
-            "PNG": "0x60781C2586D68229fde47564546784ab3fACA982", 
+            "DAI": "0xbA7dEebBFC5fA1100Fb055a87773e1E99Cd3507a",
+            "WAVAX": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+            "PNG": "0x60781C2586D68229fde47564546784ab3fACA982",
             "USDT": "0xde3A24028580884448a5397872046a019649b084",
-            "ETH": "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15", 
-            "TUSD": "0x1C20E891Bab6b1727d14Da358FAe2984Ed9B59EB", 
-            "FRAX": "0xDC42728B0eA910349ed3c6e1c9Dc06b5FB591f98", 
+            "ETH": "0xf20d962a6c8f70c731bd838a3a388D7d48fA6e15",
+            "TUSD": "0x1C20E891Bab6b1727d14Da358FAe2984Ed9B59EB",
+            "FRAX": "0xDC42728B0eA910349ed3c6e1c9Dc06b5FB591f98",
             "arUSD": "0x025AB35fF6AbccA56d57475249baaEae08419039",
-            "SUSHI": "0x39cf1BD5f15fb22eC3D9Ff86b0727aFc203427cc", 
-            "SUSHIe": "0x37b608519f91f70f2eeb0e5ed9af4061722e4f76", 
+            "SUSHI": "0x39cf1BD5f15fb22eC3D9Ff86b0727aFc203427cc",
+            "SUSHIe": "0x37b608519f91f70f2eeb0e5ed9af4061722e4f76",
             "UNI": "0xf39f9671906d8630812f9d9863bBEf5D523c84Ab",
             "UNIe": "0x8ebaf22b6f053dffeaf46f4dd9efa95d89ba8580",
             "BUSD": "0xaEb044650278731Ef3DC244692AB9F64C78FfaEA",
-            "BUSDe": "0x19860ccb0a68fd4213ab9d8266f7bbf05a8dde98", 
+            "BUSDe": "0x19860ccb0a68fd4213ab9d8266f7bbf05a8dde98",
             "ZDAI": "0x12f108E6138d4A9c58511e042399cF8f90D5673f",
             "WBTC": "0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB",
-            "ZBTC": "0xc4f4Ff34A2e2cF5e4c892476BB2D056871125452", 
+            "ZBTC": "0xc4f4Ff34A2e2cF5e4c892476BB2D056871125452",
             "ZUSDT": "0x650CECaFE61f3f65Edd21eFacCa18Cc905EeF0B7",
-            "ZETH": "0xf6F3EEa905ac1da6F6DD37d06810C6Fcb0EF5183", 
-            "ZERO": "0x008E26068B3EB40B443d3Ea88c1fF99B789c10F7", 
+            "ZETH": "0xf6F3EEa905ac1da6F6DD37d06810C6Fcb0EF5183",
+            "ZERO": "0x008E26068B3EB40B443d3Ea88c1fF99B789c10F7",
             "JOE": "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd",
             "PEFI": "0xe896CDeaAC9615145c0cA09C8Cd5C25bced6384c",
             "SNOB": "0xC38f41A296A4493Ff429F1238e030924A1542e50",
@@ -207,19 +207,19 @@
             "WETHe": "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
             "WBTCe": "0x50b7545627a5162F82A992c33b87aDc75187B218",
             "renBTC": "0xDBf31dF14B66535aF65AaC99C32e9eA844e14501",
-            "LINK": "0xB3fe5374F67D7a22886A0eE082b2E2f9d2651651", 
+            "LINK": "0xB3fe5374F67D7a22886A0eE082b2E2f9d2651651",
             "TSD": "0x4fbf0429599460D327BD5F55625E30E4fC066095",
             "NUSD": "0xCFc37A6AB183dd4aED08C204D1c2773c0b1BDf46",
             "YAK": "0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7",
             "mYAK": "0xdDAaAD7366B455AfF8E7c82940C43CEB5829B604",
             "MIM": "0x130966628846BFd36ff31a822705796e8cb8C18D",
-            "QI": "0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5", 
-            "SPELL": "0xCE1bFFBD5374Dac86a2893119683F4911a2F7814", 
+            "QI": "0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5",
+            "SPELL": "0xCE1bFFBD5374Dac86a2893119683F4911a2F7814",
             "USDC": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
             "FRAXc": "0xD24C2Ad096400B6FBcd2ad8B24E7acBc21A1da64",
             "AVAI": "0x346A59146b9b4a77100D369a3d18E8007A9F46a6",
             "DYP": "0x961C8c0B1aaD0c0b10a51FeF6a867E3091BCef17",
-            "XAVA": "0xd1c3f94de7e5b45fa4edbba472491a9f4b166fc4", 
+            "XAVA": "0xd1c3f94de7e5b45fa4edbba472491a9f4b166fc4",
             "xJOE": "0x57319d41F71E81F3c65F2a47CA4e001EbAFd4F33",
             "AUSD": "0x783C08b5F26E3daf8C4681F3bf49844e425b6393",
             "AVE": "0x78ea17559B3D2CF85a7F9C2C704eda119Db5E6dE",
@@ -233,29 +233,30 @@
             "yyAVAX": "0xF7D9281e8e363584973F946201b82ba72C965D27",
             "gAVAX": "0x6026a85e11BD895c934Af02647E8C7b4Ea2D9808",
             "SNX": "0xBeC243C995409E6520D7C41E404da5dEba4b209B",
-            "BTCb": "0x152b9d0FdC40C096757F570A51E494bd4b943E50", 
+            "BTCb": "0x152b9d0FdC40C096757F570A51E494bd4b943E50",
             "H20": "0x026187BdbC6b751003517bcb30Ac7817D5B766f8",
             "POPS": "0x240248628B7B6850352764C5dFa50D1592A033A8",
             "yyJOE": "0xe7462905B79370389e8180E300F58f63D35B725F",
             "fsGLP": "0x9e295B5B976a184B14aD8cd72413aD846C299660",
             "sGLP": "0xaE64d55a6f09E4263421737397D1fdFA71896a69",
             "GLP": "0x01234181085565ed162a948b6a5e88758CD7c7b8",
-            "USDV": "0x323665443CEf804A3b5206103304BD4872EA4253"
-        }, 
+            "USDV": "0x323665443CEf804A3b5206103304BD4872EA4253",
+            "rsAVAX": "0xA38Bfa13bEEf9beb75F3698B4647F027fbe8f61D"
+        },
         "unilikeRouters": {
-            "zero": "0x85995d5f8ee9645cA855e92de16FA62D26398060", 
-            "sushiswap": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506", 
-            "pandaswap": "0x67c58C8f01f50589A52C2C0b233Db9aF6A66a0F0", 
-            "complus": "0x78c18E6BE20df11f1f41b9635F3A18B8AD82dDD1", 
-            "yeti": "0x262DcFB36766C88E6A7a2953c16F8defc40c378A", 
+            "zero": "0x85995d5f8ee9645cA855e92de16FA62D26398060",
+            "sushiswap": "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
+            "pandaswap": "0x67c58C8f01f50589A52C2C0b233Db9aF6A66a0F0",
+            "complus": "0x78c18E6BE20df11f1f41b9635F3A18B8AD82dDD1",
+            "yeti": "0x262DcFB36766C88E6A7a2953c16F8defc40c378A",
             "elk": "0x9E4AAbd2B3E60Ee1322E94307d0776F2c8e6CFbb",
-            "olive": "0x0c45FB63001b56a21e29c7dcc1727bfDA273a368", 
-            "lydia": "0xA52aBE4676dbfd04Df42eF7755F01A3c41f28D27", 
+            "olive": "0x0c45FB63001b56a21e29c7dcc1727bfDA273a368",
+            "lydia": "0xA52aBE4676dbfd04Df42eF7755F01A3c41f28D27",
             "pangolin": "0xE54Ca86531e17Ef3616d22Ca28b0D458b6C89106",
-            "joe": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4", 
+            "joe": "0x60aE616a2155Ee3d9A68541Ba4544862310933d4",
             "kyber": "0x8Efa5A9AD6D594Cf76830267077B78cE0Bc5A5F8",
             "swapsicle": "0xC7f372c62238f6a5b79136A9e5D16A2FD7A3f0F5"
-        }, 
+        },
         "unilikeFactories": {
             "zero": "0x2Ef422F30cdb7c5F1f7267AB5CF567A88974b308",
             "sushiswap": "0xc35DADB65012eC5796536bD9864eD8773aBc74C4",
@@ -265,22 +266,22 @@
             "elk": "0x091d35d7F63487909C863001ddCA481c6De47091",
             "olive": "0x4Fe4D8b01A56706Bc6CaD26E8C59D0C7169976b3",
             "lydia": "0xe0C1bb6DF4851feEEdc3E14Bd509FEAF428f7655",
-            "pangolin": "0xefa94DE7a4656D787667C749f7E1223D71E9FD88", 
-            "canary": "0xCFBA329d49C24b70F3a8b9CC0853493d4645436b", 
-            "baguette": "0x3587B8c0136c2C3605a9E5B03ab54Da3e4044b50", 
+            "pangolin": "0xefa94DE7a4656D787667C749f7E1223D71E9FD88",
+            "canary": "0xCFBA329d49C24b70F3a8b9CC0853493d4645436b",
+            "baguette": "0x3587B8c0136c2C3605a9E5B03ab54Da3e4044b50",
             "joe": "0x9Ad6C38BE94206cA50bb0d90783181662f0Cfa10",
             "partyswap": "0x58A08bc28f3E8dab8Fb2773D8f243bC740398b09",
             "hakuswap": "0x2Db46fEB38C57a6621BCa4d97820e1fc1de40f41",
             "swapsicle": "0x9C60C867cE07a3c403E2598388673C10259EC768"
         },
         "curvelikePools": {
-            "snobS3D": "0x6B41E5c07F2d382B921DE5C34ce8E2057d84C042", 
-            "snobF3D": "0x05c5DB43dB72b6E73702EEB1e5b62A03a343732a", 
-            "snobS4D": "0xA0bE4f05E37617138Ec212D4fB0cD2A8778a535F", 
+            "snobS3D": "0x6B41E5c07F2d382B921DE5C34ce8E2057d84C042",
+            "snobF3D": "0x05c5DB43dB72b6E73702EEB1e5b62A03a343732a",
+            "snobS4D": "0xA0bE4f05E37617138Ec212D4fB0cD2A8778a535F",
             "GondolaUSD": "0xa8811bB1A4a9Ad1C011BA36a9bd370BAb3d55Bcc",
             "GondolaDAI": "0x9D43f28C5Fce24D0c8B653E5c5859E0421Af7783",
             "GondolaBTC": "0x6212db4C20A1870d232aaFd58c65d8B56490fDD7",
-            "GondolaETH": "0xed986f982269e0319F710EC270875dE2b2A443d2", 
+            "GondolaETH": "0xed986f982269e0319F710EC270875dE2b2A443d2",
             "GondolaUSD4": "0x84239eC5fa4E57a538597348a246472d0590ca02",
             "GondolaUSDT": "0x753E5e78e3B16DE7F3C415D2bF685808348831a9",
             "GondolaDAIDAIe": "0x159E2fE53E415B163bC5846DD70DDD2BC8d8F018",
@@ -288,25 +289,25 @@
             "GondolaUSDTeMIM": "0x28de33A60DcfB44562B77BaA9c882a11DB6F92A6",
             "GondolaYAKmYAKv2": "0x372dA6457c479791C83355272235eb82C5D381d2",
             "GondolaWBTCWBTCe": "0x0792ca636c917177AB534BD2D86aDa5535D97369",
-            "GondolaWETHWETHe": "0x7408DE8334C03321AFFF953F1318d0B04cdF2601", 
+            "GondolaWETHWETHe": "0x7408DE8334C03321AFFF953F1318d0B04cdF2601",
             "GondolaUSDTUSDTe": "0xAE5a60BB105e38A4986017A711c6A6CC1D1a0f36",
             "GondolaDAIeUSDTe": "0xCF97190fAAfea63523055eBd139c008cdb4468eB",
-            "GondolaWBTCrenBTC": "0x3121c59AFfb3c5Df5fA8EeEFb5064d1fC1166A0F", 
+            "GondolaWBTCrenBTC": "0x3121c59AFfb3c5Df5fA8EeEFb5064d1fC1166A0F",
             "GondolaUSDTeUSDCe": "0x4B941276eb39d114c89514791D073A085aCBa3c0",
             "GondolaUSDTeTSD": "0x83e4eE7b24bA92b3437F382b0b3C1BFA10445354",
-            "SynapseDAIeUSDCeUSDTeNUSD": "0xED2a7edd7413021d440b09D654f3b87712abAB66", 
+            "SynapseDAIeUSDCeUSDTeNUSD": "0xED2a7edd7413021d440b09D654f3b87712abAB66",
             "CurveAtricrypto": "0x58e57cA18B7A47112b877E31929798Cd3D703b0f",
             "CurveAave": "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
             "CurveRen": "0x16a7DA911A4DD1d83F3fF066fE28F3C792C50d90",
             "Curve3poolV2": "0xAEA2E71b631fA93683BCF256A8689dFa0e094fcD",
             "CurveUSDC": "0x3a43A5851A3e3E0e25A3c1089670269786be1577",
             "CurveMim": "0x30dF229cefa463e991e29D42DB0bae2e122B2AC7",
-            "AxialAM3D": "0x90c7b96AD2142166D001B27b5fbc128494CDfBc8", 
-            "AxialAS4D": "0x2a716c4933A20Cd8B9f9D9C39Ae7196A85c24228", 
-            "AxialAC4D": "0x8c3c1C6F971C01481150CA7942bD2bbB9Bc27bC7", 
+            "AxialAM3D": "0x90c7b96AD2142166D001B27b5fbc128494CDfBc8",
+            "AxialAS4D": "0x2a716c4933A20Cd8B9f9D9C39Ae7196A85c24228",
+            "AxialAC4D": "0x8c3c1C6F971C01481150CA7942bD2bbB9Bc27bC7",
             "AxialAA3D": "0x6EfbC734D91b229BE29137cf9fE531C1D3bf4Da6",
             "AxialAM3DUSDC": "0x26694e4047eA77cC96341f0aC491773aC5469d72",
-            "PlatypusV1": "0x66357dCaCe80431aee0A7507e2E361B7e2402370", 
+            "PlatypusV1": "0x66357dCaCe80431aee0A7507e2E361B7e2402370",
             "CurveMore": "0xb3F21Fc59Bc06209D5fb82c474F21582AEf09a20",
             "Curve3poolf": "0xD79138c49c49200a1Afc935171D1bDAd084FDc95",
             "CurveDeUSDC": "0xd39016475200ab8957e9C772C949Ef54bDA69111",
@@ -330,18 +331,18 @@
             "embrUSDCeUSDTe": "0x12Bb93F630802a60e5A459d323b5BFD770dAc0a4",
             "embrMIMAUSD": "0xC5355a1127140897B84c44010489034e25ee33FF",
             "embrAUSDUSDC": "0x2af262DD90bd2D124E95Fc778D9c85aA03734Ff2"
-        }, 
+        },
         "platypus": {
             "main": "0xbe52548488992Cc76fFA1B42f3A58F646864df45",
             "frax": "0xB8E567fc23c39C94a1f6359509D7b43D1Fbed824",
-            "mim": "0x30C30d826be87Cd0A4b90855C2F38f7FcfE4eaA7", 
-            "ust": "0xe0D166DE15665bC4B7185B2e35E847E51316E126", 
+            "mim": "0x30C30d826be87Cd0A4b90855C2F38f7FcfE4eaA7",
+            "ust": "0xe0D166DE15665bC4B7185B2e35E847E51316E126",
             "savax": "0x4658EA7e9960D6158a261104aAA160cC953bb6ba",
             "yusd": "0xC828D995C686AaBA78A4aC89dfc8eC0Ff4C5be83",
-            "h20": "0x233Ba46B01d2FbF1A31bDBc500702E286d6de218", 
-            "money": "0x27912AE6Ba9a54219d8287C3540A8969FF35500B", 
+            "h20": "0x233Ba46B01d2FbF1A31bDBc500702E286d6de218",
+            "money": "0x27912AE6Ba9a54219d8287C3540A8969FF35500B",
             "tsd": "0x91BB10D68C72d64a7cE10482b453153eEa03322C",
-            "btc": "0x39dE4e02F76Dbd4352Ec2c926D8d64Db8aBdf5b2", 
+            "btc": "0x39dE4e02F76Dbd4352Ec2c926D8d64Db8aBdf5b2",
             "yyavax": "0x8b4a45da5b0705ae4f47ebefc180c099345cf57e"
         },
         "wombat": {
@@ -356,15 +357,17 @@
             "WoofiPoolUSDC": "0x1df3009c57a8B143c6246149F00B090Bce3b8f88",
             "GWPyyAvax": "0xa974DE60871907AAFE3A4634766aDb40dF461C16",
             "GeodePortal": "0x4fe8C658f268842445Ae8f95D4D6D8Cfd356a8C8",
-            "ArableSF": "0xF39b1c8b977030F5FC81117C244Bf7B9514Ee562", 
+            "ArableSF": "0xF39b1c8b977030F5FC81117C244Bf7B9514Ee562",
             "curveMetaSwapper": "0x001E3BA199B4FF4B5B6e97aCD96daFC0E2e4156e",
-            "GmxRewardRouter": "0xB70B91CE0771d3f4c81D87660f71Da31d48eB3B3", 
+            "GmxRewardRouter": "0xB70B91CE0771d3f4c81D87660f71Da31d48eB3B3",
             "GlacierFactory": "0xaC7B7EaC8310170109301034b8FdB75eCa4CC491",
-            "SolisnekFactory": "0xeeee1F1c93836B2CAf8B9E929cb978c35d46657E"
-        }, 
+            "SolisnekFactory": "0xeeee1F1c93836B2CAf8B9E929cb978c35d46657E",
+            "PoolsideV1Factory": "0x19470c5e0199B7157822Ca627860B08750eCe375",
+            "ButtonTokenFactory": "0x033D23c8371354BF1110001386E97298F48Fc0a9"
+        },
         "kyberPools": {
             "USDTeUSDCe": "0xe1dad9e06380bc8962e259ddd6a5257a4f56d525"
-        }, 
+        },
         "kyberElastic": {
             "quoter": "0x14ec368E625b1d7a0cC5A9E381794CF56d6224EA",
             "pools": {
@@ -377,11 +380,11 @@
                 "usdt_usdc": "0xa83e7eebcf91097d116feacfc0d53ea5e4d03fa7",
                 "usdce_usdc": "0x2b80f8fe0064112e7d53880025e7731e246303bc",
                 "usdce_usdte": "0x0c3b6ee14cf0eddab91276e7ee71280f6ff61128",
-                "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9", 
+                "wethe_usdc": "0xb99555dcc805031f33156e67604e3de3367546b9",
                 "wethe_wavax": "0x1701a7e5034ed1e35c52245ab7c07dbdaf353de7",
                 "yusd_savax": "0xdf9aa2156be229783e8b18c38e51b0c01778c9ca",
                 "yusd_usdc": "0x42845783dee627f47b40b5ad7f1c5147c052a21c",
-                
+
                 "knc_linke": "0x6Fd1e887499950032D9Ec503287eAc3402be3819",
                 "knc_mai": "0xDb7edEf774625b2b19B6846713f96821720c7164",
                 "mai_usdc": "0xF22369517804d2C12670CB4B1f1605CeB616Cc36",
@@ -394,11 +397,11 @@
                 "wmemo_usdte": "0x024ba2110590dfFa4d6b288761c5eE1E78E62Cd4",
                 "wmemo_usdce": "0xFD52a99Ce53553f73f6dC217e9B8b5785C387037",
                 "wmemo_usdc": "0x47c6a9d36de86767460b02b3654692d85686163b"
-                
+
             }
-        }, 
+        },
         "liquidityBook": {
-            "routerV1": "0xE3Ffc583dC176575eEA7FD9dF2A7c65F7E23f4C3", 
+            "routerV1": "0xE3Ffc583dC176575eEA7FD9dF2A7c65F7E23f4C3",
             "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e"
         },
         "uniV3": {
@@ -413,7 +416,7 @@
             "quoter": "0xc7d4412aa74c655B2e6e71bB6790d24AC90E393C",
             "factory": "0xAAA32926fcE6bE95ea2c51cB4Fcb60836D320C42"
         }
-    }, 
+    },
     "dogechain": {
         "assets": {
             "WWDOGE": "0xB7ddC6414bf4F5515b52D8BdD69973Ae205ff101",
@@ -428,7 +431,7 @@
                 "yodeswap": "0xAaA04462e35f3e40D798331657cA015169e005d7",
                 "kibbleswap": "0xF4bc79D32A7dEfd87c8A9C100FD83206bbF19Af5"
             }
-        }, 
+        },
         "quickswap": {
             "quickswapFactory": "0xd2480162Aa7F02Ead7BF4C127465446150D58452",
             "algebraQuoter": "0x4a6c794192831fB9F4782E61Bec05d6C5cC9F3eA"
@@ -463,7 +466,7 @@
             "USDC": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
             "USDT": "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
             "DAI": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
-            "OP": "0x4200000000000000000000000000000000000042", 
+            "OP": "0x4200000000000000000000000000000000000042",
             "wstETH": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
             "sETH": "0xE405de8F52ba7559f9df3C368500B6E6ae6Cee49",
             "MAI": "0xdFA46478F9e5EA86d57387849598dbFB2e964b02",
@@ -484,10 +487,10 @@
         },
         "univ2Routers": {
             "zipswap": "0xE6Df0BB08e5A97b40B21950a0A51b94c4DbA0Ff6"
-        }, 
+        },
         "univ2Factories": {
             "zipswap": "0x8BCeDD62DD46F1A76F8A1633d4f5B76e0CDa521E"
-        }, 
+        },
         "beethovenx": {
             "vault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
             "pools": {
@@ -526,20 +529,20 @@
                 "OP-KNC": "0xdbaf3a3e610ee2dfadd2b02fc0f46633da8d8853",
                 "KNC-MAI": "0x5047a457901c03afe24da1ccbfde1c767dcd071f"
             }
-        }, 
+        },
         "velodrome": {
             "factory": "0x25CbdDb98b35ab1FF77413456B31EC81A6B6B746"
-        }, 
+        },
         "woofi": {
             "woofiV2Pool": "0xd1778F9DF3eee5473A9640f13682e3846f61fEbC"
-        }, 
+        },
         "saddle": {
             "frax_usdc_bp": "0xF6C2e0aDc659007Ba7c48446F5A4e4E94dfe08b5",
             "opt_usd": "0x5847f8177221268d279Cf377D0E01aB3FD993628",
             "susd_meta_fraxbp": "0x250184dDDEC6d38E28ac12B481c9016867226E9D",
             "frax_meta_optusd": "0xc55E8C79e5A6c3216D4023769559D06fa9A7732e"
         }
-    }, 
+    },
     "fuji": {
         "assets": {
             "USDC": "0xB6076C93701D6a07266c31066B298AeC6dd65c2d",
