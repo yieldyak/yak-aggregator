@@ -7,10 +7,10 @@ task(
     "Verifies the contract in the explorer",
     async function ({ deploymentFilePath }, hre, _) {
         console.log(`Verifying ${deploymentFilePath}`)
-        const deploymentFile = require(path.join("..", deploymentFilePath))
+        const deploymentFile = require(deploymentFilePath)
         const args = deploymentFile.args
         const contractAddress = deploymentFile.address
-    
+
         await hre.run("verify:verify", {
             address: contractAddress,
             constructorArguments: args,
