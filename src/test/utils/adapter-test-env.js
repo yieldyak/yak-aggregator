@@ -30,10 +30,19 @@ class AdapterTestEnv {
         ])
     }
 
+    async checkQueryReturnsNonZeroForSupportedTkns(
+        supportedTknFrom,
+        supportedTknTo,
+    ) {
+        const amountIn = parseUnits('1', 6)
+        const amountOutQuery = await this.query(amountIn, supportedTknFrom.address, supportedTknTo.address)
+        expect(amountOutQuery).to.gt(BN_ZERO)
+    }
+
     async queryMatches(
-        amountIn, 
-        tokenFromAdd, 
-        tokenToAdd, 
+        amountIn,
+        tokenFromAdd,
+        tokenToAdd,
         expectedAmountOut
     ) {
         const amountOutQuery = await this.query(amountIn, tokenFromAdd, tokenToAdd)
@@ -42,65 +51,65 @@ class AdapterTestEnv {
 
     async checkSwapMatchesQuery(
         dxFixed,
-        tokenFrom, 
+        tokenFrom,
         tokenTo,
     ) {
         await this.checkSwapMatchesQueryWithDustWithErr(
             dxFixed,
-            tokenFrom, 
+            tokenFrom,
             tokenTo,
             BN_ZERO,
-            DEFAULT_ERROR_BPS, 
+            DEFAULT_ERROR_BPS,
         )
     }
 
     async checkSwapMatchesQueryWithErr(
         dxFixed,
-        tokenFrom, 
+        tokenFrom,
         tokenTo,
         errorBps,
     ) {
         await this.checkSwapMatchesQueryWithDustWithErr(
             dxFixed,
-            tokenFrom, 
+            tokenFrom,
             tokenTo,
             BN_ZERO,
-            errorBps, 
+            errorBps,
         )
     }
 
     async checkSwapMatchesQueryWithDust(
         dxFixed,
-        tokenFrom, 
+        tokenFrom,
         tokenTo,
         maxDustWei
     ) {
         await this.checkSwapMatchesQueryWithDustWithErr(
             dxFixed,
-            tokenFrom, 
+            tokenFrom,
             tokenTo,
             maxDustWei,
-            DEFAULT_ERROR_BPS, 
+            DEFAULT_ERROR_BPS,
         )
     }
 
     async checkSwapMatchesQueryWithDustWithErr(
         dxFixed,
-        tokenFrom, 
+        tokenFrom,
         tokenTo,
         maxDustWei,
-        errorBps, 
+        errorBps,
     ) {
         const { swapFn, queryDy } = await this.#getQueryDyAndSwapFn(
             dxFixed,
-            tokenFrom, 
+            tokenFrom,
             tokenTo,
         )
         expect(queryDy).gt(0)
         const balDiffs = await this.#executeAndReturnBalChange(
-            swapFn, 
+            swapFn,
             tokenTo,
-            [ this.trader().address, this.Adapter.address ] 
+            [ this.trader().address, this.Adapter.address ]
         )
         const [ traderBalDiff, adapterBalDiff ] = balDiffs
         const errUpperThreshold = getErrUpperThreshold(queryDy, errorBps).add(maxDustWei)
@@ -151,9 +160,9 @@ class AdapterTestEnv {
     async #getGasEstimateForQuery(amountIn, tokenFrom, tokenTo) {
         return this.Adapter.estimateGas.query(
             amountIn,
-            tokenFrom.address, 
+            tokenFrom.address,
             tokenTo.address
-        ).then(parseInt)  
+        ).then(parseInt)
     }
 
     async #getGasEstimateForSwap(amountIn, tokenFrom, tokenTo) {
@@ -161,7 +170,7 @@ class AdapterTestEnv {
         const txReceipt = await this.mintAndSwap(
             amountIn,
             minDy,
-            tokenFrom, 
+            tokenFrom,
             tokenTo
         ).then(tx => tx.wait())
         return parseInt(txReceipt.gasUsed)
@@ -169,40 +178,40 @@ class AdapterTestEnv {
 
     async #getQueryDyAndSwapFn(
         dxFixed,
-        tokenFrom, 
-        tokenTo,        
+        tokenFrom,
+        tokenTo,
     ) {
         const amountIn = await parseUnitsForTkn(dxFixed, tokenFrom)
         const queryDy = await this.query(
-            amountIn, 
-            tokenFrom.address, 
+            amountIn,
+            tokenFrom.address,
             tokenTo.address
         )
         const swapFn = async () => this.mintAndSwap(
-            amountIn, 
+            amountIn,
             queryDy,
             tokenFrom,
-            tokenTo, 
+            tokenTo,
         )
         return { queryDy, swapFn }
     }
 
     async query(
-        amountIn, 
-        tokenFromAdd, 
+        amountIn,
+        tokenFromAdd,
         tokenToAdd
     ) {
         return this.Adapter.query(
-            amountIn, 
-            tokenFromAdd, 
+            amountIn,
+            tokenFromAdd,
             tokenToAdd
         )
     }
 
     async mintAndSwap(
-        amountIn, 
-        amountOutQuery, 
-        tokenFrom, 
+        amountIn,
+        amountOutQuery,
+        tokenFrom,
         tokenTo,
         to
     ) {
@@ -211,17 +220,17 @@ class AdapterTestEnv {
     }
 
     async #swap(
-        amountIn, 
-        amountOutQuery, 
-        tokenFrom, 
+        amountIn,
+        amountOutQuery,
+        tokenFrom,
         tokenTo,
         to=this.trader().address
     ) {
         return this.Adapter.connect(this.trader()).swap(
-            amountIn, 
+            amountIn,
             amountOutQuery,
             tokenFrom.address,
-            tokenTo.address, 
+            tokenTo.address,
             to
         )
     }
