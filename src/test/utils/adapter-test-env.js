@@ -19,7 +19,7 @@ class AdapterTestEnv {
     }
 
     async checkQueryReturnsZeroForUnsupportedTkns(
-        supportedTkn
+      supportedTkn
     ) {
         const amountIn = parseUnits('1', 6)
         const dummyTkn = ethers.constants.AddressZero
@@ -40,76 +40,76 @@ class AdapterTestEnv {
     }
 
     async queryMatches(
-        amountIn,
-        tokenFromAdd,
-        tokenToAdd,
-        expectedAmountOut
+      amountIn,
+      tokenFromAdd,
+      tokenToAdd,
+      expectedAmountOut
     ) {
         const amountOutQuery = await this.query(amountIn, tokenFromAdd, tokenToAdd)
         expect(amountOutQuery).to.eq(expectedAmountOut)
     }
 
     async checkSwapMatchesQuery(
-        dxFixed,
-        tokenFrom,
-        tokenTo,
+      dxFixed,
+      tokenFrom,
+      tokenTo,
     ) {
         await this.checkSwapMatchesQueryWithDustWithErr(
-            dxFixed,
-            tokenFrom,
-            tokenTo,
-            BN_ZERO,
-            DEFAULT_ERROR_BPS,
+          dxFixed,
+          tokenFrom,
+          tokenTo,
+          BN_ZERO,
+          DEFAULT_ERROR_BPS,
         )
     }
 
     async checkSwapMatchesQueryWithErr(
-        dxFixed,
-        tokenFrom,
-        tokenTo,
-        errorBps,
+      dxFixed,
+      tokenFrom,
+      tokenTo,
+      errorBps,
     ) {
         await this.checkSwapMatchesQueryWithDustWithErr(
-            dxFixed,
-            tokenFrom,
-            tokenTo,
-            BN_ZERO,
-            errorBps,
+          dxFixed,
+          tokenFrom,
+          tokenTo,
+          BN_ZERO,
+          errorBps,
         )
     }
 
     async checkSwapMatchesQueryWithDust(
-        dxFixed,
-        tokenFrom,
-        tokenTo,
-        maxDustWei
+      dxFixed,
+      tokenFrom,
+      tokenTo,
+      maxDustWei
     ) {
         await this.checkSwapMatchesQueryWithDustWithErr(
-            dxFixed,
-            tokenFrom,
-            tokenTo,
-            maxDustWei,
-            DEFAULT_ERROR_BPS,
+          dxFixed,
+          tokenFrom,
+          tokenTo,
+          maxDustWei,
+          DEFAULT_ERROR_BPS,
         )
     }
 
     async checkSwapMatchesQueryWithDustWithErr(
-        dxFixed,
-        tokenFrom,
-        tokenTo,
-        maxDustWei,
-        errorBps,
+      dxFixed,
+      tokenFrom,
+      tokenTo,
+      maxDustWei,
+      errorBps,
     ) {
         const { swapFn, queryDy } = await this.#getQueryDyAndSwapFn(
-            dxFixed,
-            tokenFrom,
-            tokenTo,
+          dxFixed,
+          tokenFrom,
+          tokenTo,
         )
         expect(queryDy).gt(0)
         const balDiffs = await this.#executeAndReturnBalChange(
-            swapFn,
-            tokenTo,
-            [ this.trader().address, this.Adapter.address ]
+          swapFn,
+          tokenTo,
+          [ this.trader().address, this.Adapter.address ]
         )
         const [ traderBalDiff, adapterBalDiff ] = balDiffs
         const errUpperThreshold = getErrUpperThreshold(queryDy, errorBps).add(maxDustWei)
@@ -122,9 +122,9 @@ class AdapterTestEnv {
         for (let [ amountInFixed, tokenFrom, tokenTo ] of options) {
             const amountIn = await parseUnitsForTkn(amountInFixed, tokenFrom)
             const gasUsed = await this.#getGasEstimateForSwapAndQuery(
-                amountIn,
-                tokenFrom,
-                tokenTo
+              amountIn,
+              tokenFrom,
+              tokenTo
             )
             if (gasUsed > maxGas) {
                 maxGas = gasUsed
@@ -159,79 +159,79 @@ class AdapterTestEnv {
 
     async #getGasEstimateForQuery(amountIn, tokenFrom, tokenTo) {
         return this.Adapter.estimateGas.query(
-            amountIn,
-            tokenFrom.address,
-            tokenTo.address
+          amountIn,
+          tokenFrom.address,
+          tokenTo.address
         ).then(parseInt)
     }
 
     async #getGasEstimateForSwap(amountIn, tokenFrom, tokenTo) {
         const minDy = parseUnits('1', 'wei')
         const txReceipt = await this.mintAndSwap(
-            amountIn,
-            minDy,
-            tokenFrom,
-            tokenTo
+          amountIn,
+          minDy,
+          tokenFrom,
+          tokenTo
         ).then(tx => tx.wait())
         return parseInt(txReceipt.gasUsed)
     }
 
     async #getQueryDyAndSwapFn(
-        dxFixed,
-        tokenFrom,
-        tokenTo,
+      dxFixed,
+      tokenFrom,
+      tokenTo,
     ) {
         const amountIn = await parseUnitsForTkn(dxFixed, tokenFrom)
         const queryDy = await this.query(
-            amountIn,
-            tokenFrom.address,
-            tokenTo.address
+          amountIn,
+          tokenFrom.address,
+          tokenTo.address
         )
         const swapFn = async () => this.mintAndSwap(
-            amountIn,
-            queryDy,
-            tokenFrom,
-            tokenTo,
+          amountIn,
+          queryDy,
+          tokenFrom,
+          tokenTo,
         )
         return { queryDy, swapFn }
     }
 
     async query(
-        amountIn,
-        tokenFromAdd,
-        tokenToAdd
+      amountIn,
+      tokenFromAdd,
+      tokenToAdd
     ) {
         return this.Adapter.query(
-            amountIn,
-            tokenFromAdd,
-            tokenToAdd
+          amountIn,
+          tokenFromAdd,
+          tokenToAdd
         )
     }
 
     async mintAndSwap(
-        amountIn,
-        amountOutQuery,
-        tokenFrom,
-        tokenTo,
-        to
+      amountIn,
+      amountOutQuery,
+      tokenFrom,
+      tokenTo,
+      to
     ) {
         await setERC20Bal(tokenFrom.address, this.Adapter.address, amountIn)
         return this.#swap(amountIn, amountOutQuery, tokenFrom, tokenTo, to)
     }
 
     async #swap(
-        amountIn,
-        amountOutQuery,
-        tokenFrom,
-        tokenTo,
-        to=this.trader().address
+      amountIn,
+      amountOutQuery,
+      tokenFrom,
+      tokenTo,
+      to=this.trader().address
     ) {
         return this.Adapter.connect(this.trader()).swap(
-            amountIn,
-            amountOutQuery,
-            tokenFrom.address,
-            tokenTo.address,
-            to
+          amountIn,
+          amountOutQuery,
+          tokenFrom.address,
+          tokenTo.address,
+          to
         )
     }
 
