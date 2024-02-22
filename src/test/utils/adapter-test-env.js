@@ -30,6 +30,15 @@ class AdapterTestEnv {
         ])
     }
 
+    async checkQueryReturnsNonZeroForSupportedTkns(
+        supportedTknFrom,
+        supportedTknTo,
+    ) {
+        const amountIn = parseUnits('1', 6)
+        const amountOutQuery = await this.query(amountIn, supportedTknFrom.address, supportedTknTo.address)
+        expect(amountOutQuery).to.gt(BN_ZERO)
+    }
+
     async queryMatches(
         amountIn, 
         tokenFromAdd, 
