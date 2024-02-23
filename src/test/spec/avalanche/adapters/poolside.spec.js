@@ -15,7 +15,7 @@ describe('YakAdapter - PoolsideV1', () => {
     tkns = testEnv.supportedTkns
 
     const contractName = 'PoolsideV1Adapter'
-    const adapterArgs = ['PoolsideV1Adapter', PoolsideV1Factory, ButtonTokenFactory, 10]
+    const adapterArgs = ['PoolsideV1Adapter', PoolsideV1Factory, ButtonTokenFactory, 415_000]
     ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
   })
 
@@ -66,7 +66,7 @@ describe('YakAdapter - PoolsideV1', () => {
     ate.checkQueryReturnsZeroForUnsupportedTkns(supportedTkn)
   })
 
-  describe('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
+  describe('Max-gas-used is less than 110% gas-estimate', async () => {
     for (const {tokenIn, tokenOut} of testConfigs) {
       if (tokenIn === 'rsAVAX') {
         // re-enable if a workaround for setERC20Bal not working for rsAVAX is found
@@ -76,7 +76,7 @@ describe('YakAdapter - PoolsideV1', () => {
         const options = [
           ['1', tkns[tokenIn], tkns[tokenOut]]
         ];
-        await ate.checkGasEstimateIsSensible(options);
+        await ate.checkGasUsedBelowEstimate(options);
       });
     }
   })

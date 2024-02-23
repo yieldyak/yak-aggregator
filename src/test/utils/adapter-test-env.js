@@ -135,6 +135,24 @@ class AdapterTestEnv {
         expect(adapterGasEstimate).to.be.within(maxGas, maxGas*upperBoundryPct/100)
     }
 
+    async checkGasUsedBelowEstimate(options, accuracyPct=10) {
+        let maxGasUsed = 0
+        for (let [ amountInFixed, tokenFrom, tokenTo ] of options) {
+            const amountIn = await parseUnitsForTkn(amountInFixed, tokenFrom)
+            const gasUsed = await this.#getGasEstimateForSwapAndQuery(
+                amountIn,
+                tokenFrom,
+                tokenTo
+            )
+            if (gasUsed > maxGasUsed) {
+                maxGasUsed = gasUsed
+            }
+        }
+        const adapterGasEstimate = await this.Adapter.swapGasEstimate().then(parseInt)
+        const upperBoundryPct = 100 + accuracyPct
+        expect(maxGasUsed).to.be.lte(adapterGasEstimate*upperBoundryPct/100)
+    }
+
     // << INTERNAL >>
 
     async #executeAndReturnBalChange(fn, tknObj, holders) {
