@@ -39,7 +39,7 @@ module.exports = {
             'WombatAdapter',
             'ReservoirAdapter',
             'RamsesV2Adapter',
-            'ButtonWrappersAdapter',
+            // 'ButtonWrappersAdapter',
             'PoolsideV1Adapter'
         ],
         minimalAdapterWhitelist: [
@@ -55,8 +55,6 @@ module.exports = {
             ava.assets.USDTe,
             ava.assets.USDC,
             ava.assets.USDCe,
-            ava.assets.WBTCe,
-            ava.assets.DAIe,
             ava.assets.USDt,
           ],
         wnative: ava.assets.WAVAX
