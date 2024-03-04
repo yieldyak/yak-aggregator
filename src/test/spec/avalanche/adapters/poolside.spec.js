@@ -1,5 +1,5 @@
-const { setTestEnv, addresses } = require('../../../utils/test-env')
-const { PoolsideV1Factory } = addresses.avalanche.other
+const {setTestEnv, addresses} = require('../../../utils/test-env')
+const {ButtonTokenFactory, PoolsideV1Factory} = addresses.avalanche.other
 
 
 describe('YakAdapter - PoolsideV1', () => {
@@ -15,7 +15,7 @@ describe('YakAdapter - PoolsideV1', () => {
     tkns = testEnv.supportedTkns
 
     const contractName = 'PoolsideV1Adapter'
-    const adapterArgs = [ 'PoolsideV1Adapter', PoolsideV1Factory, 279_220 ]
+    const adapterArgs = ['PoolsideV1Adapter', PoolsideV1Factory, ButtonTokenFactory, 415_000]
     ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
   })
 
@@ -23,14 +23,42 @@ describe('YakAdapter - PoolsideV1', () => {
     testEnv.updateTrader()
   })
 
+  const testConfigs = [
+    // WAVAX -> sAVAX direction:
+    // zero hops, swap using PoolsideV1
+    {tokenIn: 'WAVAX', tokenOut: 'rsAVAX'},
+    // zero hops, swap using ButtonWrappers
+    {tokenIn: 'rsAVAX', tokenOut: 'SAVAX'},
+    // one hop, swap via PoolsideV1 then swap via ButtonWrappers
+    {tokenIn: 'WAVAX', tokenOut: 'SAVAX'},
+
+    // sAVAX -> WAVAX direction:
+    // zero hops, swap using ButtonWrappers
+    {tokenIn: 'SAVAX', tokenOut: 'rsAVAX'},
+    // zero hops, swap using PoolsideV1
+    {tokenIn: 'rsAVAX', tokenOut: 'WAVAX'},
+    // one hop, swap via ButtonWrappers then swap via PoolsideV1
+    {tokenIn: 'SAVAX', tokenOut: 'WAVAX'},
+  ];
+
+  describe('Query is non-zero for supported pairs', async () => {
+    for (const {tokenIn, tokenOut} of testConfigs) {
+      it(`${tokenIn} -> ${tokenOut}`, async () => {
+        await ate.checkQueryReturnsNonZeroForSupportedTkns(tkns[tokenIn], tkns[tokenOut]);
+      });
+    }
+  })
+
   describe('Swapping matches query', async () => {
-    it('1 WAVAX -> rsAVAX', async () => {
-      await ate.checkSwapMatchesQuery('1', tkns.WAVAX, tkns.rsAVAX)
-    })
-    // re-enable if a workaround for setERC20Bal not working for rsAVAX is found
-    // it('1 rsAVAX -> WAVAX', async () => {
-    //   await ate.checkSwapMatchesQuery('1', tkns.rsAVAX, tkns.WAVAX)
-    // })
+    for (const {tokenIn, tokenOut} of testConfigs) {
+      if (tokenIn === 'rsAVAX') {
+        // re-enable if a workaround for setERC20Bal not working for rsAVAX is found
+        continue;
+      }
+      it(`${tokenIn} -> ${tokenOut}`, async () => {
+        await ate.checkQueryReturnsNonZeroForSupportedTkns(tkns[tokenIn], tkns[tokenOut]);
+      });
+    }
   })
 
   it('Query returns zero if tokens not found', async () => {
@@ -38,13 +66,19 @@ describe('YakAdapter - PoolsideV1', () => {
     ate.checkQueryReturnsZeroForUnsupportedTkns(supportedTkn)
   })
 
-  it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
-    const options = [
-      [ '1', tkns.WAVAX, tkns.rsAVAX ],
-      // re-enable if a workaround for setERC20Bal not working for rsAVAX is found
-      // [ '1', tkns.rsAVAX, tkns.WAVAX ],
-    ]
-    await ate.checkGasEstimateIsSensible(options)
+  describe('Max-gas-used is less than 110% gas-estimate', async () => {
+    for (const {tokenIn, tokenOut} of testConfigs) {
+      if (tokenIn === 'rsAVAX') {
+        // re-enable if a workaround for setERC20Bal not working for rsAVAX is found
+        continue;
+      }
+      it(`${tokenIn} -> ${tokenOut}`, async () => {
+        const options = [
+          ['1', tkns[tokenIn], tkns[tokenOut]]
+        ];
+        await ate.checkGasUsedBelowEstimate(options);
+      });
+    }
   })
 
 })

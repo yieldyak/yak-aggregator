@@ -30,6 +30,15 @@ class AdapterTestEnv {
         ])
     }
 
+    async checkQueryReturnsNonZeroForSupportedTkns(
+        supportedTknFrom,
+        supportedTknTo,
+    ) {
+        const amountIn = parseUnits('1', 6)
+        const amountOutQuery = await this.query(amountIn, supportedTknFrom.address, supportedTknTo.address)
+        expect(amountOutQuery).to.gt(BN_ZERO)
+    }
+
     async queryMatches(
         amountIn, 
         tokenFromAdd, 
@@ -124,6 +133,24 @@ class AdapterTestEnv {
         const adapterGasEstimate = await this.Adapter.swapGasEstimate().then(parseInt)
         const upperBoundryPct = 100 + accuracyPct
         expect(adapterGasEstimate).to.be.within(maxGas, maxGas*upperBoundryPct/100)
+    }
+
+    async checkGasUsedBelowEstimate(options, accuracyPct=10) {
+        let maxGasUsed = 0
+        for (let [ amountInFixed, tokenFrom, tokenTo ] of options) {
+            const amountIn = await parseUnitsForTkn(amountInFixed, tokenFrom)
+            const gasUsed = await this.#getGasEstimateForSwapAndQuery(
+                amountIn,
+                tokenFrom,
+                tokenTo
+            )
+            if (gasUsed > maxGasUsed) {
+                maxGasUsed = gasUsed
+            }
+        }
+        const adapterGasEstimate = await this.Adapter.swapGasEstimate().then(parseInt)
+        const upperBoundryPct = 100 + accuracyPct
+        expect(maxGasUsed).to.be.lte(adapterGasEstimate*upperBoundryPct/100)
     }
 
     // << INTERNAL >>
