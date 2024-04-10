@@ -1,13 +1,10 @@
 require('dotenv').config();
-require("@nomiclabs/hardhat-etherscan");
-require("@nomiclabs/hardhat-waffle");
-require('hardhat-contract-sizer');
-require('hardhat-deploy-ethers');
-require('hardhat-abi-exporter');
-require("hardhat-gas-reporter");
-require('hardhat-log-remover');
+require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-tracer");
-require('hardhat-deploy');
+require("@nomicfoundation/hardhat-ethers");
+require("hardhat-deploy");
+require("hardhat-deploy-ethers");
+require('hardhat-log-remover');
 
 // Tasks
 require('./src/tasks/update-hop-tokens')

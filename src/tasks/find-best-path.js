@@ -39,12 +39,12 @@ class Quoter {
 
   async parseFixed(amountFixed, token) {
     const dec = await this.getDecimalsForTkn(token)
-    return this.hre.ethers.utils.parseUnits(amountFixed, dec)
+    return this.hre.ethers.parseUnits(amountFixed, dec)
   }
 
   async formatBN(amountBN, token) {
     const dec = await this.getDecimalsForTkn(token)
-    return this.hre.ethers.utils.formatUnits(amountBN, dec)    
+    return this.hre.ethers.formatUnits(amountBN, dec)    
   }
 
   parseAddress(addressAlias) {
@@ -118,7 +118,7 @@ class Quoter {
 
   async rawCallToStr(to, data) {
     const raw = await this.hre.ethers.provider.call({to, data})
-    return ethers.utils.defaultAbiCoder.decode(['string'], raw)[0]
+    return ethers.AbiCoder.defaultAbiCoder().decode(['string'], raw)[0]
   }
 
 
