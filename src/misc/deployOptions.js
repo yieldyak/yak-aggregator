@@ -127,12 +127,10 @@ module.exports = {
         ],
         hopTokens: [
             arb.assets.WETH,
-            arb.assets.WBTC,
             arb.assets.USDC,
             arb.assets.USDCe,
             arb.assets.ARB,
-            arb.assets.USDT,
-            arb.assets.DAI,
+            arb.assets.USDT
         ], 
         wnative: arb.assets.WETH
     },
