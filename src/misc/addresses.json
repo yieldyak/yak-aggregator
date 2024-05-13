@@ -375,7 +375,7 @@
     "other": {
       "GmxVault": "0x9ab2De34A33fB459b538c43f251eB825645e8595",
       "WoofiPool": "0xF8cE0D043891b62c55380fB1EFBfB4F186153D96",
-      "WoofiV2Pool": "0x3b3E4b4741e91aF52d0e9ad8660573E951c88524",
+      "woofiV2Pool": "0xEd9e3f98bBed560e66B89AaC922E29D4596A9642",
       "WoofiPoolUSDC": "0x1df3009c57a8B143c6246149F00B090Bce3b8f88",
       "GWPyyAvax": "0xa974DE60871907AAFE3A4634766aDb40dF461C16",
       "GeodePortal": "0x4fe8C658f268842445Ae8f95D4D6D8Cfd356a8C8",
@@ -478,6 +478,10 @@
     "fusion": {
       "quoter": "0x4aacd032a541176CEeb39AB06d67637097819a35",
       "factory": "0x530d2766D1988CC1c000C8b7d00334c14B69AD71"
+    },
+    "liquidityBook": {
+      "routerV1": "0xAFb85a12Babfafabfe1a518594492d5a830e782a",
+      "factoryV2": "0xa6630671775c4EA2743840F9A5016dCf2A104054"
     }
   },
   "optimism": {

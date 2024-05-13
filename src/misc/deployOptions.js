@@ -79,7 +79,8 @@ module.exports = {
             'WMNTAdapter',
             'MerchantMoeAdapter',
             'AgniAdapter',
-            'FusionAdapter'
+            'FusionAdapter',
+            'LiquidityBook2Adapter'
         ],
         hopTokens: [
             mnt.assets.METH,
