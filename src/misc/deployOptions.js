@@ -28,6 +28,7 @@ module.exports = {
             
             'UniswapV3Adapter',
             'LiquidityBook2Adapter',
+            'LiquidityBook2.2Adapter',
             // 'LiquidityBookAdapter',
             // 'KyberElasticAdapter',
             'WoofiV2Adapter',
@@ -111,6 +112,7 @@ module.exports = {
             'SwaprAdapter',
             'UniswapV3Adapter',
             'LiquidityBook2Adapter',
+            'LiquidityBook2.2Adapter',
             // 'LiquidityBookAdapter',
             // 'KyberElasticAdapter',
             'WoofiV2Adapter',

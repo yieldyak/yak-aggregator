@@ -122,7 +122,8 @@
     },
     "liquidityBook": {
       "routerV1": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
-      "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e"
+      "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e",
+      "factoryV22": "0xb43120c4745967fa9b93E79C149E66B0f2D6Fe0c"
     },
     "ramses": {
       "quoter": "0x1553804c340ac418797A701e330578593C78A91E",
@@ -425,7 +426,8 @@
     },
     "liquidityBook": {
       "routerV1": "0xE3Ffc583dC176575eEA7FD9dF2A7c65F7E23f4C3",
-      "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e"
+      "factoryV2": "0x8e42f2F4101563bF679975178e880FD87d3eFd4e",
+      "factoryV22": "0xb43120c4745967fa9b93E79C149E66B0f2D6Fe0c"
     },
     "uniV3": {
       "quoter": "0xc15804984E3e77B7f8A60E4553e2289c5fdeAe8B",
