@@ -24,12 +24,14 @@ const OPTIMISM_RPC = getEnvValSafe('OPTIMISM_RPC')
 const AURORA_RPC = getEnvValSafe('AURORA_RPC')
 const DOGECHAIN_RPC = getEnvValSafe('DOGECHAIN_RPC')
 const MANTLE_RPC = getEnvValSafe('MANTLE_RPC')
+const HOLESKY_RPC = getEnvValSafe('HOLESKY_RPC')
 const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
 const ARBITRUM_PK_DEPLOYER = getEnvValSafe('ARBITRUM_PK_DEPLOYER')
 const OPTIMISM_PK_DEPLOYER = getEnvValSafe('OPTIMISM_PK_DEPLOYER')
 const AURORA_PK_DEPLOYER = getEnvValSafe('AURORA_PK_DEPLOYER')
 const DOGECHAIN_PK_DEPLOYER = getEnvValSafe('DOGECHAIN_PK_DEPLOYER')
 const MANTLE_PK_DEPLOYER = getEnvValSafe('MANTLE_PK_DEPLOYER')
+const HOLESKY_PK_DEPLOYER = getEnvValSafe('HOLESKY_PK_DEPLOYER')
 const ETHERSCAN_API_KEY = getEnvValSafe('ETHERSCAN_API_KEY', false)
 
 function getEnvValSafe(key, required=true) {
@@ -119,6 +121,11 @@ module.exports = {
       chainId: 5000,
       url: MANTLE_RPC,
       accounts: [ MANTLE_PK_DEPLOYER ],
+    }, 
+    holesky: {
+      chainId: 17000, 
+      url: HOLESKY_RPC,
+      accounts: [ HOLESKY_PK_DEPLOYER ], 
     }
   },
   paths: {

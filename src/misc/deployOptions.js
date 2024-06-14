@@ -3,7 +3,8 @@ const {
     dogechain: dog, 
     arbitrum: arb,
     optimism: opt,
-    mantle: mnt
+    mantle: mnt,
+    holesky: hsk
 } = require('./addresses.json')
 
 module.exports = {
@@ -160,5 +161,16 @@ module.exports = {
             // opt.assets.BOB, 
         ], 
         wnative: opt.assets.WETH
+    }, 
+    "holesky": {
+        adapterWhitelist: [
+            'UniswapV2Adapter',
+        ],
+        hopTokens: [
+            hsk.assets.AssetA,
+            hsk.assets.AssetB,
+            hsk.assets.AssetC,
+        ], 
+        wnative: hsk.assets.whETH
     }
 }

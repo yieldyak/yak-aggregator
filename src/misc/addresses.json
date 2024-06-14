@@ -549,5 +549,16 @@
         "liquidityBook": {
             "router": "0x0C344c52841d3F8d488E1CcDBafB42CE2C7fdFA9"
         }
+    }, 
+    "holesky": {
+        "assets": {
+            "AssetA": "0x58c65450e9Ea4C8F527534De6762a940F5D8B7aA",
+            "AssetB": "0x96748E756073f9a902a60ef8192a4895e78F7489",
+            "AssetC": "0xE3331E86864dc613f7AcB295d8D89e90AEE3984F", 
+            "whETH": "0x6B5817E7091BC0C747741E96820b0199388245EA"
+        },
+        "univ2Factories": {
+            "uniswapv2": "0x8f38ECe3F1aADc73Cc7b8f4D202BBAc00aa0A82B"
+        }
     }
 }
