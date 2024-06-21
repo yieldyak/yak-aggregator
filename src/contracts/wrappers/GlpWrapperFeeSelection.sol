@@ -127,11 +127,12 @@ contract GlpWrapperFeeSelection is YakWrapper {
         return _fees;
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256 amountOut) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut)
+        internal
+        view
+        override
+        returns (uint256 amountOut)
+    {
         return (_tokenOut == sGLP) ? _quoteBuyGLP(_tokenIn, _amountIn) : _quoteSellGLP(_tokenOut, _amountIn);
     }
 
@@ -143,11 +144,11 @@ contract GlpWrapperFeeSelection is YakWrapper {
         amountOut = aumInUsdg == 0 ? usdgAmount : (usdgAmount * glpSupply) / aumInUsdg;
     }
 
-    function _calculateBuyUsdg(
-        uint256 _amountIn,
-        uint256 _price,
-        address _tokenIn
-    ) internal view returns (uint256 amountOut) {
+    function _calculateBuyUsdg(uint256 _amountIn, uint256 _price, address _tokenIn)
+        internal
+        view
+        returns (uint256 amountOut)
+    {
         amountOut = (_amountIn * _price) / PRICE_PRECISION;
         amountOut = IGmxVault(vault).adjustForDecimals(amountOut, _tokenIn, USDG);
         uint256 feeBasisPoints = _calculateBuyUsdgFeeBasisPoints(_tokenIn, amountOut);
@@ -161,6 +162,13 @@ contract GlpWrapperFeeSelection is YakWrapper {
         uint256 glpSupply = IERC20(GLP).totalSupply();
         uint256 usdgAmount = (_amountIn * aumInUsdg) / glpSupply;
         uint256 redemptionAmount = IGmxVault(vault).getRedemptionAmount(_tokenOut, usdgAmount);
+
+        uint256 poolAmount = IGmxVault(vault).poolAmounts(_tokenOut);
+        if (poolAmount < redemptionAmount) return 0;
+
+        poolAmount -= redemptionAmount;
+        if (IGmxVault(vault).reservedAmounts(_tokenOut) >= poolAmount) return 0;
+
         uint256 feeBasisPoints = _calculateSellUsdgFeeBasisPoints(_tokenOut, usdgAmount);
         amountOut = (redemptionAmount * (BASIS_POINTS_DIVISOR - feeBasisPoints)) / BASIS_POINTS_DIVISOR;
     }
@@ -178,8 +186,8 @@ contract GlpWrapperFeeSelection is YakWrapper {
         if (vaultUtils > address(0)) {
             return IGmxVaultUtils(vaultUtils).getSellUsdgFeeBasisPoints(_tokenOut, _usdgAmount);
         }
-        uint feeBasisPoints = IGmxVault(vault).mintBurnFeeBasisPoints();
-        uint taxBasisPoints = IGmxVault(vault).taxBasisPoints();
+        uint256 feeBasisPoints = IGmxVault(vault).mintBurnFeeBasisPoints();
+        uint256 taxBasisPoints = IGmxVault(vault).taxBasisPoints();
         if (!IGmxVault(vault).hasDynamicFees()) {
             return feeBasisPoints;
         }
@@ -192,9 +200,7 @@ contract GlpWrapperFeeSelection is YakWrapper {
             return feeBasisPoints;
         }
 
-        uint256 initialDiff = initialAmount > targetAmount
-            ? initialAmount - targetAmount
-            : targetAmount - initialAmount;
+        uint256 initialDiff = initialAmount > targetAmount ? initialAmount - targetAmount : targetAmount - initialAmount;
         uint256 nextDiff = nextAmount > targetAmount ? nextAmount - targetAmount : targetAmount - nextAmount;
 
         if (nextDiff < initialDiff) {
@@ -210,29 +216,23 @@ contract GlpWrapperFeeSelection is YakWrapper {
         return feeBasisPoints + taxBps;
     }
 
-    function _calculateFeeBasisPoints(
-        address _token,
-        uint256 _usdgAmount,
-        bool _buyUsdg
-    ) internal view returns (uint256 feeBasisPoints) {}
+    function _calculateFeeBasisPoints(address _token, uint256 _usdgAmount, bool _buyUsdg)
+        internal
+        view
+        returns (uint256 feeBasisPoints)
+    {}
 
     function calculateSellUsdgFeeBasisPoints(address _token, uint256 _usdgDelta) internal view returns (uint256) {}
 
-    function _swap(
-        uint256 _amountIn,
-        uint256 _amountOut,
-        address _tokenIn,
-        address _tokenOut,
-        address _to
-    ) internal override {}
+    function _swap(uint256 _amountIn, uint256 _amountOut, address _tokenIn, address _tokenOut, address _to)
+        internal
+        override
+    {}
 
-    function swap(
-        uint256 _amountIn,
-        uint256 _amountOut,
-        address _fromToken,
-        address _toToken,
-        address _to
-    ) external override {
+    function swap(uint256 _amountIn, uint256 _amountOut, address _fromToken, address _toToken, address _to)
+        external
+        override
+    {
         uint256 toBalanceBefore = IERC20(_toToken).balanceOf(_to);
         if (_toToken == sGLP) {
             IERC20(_fromToken).approve(glpManager, _amountIn);
