@@ -59,7 +59,7 @@ module.exports.deployYakWrapRouter = (networkName, routerDeploymentName) => {
         if (!deployOptions)
             throw new Error(`Can't find deployOptions for network: "${networkName}"`)
 
-        router = await deployments.get(routerName)
+        router = await deployments.get(routerDeploymentName)
         const deployArgs = [
             router.address
         ]
@@ -72,6 +72,31 @@ module.exports.deployYakWrapRouter = (networkName, routerDeploymentName) => {
         await deployFn({ getNamedAccounts, deployments })
     }
     exportEnv.tags = [ 'wrapRouter', networkName ]
+    exportEnv.dependencies = [routerDeploymentName]
+    
+    return exportEnv
+}
+
+module.exports.deployYakWrapRouterAlt = (networkName, routerDeploymentName) => {
+    const deployOptions = require('../misc/deployOptions')[networkName]
+    const exportEnv = async ({ getNamedAccounts, deployments }) => {
+        const { deployer } = await getNamedAccounts()
+        if (!deployOptions)
+            throw new Error(`Can't find deployOptions for network: "${networkName}"`)
+
+        router = await deployments.get(routerDeploymentName)
+        const deployArgs = [
+            router.address
+        ]
+        console.log('YakWrapRouterAlt deployment arguments: ', deployArgs)
+
+        const name = 'YakWrapRouter'
+        const contractName = 'YakWrapRouterAlt'
+        const optionalArgs = { gas: 4000000 }
+        const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
+        await deployFn({ getNamedAccounts, deployments })
+    }
+    exportEnv.tags = [ 'wrapRouterAlt', networkName ]
     exportEnv.dependencies = [routerDeploymentName]
     
     return exportEnv
