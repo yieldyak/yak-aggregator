@@ -16,7 +16,7 @@ module.exports = {
             // 'SolisnekAdapter',
       
             'SynapseAdapter',
-            'AxialAS4DAdapter',
+            // 'AxialAS4DAdapter',
             // 'PlatypusAdapter',
             
             'CurveAtricryptoAdapter',
@@ -32,7 +32,7 @@ module.exports = {
             // 'LiquidityBookAdapter',
             // 'KyberElasticAdapter',
             'WoofiV2Adapter',
-            'GeodeWPAdapter',
+            // 'GeodeWPAdapter',
             'GmxAdapter',
             
             'SAvaxAdapter',
