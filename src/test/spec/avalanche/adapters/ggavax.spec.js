@@ -7,7 +7,7 @@ describe("YakAdapter - savax", () => {
 
   before(async () => {
     const networkName = "avalanche";
-    const forkBlockNumber = 45380679;
+    const forkBlockNumber = 47577367;
     testEnv = await setTestEnv(networkName, forkBlockNumber);
     tkns = testEnv.supportedTkns;
 
@@ -22,10 +22,10 @@ describe("YakAdapter - savax", () => {
 
   describe("Swapping matches query", async () => {
     it("100 WAVAX -> ggAVAX", async () => {
-      await ate.checkSwapMatchesQuery("100", tkns.WAVAX, tkns.ggAVAX);
+      await ate.checkSwapMatchesQuery("1", tkns.WAVAX, tkns.ggAVAX);
     });
     it("100 ggAVAX -> WAVAX", async () => {
-      await ate.checkSwapMatchesQuery("100", tkns.ggAVAX, tkns.WAVAX);
+      await ate.checkSwapMatchesQuery("1", tkns.ggAVAX, tkns.WAVAX);
     });
   });
 
