@@ -490,6 +490,15 @@
     "liquidityBook": {
       "routerV1": "0xAFb85a12Babfafabfe1a518594492d5a830e782a",
       "factoryV2": "0xa6630671775c4EA2743840F9A5016dCf2A104054"
+    },
+    "cleopatra": {
+      "legacy": {
+        "factory": "0xAAA16c016BF556fcD620328f0759252E29b1AB57"
+      },
+      "cl": {
+        "factory": "0xAAA32926fcE6bE95ea2c51cB4Fcb60836D320C42",
+        "quoter": "0x99cf6192C709DFfebCF046B04C7b6ec7C5458C7a"
+      }
     }
   },
   "optimism": {

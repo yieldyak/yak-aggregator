@@ -82,7 +82,9 @@ module.exports = {
             'MerchantMoeAdapter',
             'AgniAdapter',
             'FusionAdapter',
-            'LiquidityBook2Adapter'
+            'LiquidityBook2Adapter',
+            'CleopatraAdapter',
+            'CleopatraClAdapter'
         ],
         hopTokens: [
             mnt.assets.METH,
