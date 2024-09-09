@@ -84,7 +84,9 @@ module.exports = {
             'FusionAdapter',
             'LiquidityBook2Adapter',
             'CleopatraAdapter',
-            'CleopatraClAdapter'
+            'CleopatraClAdapter',
+            'WoofiV2Adapter',
+            'UniswapV3Adapter'
         ],
         hopTokens: [
             mnt.assets.METH,

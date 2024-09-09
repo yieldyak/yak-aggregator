@@ -499,6 +499,13 @@
         "factory": "0xAAA32926fcE6bE95ea2c51cB4Fcb60836D320C42",
         "quoter": "0x99cf6192C709DFfebCF046B04C7b6ec7C5458C7a"
       }
+    },
+    "woofi": {
+      "woofiV2Pool": "0xEd9e3f98bBed560e66B89AaC922E29D4596A9642"
+    },
+    "uniV3": {
+      "quoter": "0xa6d96e28650749c2d4d81e687AC0939352d99278",
+      "factory": "0x0d922Fb1Bc191F64970ac40376643808b4B74Df9"
     }
   },
   "optimism": {
