@@ -42,7 +42,8 @@ module.exports = {
             'RamsesV2Adapter',
             // 'ButtonWrappersAdapter',
             // 'PoolsideV1Adapter',
-            'GGAvaxAdapter'
+            'GGAvaxAdapter',
+            'TokenMillAdapter'
         ],
         minimalAdapterWhitelist: [
             'WAvaxAdapter',
