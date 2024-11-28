@@ -28,9 +28,13 @@ contract TokenMillAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
     address public immutable factory;
+    address public immutable referrer;
 
-    constructor(string memory _name, address _factory, uint256 _swapGasEstimate) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, address _factory, address _referrer, uint256 _swapGasEstimate)
+        YakAdapter(_name, _swapGasEstimate)
+    {
         factory = _factory;
+        referrer = _referrer;
     }
 
     function _query(uint256 _amountIn, address _tokenIn, address _tokenOut)
@@ -61,7 +65,7 @@ contract TokenMillAdapter is YakAdapter {
         (bool b2q, address market) = ITMFactory(factory).getMarket(_tokenIn, _tokenOut);
         IERC20(_tokenIn).transfer(market, _amountIn);
         (int256 deltaBaseAmount, int256 deltaQuoteAmount) =
-            ITMMarket(market).swap(_to, int256(_amountIn), b2q, "", address(0));
+            ITMMarket(market).swap(_to, int256(_amountIn), b2q, "", referrer);
 
         (, uint256 amountOut) = b2q
             ? (uint256(deltaBaseAmount), uint256(-deltaQuoteAmount))
