@@ -14,28 +14,27 @@
 //                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
 //                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
 //
-//
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
-import "../interface/IGGAvax.sol";
+import "../interface/ITMMarket.sol";
+import "../interface/ITMFactory.sol";
+import "../interface/IERC20.sol";
+import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
-interface IWAVAX {
-    function withdraw(uint256) external;
-}
+contract TokenMillAdapter is YakAdapter {
+    using SafeERC20 for IERC20;
 
-/**
- * @notice WAVAX -> ggAVAX
- *
- */
-contract GGAvaxAdapter is YakAdapter {
-    address public constant ggAVAX = 0xA25EaF2906FA1a3a13EdAc9B9657108Af7B703e3;
-    address public constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
+    address public immutable factory;
+    address public immutable referrer;
 
-    constructor(uint256 _swapGasEstimate) YakAdapter("GGAvaxAdapter", _swapGasEstimate) {
-        IERC20(WAVAX).approve(ggAVAX, type(uint256).max);
+    constructor(string memory _name, address _factory, address _referrer, uint256 _swapGasEstimate)
+        YakAdapter(_name, _swapGasEstimate)
+    {
+        factory = _factory;
+        referrer = _referrer;
     }
 
     function _query(uint256 _amountIn, address _tokenIn, address _tokenOut)
@@ -44,23 +43,33 @@ contract GGAvaxAdapter is YakAdapter {
         override
         returns (uint256 amountOut)
     {
-        if (_tokenIn == WAVAX && _tokenOut == ggAVAX) {
-            if (_amountIn > IGGAvax(ggAVAX).maxDeposit(address(this))) return 0;
-            return IGGAvax(ggAVAX).previewDeposit(_amountIn);
-        } else if (_tokenIn == ggAVAX && _tokenOut == WAVAX) {
-            amountOut = IGGAvax(ggAVAX).previewRedeem(_amountIn);
-            uint256 totalAssets = IGGAvax(ggAVAX).totalAssets();
-            uint256 stakingTotalAssets = IGGAvax(ggAVAX).stakingTotalAssets();
-            uint256 avail = totalAssets > stakingTotalAssets ? totalAssets - stakingTotalAssets : 0;
-            return amountOut > avail ? avail : amountOut;
+        if (_tokenIn == _tokenOut || _amountIn == 0) {
+            return 0;
         }
+        (bool tokenInIsBase, address market) = ITMFactory(factory).getMarket(_tokenIn, _tokenOut);
+
+        if (market == address(0)) {
+            return 0;
+        }
+        (int256 deltaBaseAmount, int256 deltaQuoteAmount,) =
+            ITMMarket(market).getDeltaAmounts(int256(_amountIn), tokenInIsBase);
+        (, amountOut) = tokenInIsBase
+            ? (uint256(deltaBaseAmount), uint256(-deltaQuoteAmount))
+            : (uint256(deltaQuoteAmount), uint256(-deltaBaseAmount));
     }
 
-    function _swap(uint256 _amountIn, uint256, address, address _tokenOut, address _to) internal override {
-        if (_tokenOut == ggAVAX) {
-            IGGAvax(ggAVAX).deposit(_amountIn, _to);
-        } else if (_tokenOut == WAVAX) {
-            IGGAvax(ggAVAX).redeem(_amountIn, _to, address(this));
-        }
+    function _swap(uint256 _amountIn, uint256 _amountOut, address _tokenIn, address _tokenOut, address _to)
+        internal
+        override
+    {
+        (bool b2q, address market) = ITMFactory(factory).getMarket(_tokenIn, _tokenOut);
+        IERC20(_tokenIn).transfer(market, _amountIn);
+        (int256 deltaBaseAmount, int256 deltaQuoteAmount) =
+            ITMMarket(market).swap(_to, int256(_amountIn), b2q, "", referrer);
+
+        (, uint256 amountOut) = b2q
+            ? (uint256(deltaBaseAmount), uint256(-deltaQuoteAmount))
+            : (uint256(deltaQuoteAmount), uint256(-deltaBaseAmount));
+        require(uint256(amountOut) >= _amountOut, "TokenMillAdapter: insufficient amount out");
     }
 }
