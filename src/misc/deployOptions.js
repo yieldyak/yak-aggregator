@@ -123,7 +123,7 @@ module.exports = {
             // 'CamelotAlgebraAdapter',
             // 'ArbiDexAdapter',
             'RamsesV2Adapter',
-            'PancakeV3Adapter',
+            //'PancakeV3Adapter',
             //'WombatAdapter',
             'Curve2crvUsdFrax',
             'Curve2crvUsdUsdc',

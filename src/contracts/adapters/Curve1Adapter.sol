@@ -32,22 +32,28 @@ contract Curve1Adapter is YakAdapter {
     mapping(address => bool) public isPoolToken;
     address public pool;
 
-    constructor(
-        string memory _name,
-        address _pool,
-        uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, address _pool, address[] memory _tokenBlacklist, uint256 _swapGasEstimate)
+        YakAdapter(_name, _swapGasEstimate)
+    {
         pool = _pool;
-        _setPoolTokens();
+        _setPoolTokens(_tokenBlacklist);
     }
 
     // Mapping indicator which tokens are included in the pool
-    function _setPoolTokens() internal {
+    function _setPoolTokens(address[] memory _tokenBlacklist) internal {
         for (uint256 i = 0; true; ++i) {
             try ICurve1(pool).underlying_coins(i) returns (address token) {
-                _setPoolTokenAllowance(token);
-                isPoolToken[token] = true;
-                tokenIndex[token] = i;
+                bool tokenBlacklisted;
+                for (uint256 j = 0; j < _tokenBlacklist.length; ++j) {
+                    if (_tokenBlacklist[j] == token) {
+                        tokenBlacklisted = true;
+                    }
+                }
+                if (!tokenBlacklisted) {
+                    _setPoolTokenAllowance(token);
+                    isPoolToken[token] = true;
+                    tokenIndex[token] = i;
+                }
             } catch {
                 break;
             }
@@ -58,11 +64,7 @@ contract Curve1Adapter is YakAdapter {
         IERC20(_token).approve(pool, UINT_MAX);
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view override returns (uint256) {
         if (_amountIn == 0 || _tokenIn == _tokenOut || !isPoolToken[_tokenIn] || !isPoolToken[_tokenOut]) {
             return 0;
         }
@@ -84,13 +86,10 @@ contract Curve1Adapter is YakAdapter {
         return _amount == 0 ? 0 : (_amount * (1e4 - 4)) / 1e4;
     }
 
-    function _swap(
-        uint256 _amountIn,
-        uint256 _amountOut,
-        address _tokenIn,
-        address _tokenOut,
-        address _to
-    ) internal override {
+    function _swap(uint256 _amountIn, uint256 _amountOut, address _tokenIn, address _tokenOut, address _to)
+        internal
+        override
+    {
         ICurve1(pool).exchange_underlying(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn, _amountOut);
         uint256 balThis = IERC20(_tokenOut).balanceOf(address(this));
         _returnTo(_tokenOut, balThis, _to);
