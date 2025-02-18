@@ -9,8 +9,8 @@ describe('YakAdapter - Reservoir', () => {
     let ate // adapter-test-env
 
     before(async () => {
-        const networkName = 'avalanche'
-        const forkBlockNumber = 36275195
+        const networkName = 'arbitrum'
+        const forkBlockNumber = 307220331
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 

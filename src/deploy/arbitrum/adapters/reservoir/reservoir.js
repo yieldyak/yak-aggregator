@@ -1,7 +1,7 @@
 const { deployAdapter, addresses } = require('../../../utils')
 const { factory, quoter } = addresses.avalanche.reservoir
 
-const networkName = 'avalanche'
+const networkName = 'arbitrum'
 const tags = [ 'reservoir', 'stableswap' ]
 const name = 'ReservoirAdapter'
 const contractName = 'ReservoirAdapter'
