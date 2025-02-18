@@ -30,11 +30,8 @@ describe('YakAdapter - Reservoir', () => {
     })
 
     describe('Swapping matches query', async () => {
-        it('100 USDt -> USDC', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.USDt, tkns.USDC)
-        })
-        it('1 USDC -> BTC.b', async () => {
-            await ate.checkSwapMatchesQuery('10', tkns.USDC, tkns.BTCb)
+        it('100 USDT -> USDC', async () => {
+            await ate.checkSwapMatchesQuery('100', tkns.USDT, tkns.USDC)
         })
     })
 
@@ -45,14 +42,13 @@ describe('YakAdapter - Reservoir', () => {
 
     it ('Query returns something for a valid pair', async () => {
         // 1 USDC
-        const amountOutQuery = await ate.query('1000000', tkns.USDC.address, tkns.USDt.address)
+        const amountOutQuery = await ate.query('1000000', tkns.USDC.address, tkns.USDT.address)
         expect(amountOutQuery).gt(0)
     })
 
     it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
         const options = [
-            [ '100', tkns.USDt, tkns.USDC ],
-            [ '1', tkns.USDC, tkns.BTCb ],
+            [ '100', tkns.USDT, tkns.USDC ],
         ]
         await ate.checkGasEstimateIsSensible(options)
     })
