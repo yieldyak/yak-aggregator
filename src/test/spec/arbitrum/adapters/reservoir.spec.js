@@ -1,6 +1,6 @@
 const { expect } = require("chai")
 const { setTestEnv, addresses } = require('../../../utils/test-env')
-const { reservoir } = addresses.avalanche
+const { factory, quoter } = addresses.arbitrum.reservoir
 
 describe('YakAdapter - Reservoir', () => {
 
@@ -10,7 +10,7 @@ describe('YakAdapter - Reservoir', () => {
 
     before(async () => {
         const networkName = 'arbitrum'
-        const forkBlockNumber = 307220331
+        const forkBlockNumber = 307257257
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
@@ -18,8 +18,8 @@ describe('YakAdapter - Reservoir', () => {
         const gasEstimate = 200_000
         const adapterArgs = [
             contractName,
-            reservoir.factory,
-            reservoir.quoter,
+            factory,
+            quoter,
             gasEstimate
         ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
