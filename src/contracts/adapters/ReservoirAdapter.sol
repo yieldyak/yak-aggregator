@@ -9,8 +9,6 @@ import { IReservoirPair } from "../interface/IReservoirPair.sol";
 contract ReservoirAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
-    uint256 internal constant FEE_ACCURACY = 1_000_000;
-
     IGenericFactory public immutable factory;
     IQuoter public immutable quoter;
 
