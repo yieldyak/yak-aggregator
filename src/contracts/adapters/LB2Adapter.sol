@@ -18,7 +18,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
-
 import "../YakAdapter.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
@@ -39,12 +38,9 @@ contract LB2Adapter is YakAdapter {
     bool public allowExternalPairs = true;
     uint256 public quoteGasLimit = 600_000;
 
-    constructor(
-        string memory _name,
-        uint256 _swapGasEstimate,
-        uint256 _quoteGasLimit,
-        address _factory
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, uint256 _swapGasEstimate, uint256 _quoteGasLimit, address _factory)
+        YakAdapter(_name, _swapGasEstimate)
+    {
         setQuoteGasLimit(_quoteGasLimit);
         FACTORY = _factory;
     }
@@ -61,42 +57,33 @@ contract LB2Adapter is YakAdapter {
         quoteGasLimit = _quoteGasLimit;
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256 amountOut) {
-        (amountOut, , ) = _getBestQuote(_amountIn, _tokenIn, _tokenOut);
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut)
+        internal
+        view
+        override
+        returns (uint256 amountOut)
+    {
+        (amountOut,,) = _getBestQuote(_amountIn, _tokenIn, _tokenOut);
     }
 
-    function _swap(
-        uint256 _amountIn,
-        uint256 _minAmountOut,
-        address _tokenIn,
-        address _tokenOut,
-        address to
-    ) internal override {
+    function _swap(uint256 _amountIn, uint256 _minAmountOut, address _tokenIn, address _tokenOut, address to)
+        internal
+        override
+    {
         (uint256 amountOut, address pair, bool swapForY) = _getBestQuote(_amountIn, _tokenIn, _tokenOut);
         require(amountOut >= _minAmountOut, "LBAdapter: insufficient amountOut received");
         IERC20(_tokenIn).transfer(pair, _amountIn);
         ILBPair(pair).swap(swapForY, to);
     }
 
-    function _getBestQuote(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    )
+    function _getBestQuote(uint256 _amountIn, address _tokenIn, address _tokenOut)
         internal
         view
-        returns (
-            uint256 amountOut,
-            address pair,
-            bool swapForY
-        )
+        returns (uint256 amountOut, address pair, bool swapForY)
     {
         ILBFactory.LBPairInformation[] memory LBPairsAvailable = ILBFactory(FACTORY).getAllLBPairs(_tokenIn, _tokenOut);
 
+        bool forY;
         if (LBPairsAvailable.length > 0 && _amountIn > 0) {
             for (uint256 i; i < LBPairsAvailable.length; ++i) {
                 if (!LBPairsAvailable[i].ignoredForRouting && !allowIgnoredPairs) {
@@ -106,26 +93,22 @@ contract LB2Adapter is YakAdapter {
                     continue;
                 }
 
-                swapForY = ILBPair(LBPairsAvailable[i].LBPair).getTokenY() == _tokenOut;
-                uint256 swapAmountOut = getQuote(LBPairsAvailable[i].LBPair, _amountIn, swapForY);
+                forY = ILBPair(LBPairsAvailable[i].LBPair).getTokenY() == _tokenOut;
+                uint256 swapAmountOut = getQuote(LBPairsAvailable[i].LBPair, _amountIn, forY);
 
                 if (swapAmountOut > amountOut) {
                     amountOut = swapAmountOut;
                     pair = LBPairsAvailable[i].LBPair;
+                    swapForY = forY;
                 }
             }
         }
     }
 
-    function getQuote(
-        address pair,
-        uint256 amountIn,
-        bool swapForY
-    ) internal view returns (uint256 out) {
-        try ILBPair(pair).getSwapOut{gas: quoteGasLimit}(
-            uint128(amountIn), 
-            swapForY
-        ) returns (uint128 amountInLeft, uint128 amountOut, uint128) {
+    function getQuote(address pair, uint256 amountIn, bool swapForY) internal view returns (uint256 out) {
+        try ILBPair(pair).getSwapOut{gas: quoteGasLimit}(uint128(amountIn), swapForY) returns (
+            uint128 amountInLeft, uint128 amountOut, uint128
+        ) {
             if (amountInLeft == 0) {
                 out = amountOut;
             }
