@@ -43,7 +43,8 @@ module.exports = {
             // 'ButtonWrappersAdapter',
             // 'PoolsideV1Adapter',
             'GGAvaxAdapter',
-            'TokenMillAdapter'
+            'TokenMillAdapter',
+            'ArenaAdapter'
         ],
         minimalAdapterWhitelist: [
             'WAvaxAdapter',
