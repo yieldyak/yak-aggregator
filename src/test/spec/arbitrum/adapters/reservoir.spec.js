@@ -1,6 +1,6 @@
 const { expect } = require("chai")
 const { setTestEnv, addresses } = require('../../../utils/test-env')
-const { reservoir } = addresses.avalanche
+const { factory, quoter } = addresses.arbitrum.reservoir
 
 describe('YakAdapter - Reservoir', () => {
 
@@ -9,8 +9,8 @@ describe('YakAdapter - Reservoir', () => {
     let ate // adapter-test-env
 
     before(async () => {
-        const networkName = 'avalanche'
-        const forkBlockNumber = 36275195
+        const networkName = 'arbitrum'
+        const forkBlockNumber = 307257257
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
@@ -18,8 +18,8 @@ describe('YakAdapter - Reservoir', () => {
         const gasEstimate = 350_000
         const adapterArgs = [
             contractName,
-            reservoir.factory,
-            reservoir.quoter,
+            factory,
+            quoter,
             gasEstimate
         ]
         ate = await testEnv.setAdapterEnv(contractName, adapterArgs)
@@ -30,11 +30,8 @@ describe('YakAdapter - Reservoir', () => {
     })
 
     describe('Swapping matches query', async () => {
-        it('100 USDt -> USDC', async () => {
-            await ate.checkSwapMatchesQuery('100', tkns.USDt, tkns.USDC)
-        })
-        it('1 USDC -> BTC.b', async () => {
-            await ate.checkSwapMatchesQuery('10', tkns.USDC, tkns.BTCb)
+        it('100 USDT -> USDC', async () => {
+            await ate.checkSwapMatchesQuery('100', tkns.USDT, tkns.USDC)
         })
     })
 
@@ -45,14 +42,13 @@ describe('YakAdapter - Reservoir', () => {
 
     it ('Query returns something for a valid pair', async () => {
         // 1 USDC
-        const amountOutQuery = await ate.query('1000000', tkns.USDC.address, tkns.USDt.address)
+        const amountOutQuery = await ate.query('1000000', tkns.USDC.address, tkns.USDT.address)
         expect(amountOutQuery).gt(0)
     })
 
     it('Gas-estimate is between max-gas-used and 110% max-gas-used', async () => {
         const options = [
-            [ '100', tkns.USDt, tkns.USDC ],
-            [ '1', tkns.USDC, tkns.BTCb ],
+            [ '100', tkns.USDT, tkns.USDC ],
         ]
         await ate.checkGasEstimateIsSensible(options)
     })

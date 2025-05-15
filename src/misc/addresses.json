@@ -145,6 +145,10 @@
       "quoter": "0xa7f586470CD7b70F9b5893eEe85C0b5354541A99",
       "factoryV3": "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865"
     },
+    "reservoir": {
+        "quoter": "0x272b79fcb7bcf681a6a2f5005ed59a6e675fe84c",
+        "factory": "0x89d235b4a770cb09ee976df814266226a23a9315"
+    },
     "other": {
       "woofiV2Pool": "0x5520385bFcf07Ec87C4c53A7d8d65595Dff69FA4",
       "lb_router": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
@@ -443,10 +447,6 @@
     "uniV3": {
       "quoter": "0xc15804984E3e77B7f8A60E4553e2289c5fdeAe8B",
       "factory": "0x740b1c1de25031C31FF4fC9A62f554A55cdC1baD"
-    },
-    "reservoir": {
-      "quoter": "0x95222f1dba54b87F1d71186775a38Ffae9fBFDd1",
-      "factory": "0xDd723D9273642D82c5761a4467fD5265d94a22da"
     },
     "pharaoh": {
       "quoter": "0xc7d4412aa74c655B2e6e71bB6790d24AC90E393C",
