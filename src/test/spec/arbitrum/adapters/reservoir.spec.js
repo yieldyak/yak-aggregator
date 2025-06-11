@@ -1,6 +1,6 @@
 const { expect } = require("chai")
 const { setTestEnv, addresses } = require('../../../utils/test-env')
-const { factory, quoter } = addresses.arbitrum.reservoir
+const { factory, quoter } = addresses.avalanche.reservoir
 
 describe('YakAdapter - Reservoir', () => {
 
@@ -9,8 +9,8 @@ describe('YakAdapter - Reservoir', () => {
     let ate // adapter-test-env
 
     before(async () => {
-        const networkName = 'arbitrum'
-        const forkBlockNumber = 307257257
+        const networkName = 'avalanche'
+        const forkBlockNumber = 63677687
         testEnv = await setTestEnv(networkName, forkBlockNumber)
         tkns = testEnv.supportedTkns
 
@@ -42,6 +42,8 @@ describe('YakAdapter - Reservoir', () => {
 
     it ('Query returns something for a valid pair', async () => {
         // 1 USDC
+        console.log(tkns.USDC.address);
+        console.log(tkns.USDT.address);
         const amountOutQuery = await ate.query('1000000', tkns.USDC.address, tkns.USDT.address)
         expect(amountOutQuery).gt(0)
     })

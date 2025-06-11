@@ -145,10 +145,6 @@
       "quoter": "0xa7f586470CD7b70F9b5893eEe85C0b5354541A99",
       "factoryV3": "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865"
     },
-    "reservoir": {
-        "quoter": "0x272b79fcb7bcf681a6a2f5005ed59a6e675fe84c",
-        "factory": "0x89d235b4a770cb09ee976df814266226a23a9315"
-    },
     "other": {
       "woofiV2Pool": "0xEd9e3f98bBed560e66B89AaC922E29D4596A9642",
       "lb_router": "0x7BFd7192E76D950832c77BB412aaE841049D8D9B",
@@ -446,6 +442,10 @@
     "pharaoh": {
       "quoter": "0xc7d4412aa74c655B2e6e71bB6790d24AC90E393C",
       "factory": "0xAAA32926fcE6bE95ea2c51cB4Fcb60836D320C42"
+    },
+    "reservoir": {
+      "quoter": "0xE3CFbF58fCBa0782aC3E01686811f5f1Fdf95307",
+      "factory": "0x1A49Bc8464731A08c16EdF17F33CF77db37228a4"
     }
   },
   "dogechain": {
