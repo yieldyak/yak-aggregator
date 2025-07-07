@@ -19,7 +19,7 @@ module.exports = {
             // 'AxialAS4DAdapter',
             // 'PlatypusAdapter',
             
-            'CurveAtricryptoAdapter',
+            //'CurveAtricryptoAdapter',
             'Curve3poolV2Adapter',
             // 'Curve3poolfAdapter',
             'CurveAaveAdapter',
