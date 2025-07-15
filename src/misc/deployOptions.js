@@ -22,7 +22,7 @@ module.exports = {
             //'CurveAtricryptoAdapter',
             'Curve3poolV2Adapter',
             // 'Curve3poolfAdapter',
-            'CurveAaveAdapter',
+            // 'CurveAaveAdapter',
             'CurveUSDCAdapter',
             'CurveYUSDAdapter',
             
