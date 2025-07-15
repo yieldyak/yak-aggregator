@@ -1,0 +1,30 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib", "dependencies"]
+solc_version = "0.8.4"
+
+optimizer = true
+optimizer_runs = 999
+
+gas_reports = ["*"]
+
+remappings = [
+    "@openzeppelin/contracts/=dependencies/@openzeppelin-contracts-4.9.6/",
+    "forge-std/=dependencies/forge-std-1.9.7/",
+]
+
+[rpc_endpoints]
+avalanche = "${AVALANCHE_RPC}"
+arbitrum = "${ARBITRUM_RPC}"
+optimism = "${OPTIMISM_RPC}"
+mantle = "${MANTLE_RPC}"
+
+[dependencies]
+forge-std = "1.9.7"
+"@openzeppelin-contracts" = "4.9.6"
+
+[soldeer]
+remappings_generate = true
+remappings_location = "config"
+

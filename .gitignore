@@ -10,3 +10,6 @@ cache
 .env
 out
 .vscode
+
+# Soldeer
+/dependencies
