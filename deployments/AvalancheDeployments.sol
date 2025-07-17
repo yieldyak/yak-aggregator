@@ -23,7 +23,6 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant LIQUIDITY_BOOK_2_ADAPTER = 0xb94187369171f12ae28e08424BBD01424f13c659;
     address constant LIQUIDITY_BOOK_2_2_ADAPTER = 0xf9F824576F06fF92765f2Af700a5A9923526261e;
     address constant WOOFI_V2_ADAPTER = 0x4efB1880Dc9B01c833a6E2824C8EadeA83E428B0;
-    address constant GMX_ADAPTER = 0x7F8B47Ff174Eaf96960a050B220a907dFa3feD5b;
     address constant S_AVAX_ADAPTER = 0x2F6ca0a98CF8f7D407E98993fD576f70F0FAA80B;
     address constant W_AVAX_ADAPTER = 0x5C4d23fd18Fc4128f77426F42237acFcE618D0b1;
     address constant WOMBAT_ADAPTER = 0x7De32C76309aeB1025CBA3384caBe36326603046;
@@ -55,7 +54,7 @@ contract AvalancheDeployments is INetworkDeployments {
     }
 
     function getWhitelistedAdapters() public pure override returns (address[] memory) {
-        address[] memory adapters = new address[](21);
+        address[] memory adapters = new address[](20);
         adapters[0] = TRADER_JOE_YAK_ADAPTER;
         adapters[1] = PANGOLIN_YAK_ADAPTER;
         adapters[2] = SUSHI_YAK_ADAPTER;
@@ -68,7 +67,7 @@ contract AvalancheDeployments is INetworkDeployments {
         adapters[9] = LIQUIDITY_BOOK_2_ADAPTER;
         adapters[10] = LIQUIDITY_BOOK_2_2_ADAPTER;
         adapters[11] = WOOFI_V2_ADAPTER;
-        adapters[12] = GMX_ADAPTER;
+        adapters[12] = BLACKHOLE_ADAPTER;
         adapters[13] = S_AVAX_ADAPTER;
         adapters[14] = W_AVAX_ADAPTER;
         adapters[15] = WOMBAT_ADAPTER;
@@ -76,7 +75,6 @@ contract AvalancheDeployments is INetworkDeployments {
         adapters[17] = GG_AVAX_ADAPTER;
         adapters[18] = TOKEN_MILL_ADAPTER;
         adapters[19] = ARENA_ADAPTER;
-        adapters[20] = BLACKHOLE_ADAPTER;
         return adapters;
     }
 

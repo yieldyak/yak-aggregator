@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {Script} from "forge-std/Script.sol";
 import {console} from "forge-std/console.sol";
 import {DeploymentFactory} from "../../deployments/utils/DeploymentFactory.sol";
+import {INetworkDeployments} from "../../deployments/utils/INetworkDeployments.sol";
 import {YakRouter} from "../../src/YakRouter.sol";
 import {IAdapter} from "../../src/interface/IAdapter.sol";
 
