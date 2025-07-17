@@ -274,7 +274,8 @@
       "BONER": "0x32f3Fb90112bA4CAb66c24aA75ACbe0182A5d50B",
       "ARENA": "0xB8d7710f7d8349A506b75dD184F05777c82dAd0C",
       "BOIL": "0x0A9a9e0A695F52502CdDF7A59c880f4bDf2f0548",
-      "ID": "0x34a528Da3b2EA5c6Ad1796Eba756445D1299a577"
+      "ID": "0x34a528Da3b2EA5c6Ad1796Eba756445D1299a577",
+      "BLACK": "0xcd94a87696fac69edae3a70fe5725307ae1c43f6"
     },
     "unilikeRouters": {
       "zero": "0x85995d5f8ee9645cA855e92de16FA62D26398060",
@@ -451,6 +452,9 @@
     "pharaoh": {
       "quoter": "0xc7d4412aa74c655B2e6e71bB6790d24AC90E393C",
       "factory": "0xAAA32926fcE6bE95ea2c51cB4Fcb60836D320C42"
+    },
+    "blackhole": {
+      "factory": "0xfE926062Fb99CA5653080d6C14fE945Ad68c265C"
     }
   },
   "dogechain": {
