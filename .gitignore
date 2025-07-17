@@ -10,3 +10,7 @@ cache
 .env
 out
 .vscode
+
+# Soldeer
+/dependencies
+/broadcast/UpdateAdapters.s.sol
