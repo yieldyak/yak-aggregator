@@ -73,7 +73,7 @@ contract BridgeToken is ERC20Burnable {
     /**
      * @dev Mint function used by bridge. 
         Optional FeeAddress and FeeAmount parameters used to mint small percentage of 
-        transfered assets directly to bridge.
+        transferred assets directly to bridge.
      * @param to Address to mint funds to.
      * @param amount Amount of funds to mint.
      * @param feeAddress Address to mint bridge fees to.

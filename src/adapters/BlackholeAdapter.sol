@@ -84,7 +84,7 @@ contract BlackholeAdapter is YakAdapter {
         override
     {
         (uint256 amountOut, address pair) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
-        require(amountOut >= _amountOut, "Insufficent amount out");
+        require(amountOut >= _amountOut, "Insufficient amount out");
         (uint256 amount0Out, uint256 amount1Out) =
             (_tokenIn < _tokenOut) ? (uint256(0), amountOut) : (amountOut, uint256(0));
         IERC20(_tokenIn).safeTransfer(pair, _amountIn);
