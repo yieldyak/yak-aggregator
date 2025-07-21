@@ -33,6 +33,8 @@ contract AdapterTestBase is Test {
         // Query expected output
         uint256 expectedOut = adapter.query(amountIn, tokenIn, tokenOut);
 
+        assertGt(expectedOut, 0, "Query should return non-zero amount");
+
         // Transfer tokens to adapter
         IERC20(tokenIn).transfer(address(adapter), amountIn);
 
@@ -49,6 +51,21 @@ contract AdapterTestBase is Test {
      */
     function assertSwapMatchesQuery(YakAdapter adapter, address tokenIn, address tokenOut, uint256 amountIn) internal {
         assertSwapMatchesQuery(adapter, tokenIn, tokenOut, amountIn, 0.01e18);
+    }
+
+    function assertSwapFails(YakAdapter adapter, address tokenIn, address tokenOut, uint256 amountIn) internal {
+        // Deal input tokens to this test contract
+        deal(tokenIn, address(this), amountIn);
+
+        // Query expected output
+        uint256 expectedOut = adapter.query(amountIn, tokenIn, tokenOut);
+
+        // Transfer tokens to adapter
+        IERC20(tokenIn).transfer(address(adapter), amountIn);
+
+        // Execute swap
+        vm.expectRevert();
+        adapter.swap(amountIn, expectedOut, tokenIn, tokenOut, address(this));
     }
 
     /**

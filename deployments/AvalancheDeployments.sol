@@ -14,7 +14,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant TRADER_JOE_YAK_ADAPTER = 0xDB66686Ac8bEA67400CF9E5DD6c8849575B90148;
     address constant PANGOLIN_YAK_ADAPTER = 0x3614657EDc3cb90BA420E5f4F61679777e4974E3;
     address constant SUSHI_YAK_ADAPTER = 0x3f314530a4964acCA1f20dad2D35275C23Ed7F5d;
-    address constant GLACIER_ADAPTER = 0xA05A3ebE5D0Ab59E449Fe34014f51948cb9F31dF;
+    address constant PHARAOH_LEGACY_ADAPTER = 0x564C35a1647ED40850325eBf23e484bB56E75aB2;
     address constant SYNAPSE_PLAIN_YAK_ADAPTER = 0xaFb5aE9934266a131F44F2A80c783d6a827A3d1a;
     address constant CURVE_3POOL_V2_ADAPTER = 0xd0f6e66113A6D6Cca238371948F4Ce2893D62881;
     address constant CURVE_USDC_ADAPTER = 0x22c62c9E409B97F1f9caA5Ca5433074914d73c3e;
@@ -30,7 +30,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant GG_AVAX_ADAPTER = 0x79632b8194a1Ce048e5d9b0e282E9eE2d4579c20;
     address constant TOKEN_MILL_ADAPTER = 0x214617987145Ef7c5462870362FdCAe9cacdf3C8;
     address constant ARENA_ADAPTER = 0xDfd22ef6D509a982F4e6883CBf00d56d5d0D87F3;
-    address constant BLACKHOLE_ADAPTER = 0x864603E7eA6eCF3Ebbb9a1241054887Ea96678F3;
+    address constant BLACKHOLE_ADAPTER = 0x123577a1560004D4432DC5e31F97363d0cD8A651;
 
     // Hop tokens
     address constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -58,7 +58,7 @@ contract AvalancheDeployments is INetworkDeployments {
         adapters[0] = TRADER_JOE_YAK_ADAPTER;
         adapters[1] = PANGOLIN_YAK_ADAPTER;
         adapters[2] = SUSHI_YAK_ADAPTER;
-        adapters[3] = GLACIER_ADAPTER;
+        adapters[3] = PHARAOH_LEGACY_ADAPTER;
         adapters[4] = SYNAPSE_PLAIN_YAK_ADAPTER;
         adapters[5] = CURVE_3POOL_V2_ADAPTER;
         adapters[6] = CURVE_USDC_ADAPTER;
