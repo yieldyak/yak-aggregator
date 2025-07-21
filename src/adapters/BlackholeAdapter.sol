@@ -32,6 +32,9 @@ interface IPairFactory {
 interface IPair {
     function getAmountOut(uint256, address) external view returns (uint256);
 
+    function reserve0() external view returns (uint256);
+    function reserve1() external view returns (uint256);
+
     function swap(uint256, uint256, address, bytes calldata) external;
 }
 
@@ -44,9 +47,24 @@ contract BlackholeAdapter is YakAdapter {
         FACTORY = _factory;
     }
 
-    function _getAmoutOutSafe(address pair, uint256 amountIn, address tokenIn) internal view returns (uint256) {
+    function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
+        (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
+    }
+
+    function _getAmoutOutSafe(address pair, uint256 amountIn, address tokenIn, address tokenOut)
+        internal
+        view
+        returns (uint256)
+    {
         try IPair(pair).getAmountOut(amountIn, tokenIn) returns (uint256 amountOut) {
-            return amountOut;
+            (address token0, address token1) = sortTokens(tokenIn, tokenOut);
+            uint256 reserve;
+            if (token0 == tokenOut) {
+                reserve = IPair(pair).reserve0();
+            } else {
+                reserve = IPair(pair).reserve1();
+            }
+            return reserve <= amountOut ? 0 : amountOut;
         } catch {
             return 0;
         }
@@ -61,11 +79,11 @@ contract BlackholeAdapter is YakAdapter {
         uint256 amountStable;
         uint256 amountVolatile;
         if (IPairFactory(FACTORY).isPair(pairStable)) {
-            amountStable = _getAmoutOutSafe(pairStable, _amountIn, _tokenIn);
+            amountStable = _getAmoutOutSafe(pairStable, _amountIn, _tokenIn, _tokenOut);
         }
         address pairVolatile = IPairFactory(FACTORY).getPair(_tokenIn, _tokenOut, false);
         if (IPairFactory(FACTORY).isPair(pairVolatile)) {
-            amountVolatile = _getAmoutOutSafe(pairVolatile, _amountIn, _tokenIn);
+            amountVolatile = _getAmoutOutSafe(pairVolatile, _amountIn, _tokenIn, _tokenOut);
         }
         (amountOut, pair) = amountStable > amountVolatile ? (amountStable, pairStable) : (amountVolatile, pairVolatile);
     }

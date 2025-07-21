@@ -14,7 +14,7 @@ contract DeployBlackholeAdapter is Script {
         // Deployment parameters
         string memory name = "BlackholeAdapter";
         address blackholeFactory = 0xfE926062Fb99CA5653080d6C14fE945Ad68c265C;
-        uint256 gasEstimate = 170_000;
+        uint256 gasEstimate = 180_000;
 
         // Deploy the adapter
         BlackholeAdapter adapter = new BlackholeAdapter(name, blackholeFactory, gasEstimate);

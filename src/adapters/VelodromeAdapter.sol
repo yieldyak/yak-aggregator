@@ -31,12 +31,10 @@ interface IPairFactory {
 interface IPair {
     function getAmountOut(uint256, address) external view returns (uint256);
 
-    function swap(
-        uint256,
-        uint256,
-        address,
-        bytes calldata
-    ) external;
+    function reserve0() external view returns (uint256);
+    function reserve1() external view returns (uint256);
+
+    function swap(uint256, uint256, address, bytes calldata) external;
 }
 
 contract VelodromeAdapter is YakAdapter {
@@ -45,11 +43,7 @@ contract VelodromeAdapter is YakAdapter {
     bytes32 immutable PAIR_CODE_HASH;
     address immutable FACTORY;
 
-    constructor(
-        string memory _name,
-        address _factory,
-        uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, address _factory, uint256 _swapGasEstimate) YakAdapter(_name, _swapGasEstimate) {
         FACTORY = _factory;
         PAIR_CODE_HASH = getPairCodeHash(_factory);
     }
@@ -63,21 +57,14 @@ contract VelodromeAdapter is YakAdapter {
     }
 
     // calculates the CREATE2 address for a pair without making any external calls
-    function pairFor(
-        address tokenA,
-        address tokenB,
-        bool stable
-    ) internal view returns (address pair) {
+    function pairFor(address tokenA, address tokenB, bool stable) internal view returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
         pair = address(
             uint160(
                 uint256(
                     keccak256(
                         abi.encodePacked(
-                            hex"ff",
-                            FACTORY,
-                            keccak256(abi.encodePacked(token0, token1, stable)),
-                            PAIR_CODE_HASH
+                            hex"ff", FACTORY, keccak256(abi.encodePacked(token0, token1, stable)), PAIR_CODE_HASH
                         )
                     )
                 )
@@ -85,52 +72,60 @@ contract VelodromeAdapter is YakAdapter {
         );
     }
 
-    function _getAmoutOutSafe(address pair, uint amountIn, address tokenIn) internal view returns (uint) {
-        try IPair(pair).getAmountOut(amountIn, tokenIn) returns (uint amountOut) {
-            return amountOut;
+    function _getAmoutOutSafe(address pair, uint256 amountIn, address tokenIn, address tokenOut)
+        internal
+        view
+        returns (uint256)
+    {
+        try IPair(pair).getAmountOut(amountIn, tokenIn) returns (uint256 amountOut) {
+            (address token0, address token1) = sortTokens(tokenIn, tokenOut);
+            uint256 reserve;
+            if (token0 == tokenOut) {
+                reserve = IPair(pair).reserve0();
+            } else {
+                reserve = IPair(pair).reserve1();
+            }
+            return reserve <= amountOut ? 0 : amountOut;
         } catch {
             return 0;
         }
     }
 
-    function getQuoteAndPair(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (uint256 amountOut, address pair) {
+    function getQuoteAndPair(uint256 _amountIn, address _tokenIn, address _tokenOut)
+        internal
+        view
+        returns (uint256 amountOut, address pair)
+    {
         address pairStable = pairFor(_tokenIn, _tokenOut, true);
         uint256 amountStable;
         uint256 amountVolatile;
         if (IPairFactory(FACTORY).isPair(pairStable)) {
-            amountStable = _getAmoutOutSafe(pairStable, _amountIn, _tokenIn);
+            amountStable = _getAmoutOutSafe(pairStable, _amountIn, _tokenIn, _tokenOut);
         }
         address pairVolatile = pairFor(_tokenIn, _tokenOut, false);
         if (IPairFactory(FACTORY).isPair(pairVolatile)) {
-            amountVolatile = _getAmoutOutSafe(pairVolatile, _amountIn, _tokenIn);
+            amountVolatile = _getAmoutOutSafe(pairVolatile, _amountIn, _tokenIn, _tokenOut);
         }
         (amountOut, pair) = amountStable > amountVolatile ? (amountStable, pairStable) : (amountVolatile, pairVolatile);
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256 amountOut) {
-        if (_tokenIn != _tokenOut && _amountIn != 0) (amountOut, ) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut)
+        internal
+        view
+        override
+        returns (uint256 amountOut)
+    {
+        if (_tokenIn != _tokenOut && _amountIn != 0) (amountOut,) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
     }
 
-    function _swap(
-        uint256 _amountIn,
-        uint256 _amountOut,
-        address _tokenIn,
-        address _tokenOut,
-        address to
-    ) internal override {
+    function _swap(uint256 _amountIn, uint256 _amountOut, address _tokenIn, address _tokenOut, address to)
+        internal
+        override
+    {
         (uint256 amountOut, address pair) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
         require(amountOut >= _amountOut, "Insufficent amount out");
-        (uint256 amount0Out, uint256 amount1Out) = (_tokenIn < _tokenOut)
-            ? (uint256(0), amountOut)
-            : (amountOut, uint256(0));
+        (uint256 amount0Out, uint256 amount1Out) =
+            (_tokenIn < _tokenOut) ? (uint256(0), amountOut) : (amountOut, uint256(0));
         IERC20(_tokenIn).safeTransfer(pair, _amountIn);
         IPair(pair).swap(amount0Out, amount1Out, to, new bytes(0));
     }
