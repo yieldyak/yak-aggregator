@@ -31,6 +31,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant TOKEN_MILL_ADAPTER = 0x214617987145Ef7c5462870362FdCAe9cacdf3C8;
     address constant ARENA_ADAPTER = 0xDfd22ef6D509a982F4e6883CBf00d56d5d0D87F3;
     address constant BLACKHOLE_ADAPTER = 0x123577a1560004D4432DC5e31F97363d0cD8A651;
+    address constant BLACKHOLE_CLA_ADAPTER = 0xE3D2c10C2122e6f02C702064015554D468B24D6D;
 
     // Hop tokens
     address constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -54,7 +55,7 @@ contract AvalancheDeployments is INetworkDeployments {
     }
 
     function getWhitelistedAdapters() public pure override returns (address[] memory) {
-        address[] memory adapters = new address[](20);
+        address[] memory adapters = new address[](21);
         adapters[0] = TRADER_JOE_YAK_ADAPTER;
         adapters[1] = PANGOLIN_YAK_ADAPTER;
         adapters[2] = SUSHI_YAK_ADAPTER;
@@ -75,6 +76,7 @@ contract AvalancheDeployments is INetworkDeployments {
         adapters[17] = GG_AVAX_ADAPTER;
         adapters[18] = TOKEN_MILL_ADAPTER;
         adapters[19] = ARENA_ADAPTER;
+        adapters[20] = BLACKHOLE_CLA_ADAPTER;
         return adapters;
     }
 
