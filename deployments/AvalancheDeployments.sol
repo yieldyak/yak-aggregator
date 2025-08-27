@@ -41,6 +41,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant USDC = 0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E;
     address constant USDt = 0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7;
     address constant BTCb = 0x152b9d0FdC40C096757F570A51E494bd4b943E50;
+    address constant BLACK = 0xcd94a87696FAC69Edae3a70fE5725307Ae1c43f6;
 
     function getChainId() public pure override returns (uint256) {
         return CHAIN_ID;
@@ -84,10 +85,10 @@ contract AvalancheDeployments is INetworkDeployments {
         address[] memory hopTokens = new address[](6);
         hopTokens[0] = WAVAX;
         hopTokens[1] = WETHe;
-        hopTokens[2] = USDTe;
-        hopTokens[3] = USDCe;
-        hopTokens[4] = USDC;
-        hopTokens[5] = USDt;
+        hopTokens[2] = USDC;
+        hopTokens[3] = USDt;
+        hopTokens[4] = BTCb;
+        hopTokens[5] = BLACK;
         return hopTokens;
     }
 }
