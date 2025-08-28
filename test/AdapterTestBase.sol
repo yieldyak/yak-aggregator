@@ -73,7 +73,7 @@ contract AdapterTestBase is Test {
      * @param adapter The adapter instance to test
      * @param supportedToken A token that the adapter supports
      */
-    function assertQueryReturnsZeroForUnsupportedTokens(YakAdapter adapter, address supportedToken) internal {
+    function assertQueryReturnsZeroForUnsupportedTokens(YakAdapter adapter, address supportedToken) internal view {
         uint256 amountIn = 1e6; // 1 token with 6 decimals
         address unsupportedToken = address(0); // Use address zero as unsupported token
 
@@ -84,6 +84,14 @@ contract AdapterTestBase is Test {
         // Query with unsupported tokenOut should return 0
         uint256 result2 = adapter.query(amountIn, supportedToken, unsupportedToken);
         assertEq(result2, 0, "Query should return 0 for unsupported tokenOut");
+    }
+
+    function assertQueryReturnsZero(YakAdapter adapter, address tokenIn, address tokenOut, uint256 amountIn)
+        internal
+        view
+    {
+        uint256 result = adapter.query(amountIn, tokenIn, tokenOut);
+        assertEq(result, 0, "Query should return 0 for unsupported pair");
     }
 
     /**
