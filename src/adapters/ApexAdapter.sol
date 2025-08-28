@@ -33,8 +33,11 @@ contract ApexAdapter is YakAdapter {
             return 0;
         }
 
-        address pair = IApexRouter(router).getPair(_tokenIn, _tokenOut);
-        if (pair == address(0) || !IApexFactory(factory).isWrappedToken(pair)) {
+        try IApexRouter(router).getPair(_tokenIn, _tokenOut) returns (address pair) {
+            if (!IApexFactory(factory).isWrappedToken(pair)) {
+                return 0;
+            }
+        } catch {
             return 0;
         }
 
