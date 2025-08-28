@@ -24,7 +24,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant LIQUIDITY_BOOK_2_2_ADAPTER = 0xf9F824576F06fF92765f2Af700a5A9923526261e;
     address constant WOOFI_V2_ADAPTER = 0x4efB1880Dc9B01c833a6E2824C8EadeA83E428B0;
     address constant S_AVAX_ADAPTER = 0x2F6ca0a98CF8f7D407E98993fD576f70F0FAA80B;
-    address constant W_AVAX_ADAPTER = 0x5C4d23fd18Fc4128f77426F42237acFcE618D0b1;
+    address constant WAVAX_ADAPTER = 0x5C4d23fd18Fc4128f77426F42237acFcE618D0b1;
     address constant WOMBAT_ADAPTER = 0x7De32C76309aeB1025CBA3384caBe36326603046;
     address constant PHARAOH_ADAPTER = 0x97d26D7fc0895e3456b2146585848b466cfbb1cf;
     address constant GG_AVAX_ADAPTER = 0x79632b8194a1Ce048e5d9b0e282E9eE2d4579c20;
@@ -33,6 +33,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant BLACKHOLE_ADAPTER = 0x123577a1560004D4432DC5e31F97363d0cD8A651;
     address constant BLACKHOLE_CLA_ADAPTER = 0xE3D2c10C2122e6f02C702064015554D468B24D6D;
     address constant PANGOLIN_V3_ADAPTER = 0x526C75aef80D3c5D19F1B9fC38e3f7EF591eaAA2;
+    address constant APEX_ADAPTER = 0xA2b61cD3e656e22A41a290092eBe9a2f81ED39c5;
 
     // Hop tokens
     address constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -43,6 +44,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant USDt = 0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7;
     address constant BTCb = 0x152b9d0FdC40C096757F570A51E494bd4b943E50;
     address constant BLACK = 0xcd94a87696FAC69Edae3a70fE5725307Ae1c43f6;
+    address constant ARENA = 0xB8d7710f7d8349A506b75dD184F05777c82dAd0C;
 
     function getChainId() public pure override returns (uint256) {
         return CHAIN_ID;
@@ -57,40 +59,39 @@ contract AvalancheDeployments is INetworkDeployments {
     }
 
     function getWhitelistedAdapters() public pure override returns (address[] memory) {
-        address[] memory adapters = new address[](22);
+        address[] memory adapters = new address[](20);
         adapters[0] = TRADER_JOE_YAK_ADAPTER;
         adapters[1] = PANGOLIN_YAK_ADAPTER;
         adapters[2] = SUSHI_YAK_ADAPTER;
         adapters[3] = PHARAOH_LEGACY_ADAPTER;
-        adapters[4] = SYNAPSE_PLAIN_YAK_ADAPTER;
-        adapters[5] = CURVE_3POOL_V2_ADAPTER;
-        adapters[6] = CURVE_USDC_ADAPTER;
-        adapters[7] = CURVE_YUSD_ADAPTER;
-        adapters[8] = UNISWAP_V3_ADAPTER;
-        adapters[9] = LIQUIDITY_BOOK_2_ADAPTER;
-        adapters[10] = LIQUIDITY_BOOK_2_2_ADAPTER;
-        adapters[11] = WOOFI_V2_ADAPTER;
-        adapters[12] = BLACKHOLE_ADAPTER;
-        adapters[13] = S_AVAX_ADAPTER;
-        adapters[14] = W_AVAX_ADAPTER;
-        adapters[15] = WOMBAT_ADAPTER;
-        adapters[16] = PHARAOH_ADAPTER;
-        adapters[17] = GG_AVAX_ADAPTER;
-        adapters[18] = TOKEN_MILL_ADAPTER;
-        adapters[19] = ARENA_ADAPTER;
-        adapters[20] = BLACKHOLE_CLA_ADAPTER;
-        adapters[21] = PANGOLIN_V3_ADAPTER;
+        adapters[4] = CURVE_YUSD_ADAPTER;
+        adapters[5] = UNISWAP_V3_ADAPTER;
+        adapters[6] = LIQUIDITY_BOOK_2_ADAPTER;
+        adapters[7] = LIQUIDITY_BOOK_2_2_ADAPTER;
+        adapters[8] = WOOFI_V2_ADAPTER;
+        adapters[9] = S_AVAX_ADAPTER;
+        adapters[10] = WAVAX_ADAPTER;
+        adapters[11] = WOMBAT_ADAPTER;
+        adapters[12] = PHARAOH_ADAPTER;
+        adapters[13] = GG_AVAX_ADAPTER;
+        adapters[14] = TOKEN_MILL_ADAPTER;
+        adapters[15] = ARENA_ADAPTER;
+        adapters[16] = BLACKHOLE_ADAPTER;
+        adapters[17] = BLACKHOLE_CLA_ADAPTER;
+        adapters[18] = PANGOLIN_V3_ADAPTER;
+        adapters[19] = APEX_ADAPTER;
         return adapters;
     }
 
     function getWhitelistedHopTokens() public pure override returns (address[] memory) {
-        address[] memory hopTokens = new address[](6);
+        address[] memory hopTokens = new address[](7);
         hopTokens[0] = WAVAX;
         hopTokens[1] = WETHe;
         hopTokens[2] = USDC;
         hopTokens[3] = USDt;
         hopTokens[4] = BTCb;
         hopTokens[5] = BLACK;
+        hopTokens[6] = ARENA;
         return hopTokens;
     }
 }
