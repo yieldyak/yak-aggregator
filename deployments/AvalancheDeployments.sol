@@ -34,6 +34,8 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant BLACKHOLE_CLA_ADAPTER = 0xE3D2c10C2122e6f02C702064015554D468B24D6D;
     address constant PANGOLIN_V3_ADAPTER = 0x526C75aef80D3c5D19F1B9fC38e3f7EF591eaAA2;
     address constant APEX_ADAPTER = 0xA2b61cD3e656e22A41a290092eBe9a2f81ED39c5;
+    address constant PHAR_CL_ADAPTER = 0xadDB698A6723787624f3286369E588De7D780927;
+    address constant PHAR_LEGACY_ADAPTER = 0x20A8a786375E9A92B875AdD32a7280a32820682c;
 
     // Hop tokens
     address constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -59,39 +61,36 @@ contract AvalancheDeployments is INetworkDeployments {
     }
 
     function getWhitelistedAdapters() public pure override returns (address[] memory) {
-        address[] memory adapters = new address[](20);
+        address[] memory adapters = new address[](18);
         adapters[0] = TRADER_JOE_YAK_ADAPTER;
         adapters[1] = PANGOLIN_YAK_ADAPTER;
         adapters[2] = SUSHI_YAK_ADAPTER;
         adapters[3] = PHARAOH_LEGACY_ADAPTER;
-        adapters[4] = CURVE_YUSD_ADAPTER;
-        adapters[5] = UNISWAP_V3_ADAPTER;
-        adapters[6] = LIQUIDITY_BOOK_2_ADAPTER;
-        adapters[7] = LIQUIDITY_BOOK_2_2_ADAPTER;
-        adapters[8] = WOOFI_V2_ADAPTER;
-        adapters[9] = S_AVAX_ADAPTER;
-        adapters[10] = WAVAX_ADAPTER;
-        adapters[11] = WOMBAT_ADAPTER;
-        adapters[12] = PHARAOH_ADAPTER;
-        adapters[13] = GG_AVAX_ADAPTER;
-        adapters[14] = TOKEN_MILL_ADAPTER;
-        adapters[15] = ARENA_ADAPTER;
-        adapters[16] = BLACKHOLE_ADAPTER;
-        adapters[17] = BLACKHOLE_CLA_ADAPTER;
-        adapters[18] = PANGOLIN_V3_ADAPTER;
-        adapters[19] = APEX_ADAPTER;
+        adapters[4] = UNISWAP_V3_ADAPTER;
+        adapters[5] = LIQUIDITY_BOOK_2_ADAPTER;
+        adapters[6] = LIQUIDITY_BOOK_2_2_ADAPTER;
+        adapters[7] = WOOFI_V2_ADAPTER;
+        adapters[8] = S_AVAX_ADAPTER;
+        adapters[9] = WAVAX_ADAPTER;
+        adapters[10] = PHARAOH_ADAPTER;
+        adapters[11] = ARENA_ADAPTER;
+        adapters[12] = BLACKHOLE_ADAPTER;
+        adapters[13] = BLACKHOLE_CLA_ADAPTER;
+        adapters[14] = PANGOLIN_V3_ADAPTER;
+        adapters[15] = APEX_ADAPTER;
+        adapters[16] = PHAR_CL_ADAPTER;
+        adapters[17] = PHAR_LEGACY_ADAPTER;
         return adapters;
     }
 
     function getWhitelistedHopTokens() public pure override returns (address[] memory) {
-        address[] memory hopTokens = new address[](7);
+        address[] memory hopTokens = new address[](6);
         hopTokens[0] = WAVAX;
-        hopTokens[1] = WETHe;
-        hopTokens[2] = USDC;
-        hopTokens[3] = USDt;
-        hopTokens[4] = BTCb;
-        hopTokens[5] = BLACK;
-        hopTokens[6] = ARENA;
+        hopTokens[1] = USDC;
+        hopTokens[2] = USDt;
+        hopTokens[3] = BTCb;
+        hopTokens[4] = BLACK;
+        hopTokens[5] = ARENA;
         return hopTokens;
     }
 }
