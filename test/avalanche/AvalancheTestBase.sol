@@ -14,4 +14,5 @@ contract AvalancheTestBase is AdapterTestBase {
     address public constant AKET = 0x4df0a045323A36ec178db44E159A3B2Ed037DDc3;
     address public constant BTCb = 0x152b9d0FdC40C096757F570A51E494bd4b943E50;
     address public constant KET = 0xFFFF003a6BAD9b743d658048742935fFFE2b6ED7;
+    address public constant PHAR = 0x13A466998Ce03Db73aBc2d4DF3bBD845Ed1f28E7;
 }
