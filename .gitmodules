@@ -1,0 +1,6 @@
+[submodule "dependencies/v4-periphery"]
+	path = dependencies/v4-periphery
+	url = https://github.com/Uniswap/v4-periphery
+[submodule "dependencies/v4-core"]
+	path = dependencies/v4-core
+	url = https://github.com/Uniswap/v4-core
