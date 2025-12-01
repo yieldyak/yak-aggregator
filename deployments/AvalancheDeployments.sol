@@ -36,6 +36,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant APEX_ADAPTER = 0xA2b61cD3e656e22A41a290092eBe9a2f81ED39c5;
     address constant PHAR_CL_ADAPTER = 0xadDB698A6723787624f3286369E588De7D780927;
     address constant PHAR_LEGACY_ADAPTER = 0x20A8a786375E9A92B875AdD32a7280a32820682c;
+    address constant ARENA_ADAPTER_V2 = 0xeF3CCEFb2FE23E9d0AA7B578724B92F59F76f13C;
 
     // Hop tokens
     address constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -77,20 +78,21 @@ contract AvalancheDeployments is INetworkDeployments {
         adapters[12] = BLACKHOLE_ADAPTER;
         adapters[13] = BLACKHOLE_CLA_ADAPTER;
         adapters[14] = PANGOLIN_V3_ADAPTER;
-        adapters[15] = APEX_ADAPTER;
+        adapters[15] = ARENA_ADAPTER_V2;
         adapters[16] = PHAR_CL_ADAPTER;
         adapters[17] = PHAR_LEGACY_ADAPTER;
         return adapters;
     }
 
     function getWhitelistedHopTokens() public pure override returns (address[] memory) {
-        address[] memory hopTokens = new address[](6);
+        address[] memory hopTokens = new address[](7);
         hopTokens[0] = WAVAX;
-        hopTokens[1] = USDC;
-        hopTokens[2] = USDt;
-        hopTokens[3] = BTCb;
-        hopTokens[4] = BLACK;
-        hopTokens[5] = ARENA;
+        hopTokens[1] = WETHe;
+        hopTokens[2] = USDC;
+        hopTokens[3] = USDt;
+        hopTokens[4] = BTCb;
+        hopTokens[5] = BLACK;
+        hopTokens[6] = ARENA;
         return hopTokens;
     }
 }
