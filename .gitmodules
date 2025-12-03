@@ -4,3 +4,6 @@
 [submodule "dependencies/v4-core"]
 	path = dependencies/v4-core
 	url = https://github.com/Uniswap/v4-core
+[submodule "dependencies/solady"]
+	path = dependencies/solady
+	url = https://github.com/vectorized/solady

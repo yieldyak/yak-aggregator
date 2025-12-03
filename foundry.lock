@@ -1,4 +1,10 @@
 {
+  "dependencies/solady": {
+    "tag": {
+      "name": "v0.1.26",
+      "rev": "acd959aa4bd04720d640bf4e6a5c71037510cc4b"
+    }
+  },
   "dependencies/v4-core": {
     "tag": {
       "name": "v4.0.0",
