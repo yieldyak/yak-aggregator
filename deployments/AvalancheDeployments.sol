@@ -2,6 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "./utils/INetworkDeployments.sol";
+import {PoolKey} from "@uniswap/v4-core/src/types/PoolKey.sol";
+import {Currency} from "@uniswap/v4-core/src/types/Currency.sol";
+import {IHooks} from "@uniswap/v4-core/src/interfaces/IHooks.sol";
 
 contract AvalancheDeployments is INetworkDeployments {
     // Chain ID
@@ -37,6 +40,7 @@ contract AvalancheDeployments is INetworkDeployments {
     address constant PHAR_CL_ADAPTER = 0xadDB698A6723787624f3286369E588De7D780927;
     address constant PHAR_LEGACY_ADAPTER = 0x20A8a786375E9A92B875AdD32a7280a32820682c;
     address constant ARENA_ADAPTER_V2 = 0xeF3CCEFb2FE23E9d0AA7B578724B92F59F76f13C;
+    address constant UNISWAP_V4_ADAPTER = 0x030b6d2B19A834535987f20Ca2958039b572694C;
 
     // Hop tokens
     address constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -62,7 +66,7 @@ contract AvalancheDeployments is INetworkDeployments {
     }
 
     function getWhitelistedAdapters() public pure override returns (address[] memory) {
-        address[] memory adapters = new address[](18);
+        address[] memory adapters = new address[](19);
         adapters[0] = TRADER_JOE_YAK_ADAPTER;
         adapters[1] = PANGOLIN_YAK_ADAPTER;
         adapters[2] = SUSHI_YAK_ADAPTER;
@@ -81,6 +85,7 @@ contract AvalancheDeployments is INetworkDeployments {
         adapters[15] = ARENA_ADAPTER_V2;
         adapters[16] = PHAR_CL_ADAPTER;
         adapters[17] = PHAR_LEGACY_ADAPTER;
+        adapters[18] = UNISWAP_V4_ADAPTER;
         return adapters;
     }
 
@@ -94,5 +99,37 @@ contract AvalancheDeployments is INetworkDeployments {
         hopTokens[5] = BLACK;
         hopTokens[6] = ARENA;
         return hopTokens;
+    }
+
+    function getUniswapV4Adapter() public pure override returns (address) {
+        return UNISWAP_V4_ADAPTER;
+    }
+
+    function getWhitelistedUniswapV4Pools() public pure override returns (PoolKey[] memory) {
+        // Common pools for WAVAX/USDC pair
+        // Standard Uniswap V3/V4 pool: 0.3% fee, tick spacing 60
+        PoolKey[] memory pools = new PoolKey[](3);
+        pools[0] = PoolKey({
+            currency0: Currency.wrap(address(0)),
+            currency1: Currency.wrap(USDC),
+            fee: 3000, // 0.3%
+            tickSpacing: 60,
+            hooks: IHooks(address(0))
+        });
+        pools[1] = PoolKey({
+            currency0: Currency.wrap(address(0)),
+            currency1: Currency.wrap(USDC),
+            fee: 500, // 0.05%
+            tickSpacing: 10,
+            hooks: IHooks(address(0))
+        });
+        pools[2] = PoolKey({
+            currency0: Currency.wrap(USDt),
+            currency1: Currency.wrap(USDC),
+            fee: 3000, // 0.3%
+            tickSpacing: 60,
+            hooks: IHooks(address(0))
+        });
+        return pools;
     }
 }

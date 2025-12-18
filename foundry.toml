@@ -14,6 +14,7 @@ remappings = [
     "forge-std/=dependencies/forge-std-1.9.7/src/",
     "@uniswap/v4-core/=dependencies/v4-core/",
     "@uniswap/v4-periphery/=dependencies/v4-periphery/",
+    "@solady/=dependencies/solady/src"
 ]
 
 [rpc_endpoints]
