@@ -66,10 +66,10 @@ contract AvalancheDeployments is INetworkDeployments {
     }
 
     function getWhitelistedAdapters() public pure override returns (address[] memory) {
-        address[] memory adapters = new address[](19);
+        address[] memory adapters = new address[](17);
         adapters[0] = TRADER_JOE_YAK_ADAPTER;
-        adapters[1] = PANGOLIN_YAK_ADAPTER;
-        adapters[2] = SUSHI_YAK_ADAPTER;
+        adapters[1] = UNISWAP_V4_ADAPTER;
+        adapters[2] = PHAR_LEGACY_ADAPTER;
         adapters[3] = PHARAOH_LEGACY_ADAPTER;
         adapters[4] = UNISWAP_V3_ADAPTER;
         adapters[5] = LIQUIDITY_BOOK_2_ADAPTER;
@@ -84,8 +84,6 @@ contract AvalancheDeployments is INetworkDeployments {
         adapters[14] = PANGOLIN_V3_ADAPTER;
         adapters[15] = ARENA_ADAPTER_V2;
         adapters[16] = PHAR_CL_ADAPTER;
-        adapters[17] = PHAR_LEGACY_ADAPTER;
-        adapters[18] = UNISWAP_V4_ADAPTER;
         return adapters;
     }
 
