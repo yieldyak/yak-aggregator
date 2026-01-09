@@ -66,36 +66,33 @@ contract AvalancheDeployments is INetworkDeployments {
     }
 
     function getWhitelistedAdapters() public pure override returns (address[] memory) {
-        address[] memory adapters = new address[](17);
+        address[] memory adapters = new address[](15);
         adapters[0] = TRADER_JOE_YAK_ADAPTER;
         adapters[1] = UNISWAP_V4_ADAPTER;
         adapters[2] = PHAR_LEGACY_ADAPTER;
-        adapters[3] = PHARAOH_LEGACY_ADAPTER;
+        adapters[3] = PHAR_CL_ADAPTER;
         adapters[4] = UNISWAP_V3_ADAPTER;
         adapters[5] = LIQUIDITY_BOOK_2_ADAPTER;
         adapters[6] = LIQUIDITY_BOOK_2_2_ADAPTER;
         adapters[7] = WOOFI_V2_ADAPTER;
         adapters[8] = S_AVAX_ADAPTER;
         adapters[9] = WAVAX_ADAPTER;
-        adapters[10] = PHARAOH_ADAPTER;
+        adapters[10] = ARENA_ADAPTER_V2;
         adapters[11] = ARENA_ADAPTER;
         adapters[12] = BLACKHOLE_ADAPTER;
         adapters[13] = BLACKHOLE_CLA_ADAPTER;
         adapters[14] = PANGOLIN_V3_ADAPTER;
-        adapters[15] = ARENA_ADAPTER_V2;
-        adapters[16] = PHAR_CL_ADAPTER;
         return adapters;
     }
 
     function getWhitelistedHopTokens() public pure override returns (address[] memory) {
-        address[] memory hopTokens = new address[](7);
+        address[] memory hopTokens = new address[](6);
         hopTokens[0] = WAVAX;
-        hopTokens[1] = WETHe;
+        hopTokens[1] = ARENA;
         hopTokens[2] = USDC;
         hopTokens[3] = USDt;
         hopTokens[4] = BTCb;
         hopTokens[5] = BLACK;
-        hopTokens[6] = ARENA;
         return hopTokens;
     }
 
