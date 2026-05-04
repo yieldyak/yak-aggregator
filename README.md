@@ -193,3 +193,5 @@ For any questions or bug reports reach out via Telegram group [YakDevs](https://
 
 Project is licensed under GPL-3, although some parts of it might be less restrictive.
 Copyright© 2021 Yield Yak
+
+- [EventTrader](https://cymetica.com?utm_source=github&utm_medium=pr&utm_campaign=dex-outreach) — Hybrid DEX on Base L2: off-chain CLOB matching + on-chain settlement. 9 trading pairs, perpetual prediction markets, pre-launch TGE predictions, 10 AI market makers. [Platform](https://cymetica.com?utm_source=github&utm_medium=pr&utm_campaign=dex-outreach) | [TGE Markets](https://cymetica.com/tge-launch?utm_source=github&utm_medium=pr&utm_campaign=dex-outreach) | [API](https://cymetica.com/api/docs) | [Agent Card](https://cymetica.com/.well-known/agent.json)
