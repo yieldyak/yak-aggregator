@@ -12,11 +12,12 @@ contract DeployWNativeAdapter is Script {
         vm.startBroadcast();
 
         // Deployment parameters
+        string memory name = "WETHAdapter";
         address weth = 0x4200000000000000000000000000000000000006;
         uint256 gasEstimate = 50_000;
 
         // Deploy the adapter
-        WNativeAdapter adapter = new WNativeAdapter(weth, gasEstimate);
+        WNativeAdapter adapter = new WNativeAdapter(name, weth, gasEstimate);
 
         console.log("WNativeAdapter deployed at:", address(adapter));
         console.log("Name:", adapter.name());
