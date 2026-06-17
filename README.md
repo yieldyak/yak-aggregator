@@ -9,17 +9,18 @@ Search is performed by calling on-chain query-methods and can be called by anyon
 
 ## Usage
 
-
 ### Router
 
-YakRouter is the user-facing interface to check prices and make trades. See example off-chain usage [here](./src/examples/debridge/main.js).
+YakRouter is the user-facing interface to check prices and make trades.
 
+| Chain | Address |
+| --- | --- |
+| Avalanche | [`0xC4729E56b831d74bBc18797e0e17A295fA77488c`](https://snowtrace.io/address/0xc4729e56b831d74bbc18797e0e17a295fa77488c) |
+| Base | [`0x50564bF9cE3b1eA33c7bDb5acfFb1B997C319aE4`](https://basescan.org/address/0x50564bF9cE3b1eA33c7bDb5acfFb1B997C319aE4) |
+| Arbitrum | [`0xb32C79a25291265eF240Eb32E9faBbc6DcEE3cE3`](https://arbiscan.io/address/0xb32C79a25291265eF240Eb32E9faBbc6DcEE3cE3) |
+| Optimism | [`0xCd887F78c77b36B0b541E77AfD6F91C0253182A2`](https://optimistic.etherscan.io/address/0xCd887F78c77b36B0b541E77AfD6F91C0253182A2) |
 
-| Chain      | Address |
-| ----------- | ----------- |
-| Avalanche   | [`0xC4729E56b831d74bBc18797e0e17A295fA77488c`](https://snowtrace.io/address/0xc4729e56b831d74bbc18797e0e17a295fa77488c) |
-| Arbitrum   | [`0xb32C79a25291265eF240Eb32E9faBbc6DcEE3cE3`](https://arbiscan.io/address/0xb32C79a25291265eF240Eb32E9faBbc6DcEE3cE3) |
-| Optimism   | [`0xCd887F78c77b36B0b541E77AfD6F91C0253182A2`](https://optimistic.etherscan.io/address/0xCd887F78c77b36B0b541E77AfD6F91C0253182A2) |
+Base also has a `SimpleRouter` deployment at [`0xD7A465165338B0B53dfDdef2Ee07cd8870Cd7dc7`](https://basescan.org/address/0xD7A465165338B0B53dfDdef2Ee07cd8870Cd7dc7).
 
 #### **findBestPathWithGas**
 
@@ -129,54 +130,145 @@ function swap(
 ) external;
 ```
 
-After setting up this repo call `npx hardhat list-adapters --network {network-id}` to get a list of live adapters and their addresses. Or see  [`deployOptions`](./src/misc/deployOptions.js) for a list of live adapters per chain.
+See [`deployments/`](./deployments) for known router, adapter, hop-token, and Uniswap V4 pool configuration by chain. To inspect a live router, use the Foundry script:
+
+```bash
+forge script script/admin/ListAdapters.s.sol --rpc-url <network>
+```
+
+Examples:
+
+```bash
+forge script script/admin/ListAdapters.s.sol --rpc-url base
+forge script script/admin/ListAdapters.s.sol --rpc-url avalanche
+```
 
 
 ## Local Development and testing
 
+This repository uses [Foundry](https://book.getfoundry.sh/) for compilation, testing, scripts, and deployment. Solidity package dependencies are managed with Foundry's native Soldeer integration and the checked-in `soldeer.lock` file.
+
+### Install Foundry
+
+```bash
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
+```
+
+Make sure the Foundry binaries are available on your `PATH`:
+
+```bash
+forge --version
+cast --version
+anvil --version
+```
+
 ### Install Dependencies
 
-```
-yarn install
+Clone submodules and install Soldeer dependencies:
+
+```bash
+git submodule update --init --recursive
+forge soldeer update
 ```
 
 ### Set Environmental Variables
 
-```
-cp .env.sample > .env
+Copy the sample env file and fill in any private keys, RPC URLs, or explorer API keys needed for your workflow:
+
+```bash
+cp .env.sample .env
 ```
 
+At minimum, fork tests and scripts need RPC endpoints for the networks you target. Public RPC examples:
 
-### Actions
-
-#### Test
-Test for chain:
-```
-yarn test:{network-id}
-```
-Test individual:
-```
-npx hardhat test {path to the test/tests | empty to run all}
+```bash
+export BASE_RPC="https://mainnet.base.org"
+export AVALANCHE_RPC="https://api.avax.network/ext/bc/C/rpc"
 ```
 
-#### Deploy
+`foundry.toml` currently defines RPC aliases for:
 
-```
-yarn deploy:{network-id}
-```
-#### Verify
-```
-npx hardhat verify-contract --deployment-file-path {path to deployment file} --network {your network tag}
+- `base`
+- `avalanche`
+- `arbitrum`
+- `optimism`
+- `mantle`
+
+### Build
+
+```bash
+forge build
 ```
 
-#### Query
+### Test
+
+Run all tests:
+
+```bash
+forge test
 ```
-npx hardhat find-best-path {fixed-amount-in} {token-in symbol/address} {token-in symbol/address}  --network {network tag}
+
+Run Base tests:
+
+```bash
+forge test --match-path 'test/base/*.sol' --rpc-url base
 ```
-Example:
+
+Run Avalanche tests:
+
+```bash
+forge test --match-path 'test/avalanche/*.sol' --rpc-url avalanche
 ```
-npx hardhat find-best-path 1000 USDC yyAVAX  --network avalanche
+
+Run a single test file:
+
+```bash
+forge test --match-path test/base/Aerodrome.t.sol --rpc-url base
 ```
+
+### Deploy
+
+Deployment scripts live in [`script/deploy/`](./script/deploy). Run without `--broadcast` first to simulate, then add `--broadcast` to submit transactions.
+
+Example simulation:
+
+```bash
+forge script script/deploy/base/DeploySimpleRouter.s.sol:DeploySimpleRouter --rpc-url base
+```
+
+Example broadcast:
+
+```bash
+forge script script/deploy/base/DeploySimpleRouter.s.sol:DeploySimpleRouter \
+  --account deployer \
+  --rpc-url base \
+  --broadcast \
+  --verify \
+  --etherscan-api-key "$ETHERSCAN_API_KEY"
+```
+
+### Admin scripts
+
+Admin scripts live in [`script/admin/`](./script/admin). They are generally written to support a dry-run/check mode without `--broadcast` and an execute mode with `--broadcast`.
+
+Examples:
+
+```bash
+forge script script/admin/ListAdapters.s.sol --rpc-url base
+forge script script/admin/UpdateAdapters.s.sol --account deployer --rpc-url base
+forge script script/admin/UpdateAdapters.s.sol --account deployer --rpc-url base --broadcast
+```
+
+### Adding adapters
+
+See [`docs/adding-new-adapter.md`](./docs/adding-new-adapter.md) for adapter requirements and implementation notes. New adapters should usually include:
+
+- the adapter contract under [`src/adapters/`](./src/adapters)
+- interface additions under [`src/interface/`](./src/interface), if needed
+- deployment constants in [`deployments/`](./deployments)
+- a deployment script under [`script/deploy/<network>/`](./script/deploy)
+- fork tests under [`test/<network>/`](./test)
 
 ## Misc
 
