@@ -19,6 +19,7 @@ remappings = [
 
 [rpc_endpoints]
 avalanche = "${AVALANCHE_RPC}"
+base = "${BASE_RPC}"
 arbitrum = "${ARBITRUM_RPC}"
 optimism = "${OPTIMISM_RPC}"
 mantle = "${MANTLE_RPC}"
