@@ -19,6 +19,7 @@ contract BaseDeployments is INetworkDeployments {
     address constant UNISWAP_V2_ADAPTER = 0x91739fA321D12208dB61DF388C69372b658d725b;
     address constant PANCAKESWAP_V3_ADAPTER = 0x43595883bb86862805ABFb2D4A928559Ab4aE1B1;
     address constant WNATIVE_ADAPTER = 0x22a6Aa322645B881c3BD36AE03525684b5C91919;
+    address constant CHAINLINK_CCIP_WSTETH_STAKING_ADAPTER = 0x34D5E8761d24C7e4Ed3151E9BD312e4625343a25;
 
     // Hop tokens
     address constant WETH = 0x4200000000000000000000000000000000000006;
@@ -39,13 +40,14 @@ contract BaseDeployments is INetworkDeployments {
     }
 
     function getWhitelistedAdapters() public pure override returns (address[] memory) {
-        address[] memory adapters = new address[](6);
+        address[] memory adapters = new address[](7);
         adapters[0] = AERODROME_ADAPTER;
         adapters[1] = AERODROME_CL_ADAPTER;
         adapters[2] = UNISWAP_V3_ADAPTER;
         adapters[3] = UNISWAP_V2_ADAPTER;
         adapters[4] = PANCAKESWAP_V3_ADAPTER;
         adapters[5] = WNATIVE_ADAPTER;
+        adapters[6] = CHAINLINK_CCIP_WSTETH_STAKING_ADAPTER;
         return adapters;
     }
 
